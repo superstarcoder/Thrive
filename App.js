@@ -5,15 +5,16 @@ import Color from './assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4} from './components/text/StyledH1';
 
 export default function App() {
-  const [task, setTask] = useState();
+  const [task, setTask] = useState({});
   const [taskItems, setTaskItems] = useState([]);
 
-
-
   const handleAddTask = () => {
-    Keyboard.dismiss();
-    setTaskItems([...taskItems, task])
-    setTask(null);
+    if (task != null) {
+      Keyboard.dismiss();
+      setTaskItems([...taskItems, task])
+      setTask(null);
+      this.textInput.clear()
+    }
   }
 
   const completeTask = (index) => {
@@ -39,10 +40,11 @@ export default function App() {
         <View style={styles.items}>
           {/* This is where the tasks will go! */}
           {
-            taskItems.map((item, index) => {
+            taskItems.map((task, index) => {
+              console.log(task);
               return (
                 <TouchableOpacity key={index}  onPress={() => completeTask(index)}>
-                  <Task text={item} /> 
+                  <Task text={task.text} priority={task.priority} duration={task.duration}/> 
                 </TouchableOpacity>
               )
             })
@@ -58,7 +60,7 @@ export default function App() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.writeTaskWrapper}
       >
-        <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text => setTask(text)} />
+        <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text => setTask({text:text, priority: 9, duration: 7})} ref={input => { this.textInput = input }} />
         <TouchableOpacity onPress={() => handleAddTask()}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>+</Text>

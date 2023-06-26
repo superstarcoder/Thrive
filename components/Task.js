@@ -5,22 +5,39 @@ import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledH1';
 import { Clock, WarningCircle } from 'phosphor-react-native';
 
 
-const Task = (props) => {
+const Task = ({text, duration, priority}) => {
+
+  // 1, 2, 3
+  // 4, 5, 6, 7
+  // 8, 9, 10
+
+  if (priority <= 3) {
+    accent = <View style={styles.lowPriorityAccent}></View>
+    importanceText = <StyledH4 text={"very important"} style={styles.importanceText}/>
+  }
+  else if (priority <= 7) {
+    accent = <View style={styles.mediumPriorityAccent}></View>
+    importanceText = <StyledH4 text={"medium importance"} style={styles.importanceText}/>
+  }
+  else if (priority <= 10) {
+    accent = <View style={styles.highPriorityAccent}></View>
+    importanceText = <StyledH4 text={"high importance"} style={styles.importanceText}/>
+  }
 
   return (
     <View style={styles.task}>
-      <View style={styles.accent}></View>
+      {accent}
       <View style={styles.taskContent}>
-        <StyledH1 text={props.text} style={styles.title}/>
+        <StyledH1 text={text} style={styles.title}/>
         <StyledH4 text={"+ 5 points"} style={styles.pointsText}/>
         <View style={styles.taskDetails}>
           <View style={styles.timeDetail}>
             <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
-            <StyledH4 text={"5 hours"} style={styles.timeText}/>
+            <StyledH4 text={`${duration} hours`} style={styles.timeText}/>
           </View>
           <View style={styles.importanceDetail}>
             <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
-            <StyledH4 text={"very important"} style={styles.importanceText}/>
+            {importanceText}
           </View>
         </View>
       </View>
@@ -58,13 +75,27 @@ const styles = StyleSheet.create({
     margin: 0,
     color: Color.LightBlue,
   },
-  accent: {
+  lowPriorityAccent: {
+    width: 13,
+    height: '100%',
+    backgroundColor: Color.GreenAccent,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  }, 
+  mediumPriorityAccent: {
+    width: 13,
+    height: '100%',
+    backgroundColor: Color.BlueAccent,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  }, 
+  highPriorityAccent: {
     width: 13,
     height: '100%',
     backgroundColor: Color.RedAccent,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
-  }, 
+  },
   task: {
     backgroundColor: Color.DarkBlue,
     paddingRight: 15,
