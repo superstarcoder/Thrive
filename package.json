@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "expo": "~48.0.18",
+    "expo-app-loading": "^2.1.1",
+    "expo-font": "~11.1.1",
     "expo-status-bar": "~1.4.4",
+    "phosphor-react-native": "^1.1.2",
     "react": "18.2.0",
     "react-native": "0.71.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "sass": "^1.63.6"
   },
   "private": true
 }
