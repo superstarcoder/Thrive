@@ -22,7 +22,7 @@ export function StyledH1({text, style={}, weight="regular"}) {
   }
   
   return (
-	  <Text style={[styles.styledH1, style]}>{text}</Text>
+	  <Text style={[fontStyles.styledH1, style]}>{text}</Text>
   )
 }
 
@@ -44,7 +44,7 @@ export function StyledH2({text, style={}, weight="regular"}) {
   }
   
   return (
-	  <Text style={[styles.styledH2, style]}>{text}</Text>
+	  <Text style={[fontStyles.styledH2, style]}>{text}</Text>
   )
 }
 
@@ -67,7 +67,7 @@ export function StyledH3({text, style={}, weight="regular"}) {
   }
   
   return (
-	  <Text style={[styles.styledH3, style]}>{text}</Text>
+	  <Text style={[fontStyles.styledH3, style]}>{text}</Text>
   )
 }
 
@@ -89,11 +89,11 @@ export function StyledH4({text, style={}, weight="regular"}) {
   }
   
   return (
-	  <Text style={[styles.styledH4, style]}>{text}</Text>
+	  <Text style={[fontStyles.styledH4, style]}>{text}</Text>
   )
 }
 
-const styles = StyleSheet.create({
+export const fontStyles = StyleSheet.create({
 	styledH1: {
     fontFamily: "MPlus",
     color: Color.White,

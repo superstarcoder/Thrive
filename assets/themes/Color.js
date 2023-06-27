@@ -13,6 +13,7 @@ const RedAccent = '#F76969' // high priority task accent
 const BlueAccent = '#64ABFF' // medium priority task accent
 const GreenAccent = '#52BF58' // low priority task accent
 const GrayBlue = '#252B55'
+const Gray = '#C8C8C8'
 
 const Color = {
 	DarkestBlue, 
@@ -24,6 +25,7 @@ const Color = {
 	BlueAccent, 
 	GreenAccent, 
 	GrayBlue,
+	Gray,
 }
 
 export default Color;

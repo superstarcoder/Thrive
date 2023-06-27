@@ -98,8 +98,7 @@ const styles = StyleSheet.create({
   },
   task: {
     backgroundColor: Color.DarkBlue,
-    paddingRight: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
