@@ -2,7 +2,7 @@ import React, {useState, useRef, useCallback} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal } from 'react-native';
 import Task from './components/Task';
 import Color from './assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4} from './components/text/StyledH1';
+import {StyledH1, StyledH2, StyledH3, StyledH4} from './components/text/StyledText';
 import { XCircle } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from './components/BottomSheet';
@@ -38,7 +38,6 @@ export default function App() {
 
     const isActive = bottomSheetRef?.current?.isActive()
     bottomSheetRef?.current?.scrollTo(-100)
-    console.log(bottomSheetRef)
   }, [])
 
   return (
@@ -56,7 +55,6 @@ export default function App() {
           <View style={styles.items}>
             {
               taskItems.map((task, index) => {
-                console.log(task);
                 return (
                   <TouchableOpacity key={index}  onPress={() => {completeTask(index);}}>
                     <Task text={task.text} priority={task.priority} duration={task.duration}/> 

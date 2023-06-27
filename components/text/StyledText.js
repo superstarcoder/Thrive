@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import { useFonts } from 'expo-font'
-import AppLoading from 'expo-app-loading'
+// import AppLoading from 'expo-app-loading'
 import Color from '../../assets/themes/Color'
 
 export function StyledH1({text, style={}, weight="regular"}) {
@@ -18,7 +18,7 @@ export function StyledH1({text, style={}, weight="regular"}) {
 
 
   if (!fontsLoaded) {
-    return <AppLoading />
+    return null
   }
   
   return (
@@ -40,7 +40,7 @@ export function StyledH2({text, style={}, weight="regular"}) {
 
 
   if (!fontsLoaded) {
-    return <AppLoading />
+    return null
   }
   
   return (
@@ -63,7 +63,7 @@ export function StyledH3({text, style={}, weight="regular"}) {
 
 
   if (!fontsLoaded) {
-    return <AppLoading />
+    return null
   }
   
   return (
@@ -85,7 +85,7 @@ export function StyledH4({text, style={}, weight="regular"}) {
 
 
   if (!fontsLoaded) {
-    return <AppLoading />
+    return null
   }
   
   return (

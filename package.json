@@ -21,7 +21,8 @@
     "react-native-gesture-handler": "~2.9.0",
     "react-native-web": "~0.18.10",
     "react-dom": "18.2.0",
-    "@expo/webpack-config": "^18.0.1"
+    "@expo/webpack-config": "^18.0.1",
+    "expo-splash-screen": "~0.18.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

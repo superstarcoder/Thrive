@@ -24,7 +24,6 @@ const BottomSheet = React.forwardRef (({children}, bottomSheetRef) => {
     }
 
     translateY.value = withSpring(destination, {damping: 15})
-    console.log("scrolled")
 
   }, [])
 

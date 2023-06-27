@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledH1';
+import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledText';
 import { Clock, WarningCircle } from 'phosphor-react-native';
 
 
@@ -10,8 +10,6 @@ const Task = ({text, duration, priority}) => {
   // 1, 2, 3
   // 4, 5, 6, 7
   // 8, 9, 10
-
-  console.log(priority, text, duration)
 
   if (priority <= 3) {
     accent = <View style={styles.lowPriorityAccent}></View>
