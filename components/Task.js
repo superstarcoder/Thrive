@@ -11,6 +11,8 @@ const Task = ({text, duration, priority}) => {
   // 4, 5, 6, 7
   // 8, 9, 10
 
+  console.log(priority, text, duration)
+
   if (priority <= 3) {
     accent = <View style={styles.lowPriorityAccent}></View>
     importanceText = <StyledH4 text={"very important"} style={styles.importanceText}/>

@@ -12,6 +12,7 @@ const Blue = '#6A80F7' // warning sign symbol
 const RedAccent = '#F76969' // high priority task accent
 const BlueAccent = '#64ABFF' // medium priority task accent
 const GreenAccent = '#52BF58' // low priority task accent
+const GrayBlue = '#252B55'
 
 const Color = {
 	DarkestBlue, 
@@ -22,6 +23,7 @@ const Color = {
 	RedAccent, 
 	BlueAccent, 
 	GreenAccent, 
+	GrayBlue,
 }
 
 export default Color;
