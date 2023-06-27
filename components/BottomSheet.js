@@ -7,23 +7,23 @@ import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue, w
 const {height: SCREEN_HEIGHT} = Dimensions.get("window")
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50
 
-const BottomSheet = React.forwardRef (({children}, bottomSheetRef) => {
+const BottomSheet = React.forwardRef (({children, includeLine=true, customStyle, clamps=[0, 0.6, 1]}, bottomSheetRef) => {
 
   const translateY = useSharedValue(0)
   const active = useSharedValue(false)
   const context = useSharedValue({y: 0})
 
-  const scrollTo = useCallback((destination) => {
+  const scrollTo = useCallback((percent) => {
     "worklet"
 
-    if (destination === 0) {
+    if (percent === 0) {
       active.value = false
     }
     else {
       active.value = true
     }
 
-    translateY.value = withSpring(destination, {damping: 15})
+    translateY.value = withSpring(percent*MAX_TRANSLATE_Y, {damping: 15})
 
   }, [])
 
@@ -38,9 +38,9 @@ const BottomSheet = React.forwardRef (({children}, bottomSheetRef) => {
     scrollTo,
     isActive])
 
-  useEffect(() => {
-    scrollTo(-SCREEN_HEIGHT / 3)
-  }, [])
+  // useEffect(() => {
+  //   scrollTo(0.3)
+  // }, [])
 
   const gesture = Gesture.Pan()
     .onStart(() => {
@@ -51,12 +51,21 @@ const BottomSheet = React.forwardRef (({children}, bottomSheetRef) => {
       translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y)
     })
     .onEnd(() => {
-      if (translateY.value > -SCREEN_HEIGHT/3) {
-        scrollTo(0)
+      
+      let distanceFromClamp = []
+      for (const clamp of clamps) {
+        distanceFromClamp.push((Math.abs(translateY.value-MAX_TRANSLATE_Y*clamp)))
       }
-      else if (translateY.value < -SCREEN_HEIGHT/1.2) {
-        scrollTo(MAX_TRANSLATE_Y)
-      }
+      let indexOfClamp = distanceFromClamp.indexOf(Math.min(...distanceFromClamp))
+      let clampTo = clamps[indexOfClamp]
+      scrollTo(clampTo)
+
+      // if (translateY.value > -SCREEN_HEIGHT/3) {
+      //   scrollTo(0)
+      // }
+      // else if (translateY.value < -SCREEN_HEIGHT/1.2) {
+      //   scrollTo(1)
+      // }
     })
 
   const rBottomSheetStyle = useAnimatedStyle(() => {
@@ -75,8 +84,10 @@ const BottomSheet = React.forwardRef (({children}, bottomSheetRef) => {
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.bottomSheetContainer, rBottomSheetStyle]}>
-        <View style={styles.line} />
+      <Animated.View style={[styles.bottomSheetContainer, customStyle, rBottomSheetStyle]}>
+        {includeLine &&
+          <View style={styles.line} />
+        }
         {children}
       </Animated.View>
     </GestureDetector>
@@ -89,7 +100,6 @@ const styles = StyleSheet.create({
 	bottomSheetContainer: {
 		height: SCREEN_HEIGHT,
 		width: '100%',
-		backgroundColor: Color.GrayBlue,
 		position: 'absolute',
 		top: SCREEN_HEIGHT,
 		borderRadius: 25,

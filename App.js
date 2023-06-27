@@ -37,7 +37,7 @@ export default function App() {
   const initializeBottomSheet = useCallback(() => {
 
     const isActive = bottomSheetRef?.current?.isActive()
-    bottomSheetRef?.current?.scrollTo(-100)
+    bottomSheetRef?.current?.scrollTo(0.7)
   }, [])
 
   return (
@@ -78,7 +78,7 @@ export default function App() {
             </View>
           </TouchableOpacity>
         </KeyboardAvoidingView>
-        <BottomSheet ref={bottomSheetRef}>
+        <BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.7, 1]}>
           <Task text="hi" duration={1} priority={5}/>
         </BottomSheet>
       </View>
@@ -88,9 +88,13 @@ export default function App() {
 
 const styles = StyleSheet.create({
 
+
   container: {
     flex: 1,
     backgroundColor: Color.DarkestBlue,
+  },
+  addTaskModal: {
+		backgroundColor: Color.GrayBlue,
   },
   text: {
     color: Color.White,
