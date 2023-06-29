@@ -73,7 +73,7 @@ export default function App() {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.writeTaskWrapper}
         >
-          <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text => setTask({text:text, priority: 9, duration: 7})} ref={(myInput) => { this.textInput = myInput }} />
+          <TextInput style={styles.input} placeholder={'Write a task'} onChangeText={text => setTask({text:text, priority: 9, duration: 7})} ref={(myInput) => { this.textInput = myInput }} />
           <TouchableOpacity onPress={onButtonPress}>
             <View style={styles.addWrapper}>
               <Text style={styles.addText}>+</Text>

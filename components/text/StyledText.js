@@ -26,7 +26,7 @@ export function StyledH1({text, style={}, weight="regular"}) {
   )
 }
 
-export function StyledH2({text, style={}, weight="regular"}) {
+export function StyledH2({text, style={}, weight="regular", onLayout}) {
   if (weight == "regular") {
     var [fontsLoaded] = useFonts({
       "MPlus": require("../../assets/fonts/mplusRegular.ttf")
@@ -42,9 +42,9 @@ export function StyledH2({text, style={}, weight="regular"}) {
   if (!fontsLoaded) {
     return null
   }
-  
+
   return (
-	  <Text style={[fontStyles.styledH2, style]}>{text}</Text>
+	  <Text style={[fontStyles.styledH2, style]} onLayout={onLayout}>{text}</Text>
   )
 }
 

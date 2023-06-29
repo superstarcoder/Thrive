@@ -4,6 +4,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import { useFonts } from 'expo-font'
 import React from 'react'
 import { Clock } from 'phosphor-react-native';
+import ScrollSelect from './ScrollSelect';
 
 
 const DurationBox = () => {
@@ -20,14 +21,19 @@ const DurationBox = () => {
   <KeyboardAvoidingView>
 
 	<View style={styles.inputBox}>
-	<Text style={styles.boxTitleContainer}>
-	    <StyledH2 text={"Duration "}/>
-	    <StyledH4 text={"(estimate)"} style={{color: Color.Gray}}/>
-	</Text>
-	<View style={styles.timeText}>
-		<Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
-		<StyledH4 text={"2.5 hours "}/>
-	</View>
+    <View style={styles.inputBoxLeft}>
+      <Text style={styles.boxTitleContainer}>
+          <StyledH2 text={"Duration "}/>
+          <StyledH4 text={"(estimate)"} style={{color: Color.Gray}}/>
+      </Text>
+      <View style={styles.timeText}>
+        <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
+        <StyledH4 text={"2.5 hours "}/>
+      </View>
+    </View>
+    <View style={styles.inputBoxRight}>
+      <ScrollSelect />
+    </View >
 	</View>
   </KeyboardAvoidingView>
   )
@@ -41,6 +47,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 27,
     paddingVertical: 20,
+    flexDirection: "row",
+  },
+  inputBoxLeft: {
+
+  },
+  inputBoxRight: {
+    flex: 1,
+    justifyContent: "center",
+    paddingRight: 10
+
   },
   clockIcon: {
 	marginRight: 7,
