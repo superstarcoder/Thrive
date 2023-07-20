@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
 		height: 4,
 		backgroundColor: "gray",
 		alignSelf: "center",
-		marginVertical: 15,
+		marginVertical: 20,
 		borderRadius: 2,
 
 	}

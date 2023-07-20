@@ -9,6 +9,7 @@ import BottomSheet from './components/BottomSheet';
 import InputBox from './components/InputBox';
 import DurationBox from './components/DurationBox'
 
+
 export default function App() {
   const [task, setTask] = useState(null);
   const [taskItems, setTaskItems] = useState([]);
@@ -81,8 +82,10 @@ export default function App() {
           </TouchableOpacity>
         </KeyboardAvoidingView>
         <BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]}>
-          <InputBox />
-          <DurationBox />
+          {/* <ScrollView style={{display: "flex", flexDirection: "column"}}> */}
+            <InputBox />
+            <DurationBox />
+          {/* </ScrollView> */}
         </BottomSheet>
       </View>
     </GestureHandlerRootView>
