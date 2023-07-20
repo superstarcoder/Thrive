@@ -37,9 +37,9 @@ const ScrollSelect = () => {
   }
 
   // use below in order to print current value of scrollSelect
-  // useEffect(() => {
-  //   console.log('current input value: ', value);
-  // }, [value]);
+  useEffect(() => {
+    console.log('current input value: ', value);
+  }, [value]);
 
   const handleOnMomentumScrollEnd = (event) => {
     let index = (event.nativeEvent.contentOffset.y)/Math.round(textHeight)
@@ -72,7 +72,7 @@ const ScrollSelect = () => {
         keyExtractor={(item) => item.id}
         data={data}
         renderItem={({item}) => (
-				  <StyledH2 text={item.text} style={{color: Color.DarkestBlue, flex: 1}} onLayout={getHeight}/>
+				  <StyledH2 text={item.text} style={{color: Color.DarkestBlue, flex: 1, alignSelf: "center"}} onLayout={getHeight}/>
         )}
         contentContainerStyle={styles.flatList}
         snapToInterval={Math.round(textHeight)}
@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
   flatList: {
     // marginTop: 3,
     paddingVertical: 3.5
-
   }
 
 })

@@ -5,17 +5,11 @@ import { useFonts } from 'expo-font'
 import Color from '../../assets/themes/Color'
 
 export function StyledH1({text, style={}, weight="regular"}) {
-  if (weight == "regular") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusRegular.ttf")
-    })
-  }
-  else if (weight == "medium") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusMedium.ttf")
-    })
-  }
 
+  var [fontsLoaded] = useFonts({
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
+  })
 
   if (!fontsLoaded) {
     return null
@@ -26,17 +20,13 @@ export function StyledH1({text, style={}, weight="regular"}) {
   )
 }
 
-export function StyledH2({text, style={}, weight="regular", onLayout}) {
-  if (weight == "regular") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusRegular.ttf")
-    })
-  }
-  else if (weight == "medium") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusMedium.ttf")
-    })
-  }
+export function StyledH2({text, style={}, weight="medium", onLayout}) {
+
+  var [fontsLoaded] = useFonts({
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
+  })
+
 
 
   if (!fontsLoaded) {
@@ -50,17 +40,11 @@ export function StyledH2({text, style={}, weight="regular", onLayout}) {
 
 
 export function StyledH3({text, style={}, weight="regular"}) {
-  if (weight == "regular") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusRegular.ttf")
-    })
-  }
-  else if (weight == "medium") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusMedium.ttf")
-    })
-  }
 
+  var [fontsLoaded] = useFonts({
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
+  })
 
   if (!fontsLoaded) {
     return null
@@ -72,17 +56,11 @@ export function StyledH3({text, style={}, weight="regular"}) {
 }
 
 export function StyledH4({text, style={}, weight="regular"}) {
-  if (weight == "regular") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusRegular.ttf")
-    })
-  }
-  else if (weight == "medium") {
-    var [fontsLoaded] = useFonts({
-      "MPlus": require("../../assets/fonts/mplusMedium.ttf")
-    })
-  }
 
+  var [fontsLoaded] = useFonts({
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
+  })
 
   if (!fontsLoaded) {
     return null
@@ -95,22 +73,22 @@ export function StyledH4({text, style={}, weight="regular"}) {
 
 export const fontStyles = StyleSheet.create({
 	styledH1: {
-    fontFamily: "MPlus",
+    fontFamily: "MPlusRegular",
     color: Color.White,
     fontSize: 24,
 	},
   styledH2: {
-    fontFamily: "MPlus",
+    fontFamily: "MPlusRegular",
     color: Color.White,
     fontSize: 20,
 	},
   styledH3: {
-    fontFamily: "MPlus",
+    fontFamily: "MPlusRegular",
     color: Color.White,
     fontSize: 16,
 	},
   styledH4: {
-    fontFamily: "MPlus",
+    fontFamily: "MPlusRegular",
     color: Color.White,
     fontSize: 12,
 	},
