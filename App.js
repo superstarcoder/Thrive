@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from './components/BottomSheet';
 import InputBox from './components/InputBox';
 import DurationBox from './components/DurationBox'
+import ImportanceBox from './components/ImportanceBox';
 
 
 export default function App() {
@@ -85,6 +86,7 @@ export default function App() {
           {/* <ScrollView style={{display: "flex", flexDirection: "column"}}> */}
             <InputBox />
             <DurationBox />
+            <ImportanceBox />
           {/* </ScrollView> */}
         </BottomSheet>
       </View>

@@ -6,7 +6,6 @@ import React from 'react'
 import { Clock } from 'phosphor-react-native';
 import ScrollSelect from './ScrollSelect';
 
-
 const DurationBox = () => {
 
   // load fonts
@@ -48,6 +47,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 27,
     paddingVertical: 20,
     flexDirection: "row",
+    marginBottom: 20,
   },
   inputBoxLeft: {
 
