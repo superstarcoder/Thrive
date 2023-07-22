@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font'
 import React from 'react'
 
 
-const InputBox = () => {
+const MyTextInput = ({placeholderText, getText}) => {
 
   // load fonts
   var [fontsLoaded] = useFonts({
@@ -15,30 +15,22 @@ const InputBox = () => {
     return null
   }
 
-  return (
-  <KeyboardAvoidingView>
+  const onChangeText = (text) => {
+    getText(text)
+  }
 
-	<View style={styles.inputBox}>
-    <StyledH3 text={"Title"} style={{color: Color.Gray}}/>
-    <TextInput style={[fontStyles.styledH2, styles.textInput]} placeholder={'Eg: water the plants'} placeholderTextColor={Color.GrayBlue}/>
-	</View>
-  </KeyboardAvoidingView>
+  return (
+    <View>
+      <TextInput style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.GrayBlue} onChangeText={onChangeText}/>
+    </View>
   )
 }
 
-export default InputBox
+export default MyTextInput
 
 const styles = StyleSheet.create({
-  inputBox: {
-    backgroundColor: Color.DarkestBlue,
-    borderRadius: 12,
-    paddingHorizontal: 27,
-    paddingVertical: 20,
-    marginBottom: 20,
-  },
   textInput: {
     borderBottomColor: "#000",
     borderBottomWidth: 1,
   }
-
 })

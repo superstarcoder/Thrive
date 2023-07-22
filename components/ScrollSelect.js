@@ -35,14 +35,13 @@ const ScrollSelect = ({dataArray, getScrollValue}) => {
       ls.push({text: arrayItem.toString(), id: arrayItem})
     }
   const [data, setData] = useState(ls)
-  console.log("data updated: "+getDataString(data))
 
   const [textHeight, setTextHeight] = useState(28)
   const [value, setValue] = useState(data[0].text)
 
   let getHeight = (event) => {
     var {x, y, width, height} = event.nativeEvent.layout;
-    console.log({x, y, width, height})
+    // console.log({x, y, width, height})
     setTextHeight(height)
   }
 

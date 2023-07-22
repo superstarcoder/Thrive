@@ -28,7 +28,7 @@ const DurationBox = () => {
     setDuration(value)
   }
 
-  console.log("dataArray: "+dataArray)
+  // console.log("dataArray: "+dataArray)
 
   return (
   <KeyboardAvoidingView>

@@ -6,7 +6,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4} from './components/text/StyledTe
 import { XCircle } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from './components/BottomSheet';
-import InputBox from './components/InputBox';
+import TitleBox from './components/TitleBox';
 import DurationBox from './components/DurationBox'
 import ImportanceBox from './components/ImportanceBox';
 
@@ -84,7 +84,7 @@ export default function App() {
         </KeyboardAvoidingView>
         <BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]}>
           {/* <ScrollView style={{display: "flex", flexDirection: "column"}}> */}
-            <InputBox />
+            <TitleBox />
             <DurationBox />
             <ImportanceBox />
           {/* </ScrollView> */}
