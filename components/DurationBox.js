@@ -2,11 +2,13 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-n
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
-import React from 'react'
+import React, { useState } from 'react'
 import { Clock } from 'phosphor-react-native';
 import ScrollSelect from './ScrollSelect';
 
 const DurationBox = () => {
+
+  const [duration, setDuration] = useState(0)
 
   // load fonts
   var [fontsLoaded] = useFonts({
@@ -15,6 +17,18 @@ const DurationBox = () => {
   if (!fontsLoaded) {
     return null
   }
+
+  let dataArray = [0, 0.2, 0.5, 0.8]
+
+  for (let i = 1; i < 9; i += 0.5) {
+    dataArray.push(i)
+  }
+
+  const setDurationOnUpdate = (value) => {
+    setDuration(value)
+  }
+
+  console.log("dataArray: "+dataArray)
 
   return (
   <KeyboardAvoidingView>
@@ -27,11 +41,11 @@ const DurationBox = () => {
       </Text>
       <View style={styles.timeText}>
         <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
-        <StyledH4 text={"2.5 hours "}/>
+        <StyledH4 text={duration+" hours "}/>
       </View>
     </View>
     <View style={styles.inputBoxRight}>
-      <ScrollSelect />
+      <ScrollSelect dataArray={dataArray} getScrollValue={(value) => setDurationOnUpdate(value)}/>
     </View >
 	</View>
   </KeyboardAvoidingView>

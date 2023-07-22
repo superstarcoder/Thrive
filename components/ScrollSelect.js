@@ -4,31 +4,41 @@ import Color from '../assets/themes/Color'
 import { StyledH2 } from './text/StyledText'
 import { CaretUp, TextH } from 'phosphor-react-native';
 
+
+// note:
+// yet to implement feature in which parent can change scroll select's data state
+
 // scroll select input
 // use variable "value" to get the input's current value 
-const ScrollSelect = () => {
+const ScrollSelect = ({dataArray, getScrollValue}) => {
 
+
+  // helper function for rounding
   Number.prototype.round = function(places) {
     return +(Math.round(this + "e+" + places)  + "e-" + places);
   }
 
-  let lsBeginning = ["0", "0.2", "0.5", "0.8"]
+  // helper function for printing object data in readable way
+  let getDataString = (myData) => {
+    s = "[ "
+    for (dataItem of myData) {
+      s += dataItem.text+" "
+    }
+    s += "]"
+
+    return s
+  }
+
+
   let ls = []
-
-  for (item of lsBeginning) {
-    ls.push({text: item, id: item})
-  }
-
-  for (let i = 1; i < 9; i += 0.5) {
-    ls.push({text: (i.round(2)).toString(), id: i.round(2)})
-  }
-  
+    for (arrayItem of dataArray) {
+      ls.push({text: arrayItem.toString(), id: arrayItem})
+    }
   const [data, setData] = useState(ls)
+  console.log("data updated: "+getDataString(data))
+
   const [textHeight, setTextHeight] = useState(28)
   const [value, setValue] = useState(data[0].text)
-
-  const scrollRef = useRef(null);
-  const heightRef = useRef(null);
 
   let getHeight = (event) => {
     var {x, y, width, height} = event.nativeEvent.layout;
@@ -41,11 +51,21 @@ const ScrollSelect = () => {
     console.log('current input value: ', value);
   }, [value]);
 
+  const handleOnScroll = (event) => {
+    let index = Math.round(((event.nativeEvent.contentOffset.y)/Math.round(textHeight)))
+    if (index >= 0 && index < data.length) {
+      let number = data[Math.round(index)].text
+      setValue(number)
+      getScrollValue(number)
+    }
+  }
+
   const handleOnMomentumScrollEnd = (event) => {
     let index = (event.nativeEvent.contentOffset.y)/Math.round(textHeight)
-    let number = Number(data[Math.round(index)].text)
+    let number = data[Math.round(index)].text
 
     setValue(number)
+    getScrollValue(number)
 
     // below is useful. don't delete
     // console.log("scroll ended: "+event.nativeEvent.contentOffset.y)
@@ -53,16 +73,7 @@ const ScrollSelect = () => {
     // console.log("current number: "+ number)
   }
 
-  // helper function for printing state data in readable way
-  let getDataString = (myData) => {
-    s = "[ "
-    for (dataItem of myData) {
-      s += dataItem.text+" "
-    }
-    s += "]"
 
-    return s
-  }
 
   return (
 	<View style={styles.scrollSelectContainer}>
@@ -80,6 +91,7 @@ const ScrollSelect = () => {
         decelerationRate={"fast"}
         showsVerticalScrollIndicator={false}
         onMomentumScrollEnd={handleOnMomentumScrollEnd}
+        onScroll={handleOnScroll}
         // contentOffset={{x:100, y:100}}
         ref={(ref) => this.flatListRef = ref}
       />
