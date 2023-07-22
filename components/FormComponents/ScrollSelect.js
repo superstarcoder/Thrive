@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native'
 import React, { useEffect, useRef, useState, useLayoutEffect } from 'react'
-import Color from '../assets/themes/Color'
-import { StyledH2 } from './text/StyledText'
+import Color from '../../assets/themes/Color'
+import { StyledH2 } from '../text/StyledText'
 import { CaretUp, TextH } from 'phosphor-react-native';
 
 

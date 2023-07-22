@@ -4,7 +4,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
-import SliderBar from './SliderBar';
+import SliderBar from './FormComponents/SliderBar';
 
 const ImportanceBox = () => {
 

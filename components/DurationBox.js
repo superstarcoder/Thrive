@@ -4,7 +4,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import { useFonts } from 'expo-font'
 import React, { useState } from 'react'
 import { Clock } from 'phosphor-react-native';
-import ScrollSelect from './ScrollSelect';
+import ScrollSelect from './FormComponents/ScrollSelect';
 
 const DurationBox = () => {
 

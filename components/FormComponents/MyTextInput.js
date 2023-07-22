@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
-import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
+import Color from '../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import { useFonts } from 'expo-font'
 import React from 'react'
 
@@ -9,7 +9,7 @@ const MyTextInput = ({placeholderText, getText}) => {
 
   // load fonts
   var [fontsLoaded] = useFonts({
-    "MPlus": require("../assets/fonts/mplusRegular.ttf")
+    "MPlus": require("../../assets/fonts/mplusRegular.ttf")
   })
   if (!fontsLoaded) {
     return null

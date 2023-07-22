@@ -3,7 +3,7 @@ import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
 import React, { useState } from 'react'
-import MyTextInput from './MyTextInput';
+import MyTextInput from './FormComponents/MyTextInput';
 
 const TitleBox = () => {
 
