@@ -13,17 +13,19 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
 
   const sliderBarGesture = Gesture.Tap().maxDuration(250)
   .onStart((event) => {
-    console.log(event.x)
     translateX.value = event.x
   })
 
-  // const getSliderPercent = useCallback(() => {
-  //   return sliderPercent.value;
-  // }, [])
+  const setSliderTo = useCallback((percent) => {
+    "worklet"
 
-  // useImperativeHandle(sliderBarRef, () => ({getSliderPercent}), [
-  //   getSliderPercent
-  //   ])
+    translateX.value = percent*MAX_TRANSLATE_X
+
+  }, [])
+
+  useImperativeHandle(sliderBarRef, () => ({setSliderTo}), [
+    setSliderTo
+    ])
 
   // why use context?
   // basically, the animation always starts from the beginning rather than the same position
@@ -44,11 +46,11 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
     translateX.value = Math.max(0, translateX.value)
     sliderPercent.value = translateX.value/MAX_TRANSLATE_X
     runOnJS(getSliderPercent)(sliderPercent.value)
+    // don't delete:
     // console.log("x: "+event.absoluteX)
     // console.log("translationX: "+event.translationX)
     // console.log("translateXValue: "+translateX.value)
     // console.log("slider percent: "+ translateX.value/MAX_TRANSLATE_X)
-    // limit 
   })
   .onEnd(() => {
 
@@ -63,10 +65,10 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
   const sliderBarFilledStyle = useAnimatedStyle(() => {
 
     var backgroundColor;
-    if (translateX.value < 0.40*MAX_TRANSLATE_X) {
+    if (translateX.value <= 0.40*MAX_TRANSLATE_X) {
       backgroundColor = Color.GreenAccent
     }
-    else if (translateX.value < 0.70*MAX_TRANSLATE_X) {
+    else if (translateX.value <= 0.70*MAX_TRANSLATE_X) {
       backgroundColor = Color.BlueAccent
     }
     else {
@@ -80,7 +82,6 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
   })
 
   return (
-    <View style={styles.sliderContainer}>
       <GestureDetector gesture={sliderBarGesture}>
         <Animated.View style={styles.sliderBar}>
           <Animated.View style={[styles.sliderBarFilled, sliderBarFilledStyle]}>
@@ -93,7 +94,6 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
           </Animated.View>
         </Animated.View>
       </GestureDetector>
-    </View>
   )
 })
 

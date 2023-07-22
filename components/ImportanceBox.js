@@ -9,57 +9,57 @@ import SliderBar from './SliderBar';
 const ImportanceBox = () => {
 
 
-  const sliderBarRef = useCallback(node => {
-    if (node !== null) { 
-      console.log("NODE: "+node.getSliderPercent())
-      // DOM node referenced by ref has changed and exists
-    }
-    
+  const sliderBarRef = useRef(null)
+  const [importance, setImportance] = useState("medium") // low, medium, high
+  const [importanceNumber, setImportanceNumber] = useState(0)
 
-  }, []); // adjust deps
-  // load fonts
   var [fontsLoaded] = useFonts({
     "MPlus": require("../assets/fonts/mplusRegular.ttf")
   })
 
   const setSliderPercent = (value) => {
-    console.log("SLIDER PERCENT: "+value)
+    // console.log("SLIDER PERCENT: "+value)
+    if (value <= 0.4) {
+      setImportance("low")
+    }
+    else if (value <= 0.7) {
+      setImportance("medium")
+    }
+    else {
+      setImportance("high")
+    }
+    setImportanceNumber((value*10).toFixed(1))
   }
 
   // code to get sliderBarPercentage
   // console.log(sliderBarRef?.current?.getSliderPercent())
 
-  useEffect(() => {
-    console.log("yo")
-
-  }, [sliderBarRef?.current?.getSliderPercent()])
-
-  
-
-
-    if (!fontsLoaded) {
-      return null
-    }
+  if (!fontsLoaded) {
+    return null
+  }
   
   return (
-  <KeyboardAvoidingView>
+    <KeyboardAvoidingView>
 
-	{/* <View style={styles.inputBox} onTouchStart={() => {console.log(sliderBarRef?.current?.getSliderPercent())}}> */}
-	<View style={styles.inputBox}>
-    <View style={styles.inputBoxLeft}>
-      <Text style={styles.boxTitleContainer}>
-          <StyledH2 text={"Importance"}/>
-      </Text>
-	  <SliderBar getSliderPercent={(value) => setSliderPercent(value)} ref={sliderBarRef}/>
-      <View style={styles.importanceText}>
-        <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
-        <StyledH4 text={"medium importance "}/>
+    {/* <View style={styles.inputBox} onTouchStart={() => {console.log(sliderBarRef?.current?.getSliderPercent())}}> */}
+    <View style={styles.inputBox}>
+      <View style={styles.inputBoxLeft}>
+        <Text style={styles.boxTitleContainer}>
+            <StyledH2 text={"Importance"}/>
+        </Text>
+      <View style={styles.sliderRow}>
+        <SliderBar getSliderPercent={(value) => setSliderPercent(value)} ref={sliderBarRef}/>
+        <StyledH4 text={importanceNumber} style={styles.sliderInfo}/>
       </View>
+        <View style={styles.importanceText}>
+          <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
+          <StyledH4 text={importance+" importance "}/>
+        </View>
+      </View>
+      <View style={styles.inputBoxRight}>
+      </View >
     </View>
-    <View style={styles.inputBoxRight}>
-    </View >
-	</View>
-  </KeyboardAvoidingView>
+    </KeyboardAvoidingView>
   )
 }
 
@@ -72,6 +72,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 27,
     paddingVertical: 20,
     flexDirection: "row",
+  },
+
+  sliderRow: {
+    flexDirection: "row"
+  },
+  sliderInfo: {
+    marginTop: 17,
+    marginLeft: 5,
   },
   inputBoxLeft: {
 
