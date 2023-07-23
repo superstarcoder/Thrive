@@ -5,6 +5,7 @@
 // const DimText = '#94A5FF'
 
 const DarkestBlue = '#151934' // background
+// const DarkestBlue = '#0F1229' // background
 const DarkBlue = '#252F68' // foreground
 const White = '#FFFFFF' // regular text, small text
 const LightBlue = '#94A5FF' // points addition text

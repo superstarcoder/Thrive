@@ -9,6 +9,7 @@ import BottomSheet from './components/BottomSheet';
 import TitleBox from './components/TitleBox';
 import DurationBox from './components/DurationBox'
 import ImportanceBox from './components/ImportanceBox';
+import DescriptionBox from './components/DescriptionBox';
 
 
 export default function App() {
@@ -87,6 +88,7 @@ export default function App() {
             <TitleBox />
             <DurationBox />
             <ImportanceBox />
+            <DescriptionBox />
           {/* </ScrollView> */}
         </BottomSheet>
       </View>

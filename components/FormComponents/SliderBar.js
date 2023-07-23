@@ -14,6 +14,17 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
   const sliderBarGesture = Gesture.Tap().maxDuration(250)
   .onStart((event) => {
     translateX.value = event.x
+    translateX.value = Math.min(translateX.value, MAX_TRANSLATE_X)
+    translateX.value = Math.max(0, translateX.value)
+    sliderPercent.value = translateX.value/MAX_TRANSLATE_X
+    runOnJS(getSliderPercent)(sliderPercent.value)
+  }).onTouchesDown((event) => {
+    // translateX.value = event.changedTouches[0].x
+    // translateX.value = Math.min(translateX.value, MAX_TRANSLATE_X)
+    // translateX.value = Math.max(0, translateX.value)
+    // sliderPercent.value = translateX.value/MAX_TRANSLATE_X
+    // runOnJS(getSliderPercent)(sliderPercent.value)
+    // console.log(event.changedTouches[0].x)
   })
 
   const setSliderTo = useCallback((percent) => {
@@ -57,8 +68,22 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
   });
 
   const sliderCircleStyle = useAnimatedStyle(() => {
+
+    var backgroundColor;
+
+    if (translateX.value <= 0.40*MAX_TRANSLATE_X) {
+      backgroundColor = "#153816"
+    }
+    else if (translateX.value <= 0.70*MAX_TRANSLATE_X) {
+      backgroundColor = "#00224d"
+    }
+    else {
+      backgroundColor = "#610505"
+    }
+
     return {
-      transform: [{translateX: translateX.value}]
+      transform: [{translateX: translateX.value}],
+      backgroundColor: backgroundColor,
     }
   })
 
@@ -72,7 +97,7 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
       backgroundColor = Color.BlueAccent
     }
     else {
-      backgroundColor = Color.RedAccent
+      backgroundColor = "#FF4646"
     }
 
     return {
@@ -121,7 +146,5 @@ const styles = StyleSheet.create({
     width: 29,
     backgroundColor: Color.DarkBlue,
     borderRadius: 30,
-    
-
   }
 })

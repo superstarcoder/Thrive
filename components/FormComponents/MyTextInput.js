@@ -5,11 +5,12 @@ import { useFonts } from 'expo-font'
 import React from 'react'
 
 
-const MyTextInput = ({placeholderText, getText}) => {
+const MyTextInput = ({placeholderText, getText, multiline=false}) => {
 
   // load fonts
   var [fontsLoaded] = useFonts({
-    "MPlus": require("../../assets/fonts/mplusRegular.ttf")
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
   })
   if (!fontsLoaded) {
     return null
@@ -21,7 +22,7 @@ const MyTextInput = ({placeholderText, getText}) => {
 
   return (
     <View>
-      <TextInput style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.GrayBlue} onChangeText={onChangeText}/>
+      <TextInput multiline={multiline} style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.GrayBlue} onChangeText={onChangeText}/>
     </View>
   )
 }
@@ -32,5 +33,6 @@ const styles = StyleSheet.create({
   textInput: {
     borderBottomColor: "#000",
     borderBottomWidth: 1,
+    fontFamily: "MPlusRegular"
   }
 })

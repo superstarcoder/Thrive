@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 27,
     paddingVertical: 20,
     flexDirection: "row",
+    marginBottom: 22,
   },
 
   sliderRow: {
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
 
   },
   clockIcon: {
-	marginRight: 7,
+	  marginRight: 7,
   },
   importanceText: {
 	flexDirection: "row",

@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font'
 import React, { useState } from 'react'
 import MyTextInput from './FormComponents/MyTextInput';
 
-const TitleBox = () => {
+const DescriptionBox = () => {
 
   const [currentText, setCurrentText] = useState("")
 
@@ -15,31 +15,30 @@ const TitleBox = () => {
 
   let title;
   if (currentText == "") {
-    title = <StyledH2 text={"Title"}/>
+    title = <StyledH2 text={"Description"}/>
   }
   else {
-    title = <StyledH3 text={"Title"} style={{color: Color.Gray}}/>
+    title = <StyledH3 text={"Description"} style={{color: Color.Gray}}/>
   }
 
   return (
   <KeyboardAvoidingView>
     <View style={styles.titleBox}>
       {title}
-      <MyTextInput placeholderText={'Eg: water the plants'} getText={onTextUpdate}/>
+      <MyTextInput placeholderText={'Eg: in frontyard and backyard'} getText={onTextUpdate} multiline={true}/>
     </View>
   </KeyboardAvoidingView>
   )
 }
 
-export default TitleBox
+export default DescriptionBox
 
 const styles = StyleSheet.create({
 	titleBox: {
     backgroundColor: Color.DarkestBlue,
     borderRadius: 12,
     paddingHorizontal: 27,
-    paddingVertical: 22,
-    marginTop: 5,
+    paddingVertical: 20,
     marginBottom: 25,
   },
 })

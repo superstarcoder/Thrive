@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 27,
     paddingVertical: 20,
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 22,
   },
   inputBoxLeft: {
 
@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingRight: 10
-
   },
+
   clockIcon: {
-	marginRight: 7,
+	  marginRight: 7,
   },
   timeText: {
 	flexDirection: "row",
@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   boxTitleContainer: {
-	flexDirection: "row",
-	alignItems: "flex-end",
-	marginBottom: 7,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginBottom: 7,
   }
 
 })
