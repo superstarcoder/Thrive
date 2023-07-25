@@ -7,7 +7,7 @@ import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue, w
 const {height: SCREEN_HEIGHT} = Dimensions.get("window")
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50
 
-const BottomSheet = React.forwardRef (({children, includeLine=true, customStyle, clamps=[0, 0.6, 1]}, bottomSheetRef) => {
+const BottomSheet = React.forwardRef (({children, includeLine=true, customStyle, clamps=[0, 0.6, 1], scrollingEnabled=true}, bottomSheetRef) => {
 
   const translateY = useSharedValue(0)
   const active = useSharedValue(false)
@@ -47,18 +47,21 @@ const BottomSheet = React.forwardRef (({children, includeLine=true, customStyle,
       context.value = {y: translateY.value}
     })
     .onUpdate((event) => {
-      translateY.value = event.translationY + context.value.y
-      translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y)
+      if (scrollingEnabled) {
+        translateY.value = event.translationY + context.value.y
+        translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y)
+      }
     })
     .onEnd(() => {
-      
-      let distanceFromClamp = []
-      for (const clamp of clamps) {
-        distanceFromClamp.push((Math.abs(translateY.value-MAX_TRANSLATE_Y*clamp)))
+      if (scrollingEnabled) {
+        let distanceFromClamp = []
+        for (const clamp of clamps) {
+          distanceFromClamp.push((Math.abs(translateY.value-MAX_TRANSLATE_Y*clamp)))
+        }
+        let indexOfClamp = distanceFromClamp.indexOf(Math.min(...distanceFromClamp))
+        let clampTo = clamps[indexOfClamp]
+        scrollTo(clampTo)
       }
-      let indexOfClamp = distanceFromClamp.indexOf(Math.min(...distanceFromClamp))
-      let clampTo = clamps[indexOfClamp]
-      scrollTo(clampTo)
 
       // if (translateY.value > -SCREEN_HEIGHT/3) {
       //   scrollTo(0)

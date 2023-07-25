@@ -1,15 +1,18 @@
 import React, {useState, useRef, useCallback} from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
 import Task from './components/Task';
 import Color from './assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4} from './components/text/StyledText';
-import { XCircle } from 'phosphor-react-native';
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from './components/text/StyledText';
+// import { XCircle } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useFonts } from 'expo-font'
 import BottomSheet from './components/BottomSheet';
 import TitleBox from './components/TitleBox';
 import DurationBox from './components/DurationBox'
 import ImportanceBox from './components/ImportanceBox';
 import DescriptionBox from './components/DescriptionBox';
+import UseHabitBox from './components/UseHabitBox';
+import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 
 
 export default function App() {
@@ -42,8 +45,27 @@ export default function App() {
   const initializeBottomSheet = useCallback(() => {
 
     const isActive = bottomSheetRef?.current?.isActive()
-    bottomSheetRef?.current?.scrollTo(0.5)
+    bottomSheetRef?.current?.scrollTo(1)
   }, [])
+
+  var [fontsLoaded] = useFonts({
+    "MPlusRegular": require("./assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("./assets/fonts/mplusMedium.ttf")
+  })
+  if (!fontsLoaded) {
+    return null
+  }
+
+
+  const onSavePress = () => {
+    bottomSheetRef?.current?.scrollTo(0)
+  }
+  const onCancelPress = () => {
+    bottomSheetRef?.current?.scrollTo(0)
+  }
+  const onDeletePress = () => {
+    bottomSheetRef?.current?.scrollTo(0)
+  }
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -83,13 +105,40 @@ export default function App() {
             </View>
           </TouchableOpacity>
         </KeyboardAvoidingView>
-        <BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]}>
-          {/* <ScrollView style={{display: "flex", flexDirection: "column"}}> */}
+        <BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
+
+          <ScrollView style={styles.addTaskModalSettings} scrollEnabled={true}>
             <TitleBox />
             <DurationBox />
             <ImportanceBox />
             <DescriptionBox />
-          {/* </ScrollView> */}
+            <StyledH1 style={styles.habitSettingsTitle} text={"Habit Settings"}/>
+            <UseHabitBox />
+            <ImportanceBox />
+            <ImportanceBox />
+          </ScrollView>
+          <View style={styles.addTaskModalButtons}>
+              <TouchableOpacity onPress={onSavePress}>
+                <View style={styles.saveTaskButton}>
+                  <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
+                  {/* <CheckCircle size={30} weight="bold" color={"black"} style={styles.saveButtonIcon} /> */}
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={onCancelPress}>
+                <View style={styles.cancelTaskButton}>
+                  {/* <Text style={[fontStyles.styledH1, styles.buttonText]}>Cancel</Text> */}
+                  <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={onDeletePress}>
+                <View style={styles.deleteTaskButton}>
+                  <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+                </View>
+              </TouchableOpacity>
+            
+            </View>
         </BottomSheet>
       </View>
     </GestureHandlerRootView>
@@ -103,9 +152,67 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.DarkestBlue,
   },
+  buttonText: {
+    color: "#000"
+  },
+  saveButtonIcon: {
+    marginLeft: 5,
+  },
+  habitSettingsTitle: {
+    alignSelf: "center",
+    marginBottom: 25,
+  },
+  saveTaskButton: {
+    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    width: 100,
+    height: 45,
+    borderRadius: 12,
+    marginRight: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: "row",
+  },
+  cancelTaskButton: {
+    backgroundColor: Color.Blue,
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    marginRight: 20,
+    alignItems: 'center',
+  },
+  deleteTaskButton: {
+    backgroundColor: "hsl(0, 81%, 50%)",
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addTaskModalButtons: {
+    backgroundColor: Color.GrayBlue,
+    height: 90,
+    marginBottom: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    // position: "absolute",
+    alignSelf: "center",
+    bottom: 25,
+    width: "100%",
+    marginTop: 25,
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    paddingBottom: 10,
+  },
+  addTaskModalSettings: {
+    flexDirection: "column",
+    // backgroundColor: Color.Gray,
+    paddingHorizontal: 30,
+  },
   addTaskModal: {
 		backgroundColor: Color.GrayBlue,
-    paddingHorizontal: 30,
+    // paddingHorizontal: 30,
   },
   text: {
     color: Color.White,
