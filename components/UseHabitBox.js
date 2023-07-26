@@ -16,8 +16,8 @@ const UseHabitBox = () => {
 
   return (
     <View style={styles.inputBox}>
-		<StyledH2 text={"Use as a habit:"} style={styles.inputTitle}/>
-		<CheckBox getCheckValue={setCheckValue}/>
+      <StyledH2 text={"Use as a habit:"} style={styles.inputTitle}/>
+      <CheckBox getCheckValue={setCheckValue}/>
     </View>
   )
 }
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     flexDirection: "row",
     marginBottom: 22,
-	alignItems: "center"
+	  alignItems: "center"
   },
   inputTitle: {
 	marginRight: 10,

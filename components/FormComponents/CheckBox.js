@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { Square, CheckSquare } from 'phosphor-react-native';
 
-const CheckBox = ({getCheckValue}) => {
+const CheckBox = ({getCheckValue, size=38}) => {
 
 
   const [checked, setChecked] = useState(false)
@@ -16,10 +16,10 @@ const CheckBox = ({getCheckValue}) => {
 
   let checkIcon;
   if (checked) {
-	checkIcon = <CheckSquare size={40} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
+	checkIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
   }
   else {
-	checkIcon = <Square size={40} weight="fill" color={"white"} style={styles.checkBoxIcon}/>
+	checkIcon = <Square size={size} weight="fill" color={"white"} style={styles.checkBoxIcon}/>
   }
   
   return (

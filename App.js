@@ -12,6 +12,7 @@ import DurationBox from './components/DurationBox'
 import ImportanceBox from './components/ImportanceBox';
 import DescriptionBox from './components/DescriptionBox';
 import UseHabitBox from './components/UseHabitBox';
+import RepeatBox from './components/RepeatBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 
 
@@ -114,7 +115,7 @@ export default function App() {
             <DescriptionBox />
             <StyledH1 style={styles.habitSettingsTitle} text={"Habit Settings"}/>
             <UseHabitBox />
-            <ImportanceBox />
+            <RepeatBox />
             <ImportanceBox />
           </ScrollView>
           <View style={styles.addTaskModalButtons}>
