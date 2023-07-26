@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import Color from '../../assets/themes/Color'
 import { StyledH2 } from '../text/StyledText'
 import { CaretUp, TextH } from 'phosphor-react-native';
+import * as Haptics from 'expo-haptics';
+
+
 
 
 // note:
@@ -11,6 +14,11 @@ import { CaretUp, TextH } from 'phosphor-react-native';
 // scroll select input
 // use variable "value" to get the input's current value 
 const ScrollSelect = ({dataArray, getScrollValue}) => {
+
+  const options = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false,
+  };
 
 
   // helper function for rounding
@@ -54,6 +62,9 @@ const ScrollSelect = ({dataArray, getScrollValue}) => {
     let index = Math.round(((event.nativeEvent.contentOffset.y)/Math.round(textHeight)))
     if (index >= 0 && index < data.length) {
       let number = data[Math.round(index)].text
+      if (number != value) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+      }
       setValue(number)
       getScrollValue(number)
     }

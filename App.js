@@ -13,6 +13,7 @@ import ImportanceBox from './components/ImportanceBox';
 import DescriptionBox from './components/DescriptionBox';
 import UseHabitBox from './components/UseHabitBox';
 import RepeatBox from './components/RepeatBox';
+import DueDatePickerBox from './components/DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 
 
@@ -113,10 +114,11 @@ export default function App() {
             <DurationBox />
             <ImportanceBox />
             <DescriptionBox />
-            <StyledH1 style={styles.habitSettingsTitle} text={"Habit Settings"}/>
+            <StyledH1 style={styles.settingsTitle} text={"Habit Settings"}/>
             <UseHabitBox />
             <RepeatBox />
-            <ImportanceBox />
+            <StyledH1 style={styles.settingsTitle} text={"Advanced"}/>
+            <DueDatePickerBox />
           </ScrollView>
           <View style={styles.addTaskModalButtons}>
               <TouchableOpacity onPress={onSavePress}>
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
   saveButtonIcon: {
     marginLeft: 5,
   },
-  habitSettingsTitle: {
+  settingsTitle: {
     alignSelf: "center",
     marginBottom: 25,
   },
