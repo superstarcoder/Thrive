@@ -3,6 +3,7 @@ import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import CheckBox from './FormComponents/CheckBox';
+import * as Haptics from 'expo-haptics';
 
 
 const UseHabitBox = () => {
@@ -13,6 +14,10 @@ const UseHabitBox = () => {
     setSelected(value)
     console.log("set check value to: "+value)
   }
+
+  useEffect(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  }, [selected])
 
   return (
     <View style={styles.inputBox}>

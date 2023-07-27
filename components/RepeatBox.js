@@ -4,7 +4,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import CheckBox from './FormComponents/CheckBox';
 import HighlightSelect from './FormComponents/HighlightSelect';
-
+import * as Haptics from 'expo-haptics';
 
 const RepeatBox = () => {
 
@@ -15,12 +15,19 @@ const RepeatBox = () => {
     console.log("set check value to: "+value)
   }
 
+
+
+
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   let myDict = {} 
   for (day of daysOfWeek) {
     myDict[day] = "false"
   }
   const [selectedList, setSelectedList] = useState(myDict)
+
+  useEffect(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  }, [selectedList])
 
   // useEffect(() => {
   //   console.log(selectedList)

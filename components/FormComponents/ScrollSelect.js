@@ -5,9 +5,6 @@ import { StyledH2 } from '../text/StyledText'
 import { CaretUp, TextH } from 'phosphor-react-native';
 import * as Haptics from 'expo-haptics';
 
-
-
-
 // note:
 // yet to implement feature in which parent can change scroll select's data state
 

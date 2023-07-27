@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
 import SliderBar from './FormComponents/SliderBar';
+import * as Haptics from 'expo-haptics';
 
 const ImportanceBox = () => {
 
@@ -16,6 +17,10 @@ const ImportanceBox = () => {
   var [fontsLoaded] = useFonts({
     "MPlus": require("../assets/fonts/mplusRegular.ttf")
   })
+
+  useEffect(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+  }, [importance])
 
   const setSliderPercent = (value) => {
     // console.log("SLIDER PERCENT: "+value)

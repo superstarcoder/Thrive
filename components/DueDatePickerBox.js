@@ -4,9 +4,9 @@ import Color from '../assets/themes/Color'
 import { PencilSimple } from 'phosphor-react-native';
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import React, {useState, useRef, useEffect, useCallback} from 'react';
+import * as Haptics from 'expo-haptics'
 import CheckBox from './FormComponents/CheckBox';
 import HighlightSelect from './FormComponents/HighlightSelect';
-
 
 const DueDatePickerBox = () => {
 
@@ -14,6 +14,7 @@ const DueDatePickerBox = () => {
   const [selectedDateTime, setSelectedDateTime] = useState(new Date())
 
 	const showDatePicker = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 		setDatePickerVisibility(true);
 	};
 

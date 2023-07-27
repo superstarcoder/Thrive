@@ -15,6 +15,7 @@ import UseHabitBox from './components/UseHabitBox';
 import RepeatBox from './components/RepeatBox';
 import DueDatePickerBox from './components/DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
+import * as Haptics from "expo-haptics"
 
 
 export default function App() {
@@ -60,12 +61,15 @@ export default function App() {
 
 
   const onSavePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
   }
   const onCancelPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
   }
   const onDeletePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
   }
 
