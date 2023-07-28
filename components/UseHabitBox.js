@@ -6,7 +6,7 @@ import CheckBox from './FormComponents/CheckBox';
 import * as Haptics from 'expo-haptics';
 
 
-const UseHabitBox = () => {
+const UseHabitBox = ({onChange}) => {
 
   const [selected, setSelected] = useState(false)
 
@@ -17,6 +17,7 @@ const UseHabitBox = () => {
 
   useEffect(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    onChange(selected)
   }, [selected])
 
   return (

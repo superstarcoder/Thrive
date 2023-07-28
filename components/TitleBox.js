@@ -2,16 +2,20 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-n
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MyTextInput from './FormComponents/MyTextInput';
 
-const TitleBox = () => {
+const TitleBox = ({onChange}) => {
 
   const [currentText, setCurrentText] = useState("")
 
 	const onTextUpdate = (text) => {
     setCurrentText(text)
 	}
+
+  useEffect(() => {
+    onChange(currentText)
+  }, [currentText])
 
   let title;
   if (currentText == "") {

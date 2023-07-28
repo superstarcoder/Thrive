@@ -2,12 +2,16 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-n
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MyTextInput from './FormComponents/MyTextInput';
 
-const DescriptionBox = () => {
+const DescriptionBox = ({onChange}) => {
 
   const [currentText, setCurrentText] = useState("")
+
+  useEffect(() => {
+    onChange(currentText)
+  }, [currentText])
 
 	const onTextUpdate = (text) => {
     setCurrentText(text)
@@ -22,12 +26,14 @@ const DescriptionBox = () => {
   }
 
   return (
-  <KeyboardAvoidingView>
+  // <KeyboardAvoidingView style={{ flex: 1 }}
+  // keyboardVerticalOffset={100}
+  // behavior={"position"}>
     <View style={styles.titleBox}>
       {title}
-      <MyTextInput placeholderText={'Eg: in frontyard and backyard'} getText={onTextUpdate} multiline={true}/>
+      <MyTextInput placeholderText={'Optional'} getText={onTextUpdate} multiline={true}/>
     </View>
-  </KeyboardAvoidingView>
+  // </KeyboardAvoidingView>
   )
 }
 

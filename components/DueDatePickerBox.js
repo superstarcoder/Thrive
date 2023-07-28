@@ -8,10 +8,14 @@ import * as Haptics from 'expo-haptics'
 import CheckBox from './FormComponents/CheckBox';
 import HighlightSelect from './FormComponents/HighlightSelect';
 
-const DueDatePickerBox = () => {
+const DueDatePickerBox = ({onChange, includeOnlyTime=false}) => {
 
 	const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState(new Date())
+  
+  useEffect(() => {
+    onChange(selectedDateTime, includeOnlyTime)
+  }, [selectedDateTime])
 
 	const showDatePicker = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)

@@ -16,11 +16,14 @@ import RepeatBox from './components/RepeatBox';
 import DueDatePickerBox from './components/DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import TaskSettingsModal from './components/TaskSettingsModal';
 
 
 export default function App() {
   const [task, setTask] = useState(null);
   const [taskItems, setTaskItems] = useState([]);
+
 
   const handleAddTask = () => {
     if (task != null) {
@@ -39,17 +42,19 @@ export default function App() {
 
   const onButtonPress = () => {
     handleAddTask();
-    initializeBottomSheet();
+    // initializeBottomSheet();
+    taskSettingsRef?.current?.showTaskSettings()
   }
 
 
-  const bottomSheetRef = useRef(null)
+  // const bottomSheetRef = useRef(null)
+  const taskSettingsRef = useRef();
 
-  const initializeBottomSheet = useCallback(() => {
+  // const initializeBottomSheet = useCallback(() => {
 
-    const isActive = bottomSheetRef?.current?.isActive()
-    bottomSheetRef?.current?.scrollTo(1)
-  }, [])
+  //   const isActive = bottomSheetRef?.current?.isActive()
+  //   bottomSheetRef?.current?.scrollTo(1)
+  // }, [])
 
   var [fontsLoaded] = useFonts({
     "MPlusRegular": require("./assets/fonts/mplusRegular.ttf"),
@@ -60,18 +65,7 @@ export default function App() {
   }
 
 
-  const onSavePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    bottomSheetRef?.current?.scrollTo(0)
-  }
-  const onCancelPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    bottomSheetRef?.current?.scrollTo(0)
-  }
-  const onDeletePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    bottomSheetRef?.current?.scrollTo(0)
-  }
+
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -111,115 +105,18 @@ export default function App() {
             </View>
           </TouchableOpacity>
         </KeyboardAvoidingView>
-        <BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
 
-          <ScrollView style={styles.addTaskModalSettings} scrollEnabled={true}>
-            <TitleBox />
-            <DurationBox />
-            <ImportanceBox />
-            <DescriptionBox />
-            <StyledH1 style={styles.settingsTitle} text={"Habit Settings"}/>
-            <UseHabitBox />
-            <RepeatBox />
-            <StyledH1 style={styles.settingsTitle} text={"Advanced"}/>
-            <DueDatePickerBox />
-          </ScrollView>
-          <View style={styles.addTaskModalButtons}>
-              <TouchableOpacity onPress={onSavePress}>
-                <View style={styles.saveTaskButton}>
-                  <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
-                  {/* <CheckCircle size={30} weight="bold" color={"black"} style={styles.saveButtonIcon} /> */}
-                </View>
-              </TouchableOpacity>
+        <TaskSettingsModal ref={taskSettingsRef} />
 
-              <TouchableOpacity onPress={onCancelPress}>
-                <View style={styles.cancelTaskButton}>
-                  {/* <Text style={[fontStyles.styledH1, styles.buttonText]}>Cancel</Text> */}
-                  <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={onDeletePress}>
-                <View style={styles.deleteTaskButton}>
-                  <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-                </View>
-              </TouchableOpacity>
-            
-            </View>
-        </BottomSheet>
       </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-
-
   container: {
     flex: 1,
     backgroundColor: Color.DarkestBlue,
-  },
-  buttonText: {
-    color: "#000"
-  },
-  saveButtonIcon: {
-    marginLeft: 5,
-  },
-  settingsTitle: {
-    alignSelf: "center",
-    marginBottom: 25,
-  },
-  saveTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
-    width: 100,
-    height: 45,
-    borderRadius: 12,
-    marginRight: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: "row",
-  },
-  cancelTaskButton: {
-    backgroundColor: Color.Blue,
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    marginRight: 20,
-    alignItems: 'center',
-  },
-  deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addTaskModalButtons: {
-    backgroundColor: Color.GrayBlue,
-    height: 90,
-    marginBottom: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    // position: "absolute",
-    alignSelf: "center",
-    bottom: 25,
-    width: "100%",
-    marginTop: 25,
-    shadowColor: "black",
-    shadowOpacity: 0.2,
-    paddingBottom: 10,
-  },
-  addTaskModalSettings: {
-    flexDirection: "column",
-    // backgroundColor: Color.Gray,
-    paddingHorizontal: 30,
-  },
-  addTaskModal: {
-		backgroundColor: Color.GrayBlue,
-    // paddingHorizontal: 30,
   },
   text: {
     color: Color.White,
@@ -260,5 +157,4 @@ const styles = StyleSheet.create({
     borderColor: '#C0C0C0',
     borderWidth: 1,
   },
-  addText: {},
 });

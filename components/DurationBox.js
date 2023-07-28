@@ -2,13 +2,17 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-n
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Clock } from 'phosphor-react-native';
 import ScrollSelect from './FormComponents/ScrollSelect';
 
-const DurationBox = () => {
+const DurationBox = ({onChange}) => {
 
   const [duration, setDuration] = useState(0)
+
+  useEffect(() => {
+    onChange(duration)
+  }, [duration])
 
   // load fonts
   var [fontsLoaded] = useFonts({
@@ -31,24 +35,21 @@ const DurationBox = () => {
   // console.log("dataArray: "+dataArray)
 
   return (
-  <KeyboardAvoidingView>
-
-	<View style={styles.inputBox}>
-    <View style={styles.inputBoxLeft}>
-      <Text style={styles.boxTitleContainer}>
-          <StyledH2 text={"Duration "}/>
-          <StyledH4 text={"(estimate)"} style={{color: Color.Gray}}/>
-      </Text>
-      <View style={styles.timeText}>
-        <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
-        <StyledH4 text={duration+" hours "}/>
+    <View style={styles.inputBox}>
+      <View style={styles.inputBoxLeft}>
+        <Text style={styles.boxTitleContainer}>
+            <StyledH2 text={"Duration "}/>
+            <StyledH4 text={"(estimate)"} style={{color: Color.Gray}}/>
+        </Text>
+        <View style={styles.timeText}>
+          <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
+          <StyledH4 text={duration+" hours "}/>
+        </View>
       </View>
+      <View style={styles.inputBoxRight}>
+        <ScrollSelect dataArray={dataArray} getScrollValue={(value) => setDurationOnUpdate(value)}/>
+      </View >
     </View>
-    <View style={styles.inputBoxRight}>
-      <ScrollSelect dataArray={dataArray} getScrollValue={(value) => setDurationOnUpdate(value)}/>
-    </View >
-	</View>
-  </KeyboardAvoidingView>
   )
 }
 

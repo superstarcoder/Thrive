@@ -7,12 +7,13 @@ import { WarningCircle } from 'phosphor-react-native';
 import SliderBar from './FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
 
-const ImportanceBox = () => {
+const ImportanceBox = ({onChange}) => {
 
 
   const sliderBarRef = useRef(null)
   const [importance, setImportance] = useState("medium") // low, medium, high
   const [importanceNumber, setImportanceNumber] = useState(0)
+  const [finalImportanceNumber, setFinalImportanceNumber] = useState(0)
 
   var [fontsLoaded] = useFonts({
     "MPlus": require("../assets/fonts/mplusRegular.ttf")
@@ -21,6 +22,13 @@ const ImportanceBox = () => {
   useEffect(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
   }, [importance])
+
+  useEffect(() => {
+    onChange(finalImportanceNumber)
+    
+    // console.log(importanceNumber)
+  }, [finalImportanceNumber])
+
 
   const setSliderPercent = (value) => {
     // console.log("SLIDER PERCENT: "+value)
@@ -34,6 +42,10 @@ const ImportanceBox = () => {
       setImportance("high")
     }
     setImportanceNumber((value*10).toFixed(1))
+  }
+
+  const onSliderMoveEnd = (value) => {
+    setFinalImportanceNumber((value*10).toFixed(1))
   }
 
   // code to get sliderBarPercentage
@@ -53,7 +65,7 @@ const ImportanceBox = () => {
             <StyledH2 text={"Importance"}/>
         </Text>
       <View style={styles.sliderRow}>
-        <SliderBar getSliderPercent={(value) => setSliderPercent(value)} ref={sliderBarRef}/>
+        <SliderBar getSliderPercent={(value) => setSliderPercent(value)} ref={sliderBarRef} onSliderMoveEnd={onSliderMoveEnd}/>
         <StyledH4 text={importanceNumber} style={styles.sliderInfo}/>
       </View>
         <View style={styles.importanceText}>

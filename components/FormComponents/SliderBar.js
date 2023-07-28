@@ -4,7 +4,7 @@ import Color from '../../assets/themes/Color'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import Animated, { Extrapolate, runOnJS, useAnimatedReaction, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 
-const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
+const SliderBar = React.forwardRef (({getSliderPercent, onSliderMoveEnd}, sliderBarRef) => {
 
   const translateX = useSharedValue(0)
   const context = useSharedValue({x: 0})
@@ -18,13 +18,8 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
     translateX.value = Math.max(0, translateX.value)
     sliderPercent.value = translateX.value/MAX_TRANSLATE_X
     runOnJS(getSliderPercent)(sliderPercent.value)
-  }).onTouchesDown((event) => {
-    // translateX.value = event.changedTouches[0].x
-    // translateX.value = Math.min(translateX.value, MAX_TRANSLATE_X)
-    // translateX.value = Math.max(0, translateX.value)
-    // sliderPercent.value = translateX.value/MAX_TRANSLATE_X
-    // runOnJS(getSliderPercent)(sliderPercent.value)
-    // console.log(event.changedTouches[0].x)
+  }).onEnd(() => {
+    runOnJS(onSliderMoveEnd)(sliderPercent.value)
   })
 
   const setSliderTo = useCallback((percent) => {
@@ -64,7 +59,7 @@ const SliderBar = React.forwardRef (({getSliderPercent}, sliderBarRef) => {
     // console.log("slider percent: "+ translateX.value/MAX_TRANSLATE_X)
   })
   .onEnd(() => {
-
+    runOnJS(onSliderMoveEnd)(sliderPercent.value)
   });
 
   const sliderCircleStyle = useAnimatedStyle(() => {
