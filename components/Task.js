@@ -5,13 +5,13 @@ import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledText';
 import { Clock, WarningCircle } from 'phosphor-react-native';
 
 
-const Task = ({text, duration, priority}) => {
+const Task = ({text, duration, priority, points, description}) => {
 
   // 1, 2, 3
   // 4, 5, 6, 7
   // 8, 9, 10
 
-  if (priority <= 3) {
+  if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
     importanceText = <StyledH4 text={"very important"} style={styles.importanceText}/>
   }
@@ -29,7 +29,9 @@ const Task = ({text, duration, priority}) => {
       {accent}
       <View style={styles.taskContent}>
         <StyledH1 text={text} style={styles.title}/>
-        <StyledH4 text={"+ 5 points"} style={styles.pointsText}/>
+
+        {description != "" ? ( <StyledH4 text={description}/> ) : ( null )}
+        
         <View style={styles.taskDetails}>
           <View style={styles.timeDetail}>
             <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
@@ -40,6 +42,7 @@ const Task = ({text, duration, priority}) => {
             {importanceText}
           </View>
         </View>
+        {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
     </View>
   )

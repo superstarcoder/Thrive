@@ -6,17 +6,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from './components/t
 // import { XCircle } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
-import BottomSheet from './components/BottomSheet';
-import TitleBox from './components/TitleBox';
-import DurationBox from './components/DurationBox'
-import ImportanceBox from './components/ImportanceBox';
-import DescriptionBox from './components/DescriptionBox';
-import UseHabitBox from './components/UseHabitBox';
-import RepeatBox from './components/RepeatBox';
-import DueDatePickerBox from './components/DueDatePickerBox';
-import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import TaskSettingsModal from './components/TaskSettingsModal';
 
 
@@ -24,14 +14,17 @@ export default function App() {
   const [task, setTask] = useState(null);
   const [taskItems, setTaskItems] = useState([]);
 
-
   const handleAddTask = () => {
-    if (task != null) {
-      Keyboard.dismiss();
-      setTaskItems([...taskItems, task])
-      setTask(null);
-      this.textInput.clear()
-    }
+    // if (task != null) {
+    //   Keyboard.dismiss();
+    //   setTaskItems([...taskItems, task])
+    //   setTask(null);
+    //   this.textInput.clear()
+    // }
+  }
+
+  const onSave = (newTaskSettings) => {
+    setTaskItems([...taskItems, newTaskSettings])
   }
 
   const completeTask = (index) => {
@@ -64,9 +57,6 @@ export default function App() {
     return null
   }
 
-
-
-
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <View style={styles.container}>
@@ -84,7 +74,7 @@ export default function App() {
               taskItems.map((task, index) => {
                 return (
                   <TouchableOpacity key={index}  onPress={() => {completeTask(index);}}>
-                    <Task text={task.text} priority={task.priority} duration={task.duration}/> 
+                    <Task text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                   </TouchableOpacity>
                 )
               })
@@ -106,7 +96,7 @@ export default function App() {
           </TouchableOpacity>
         </KeyboardAvoidingView>
 
-        <TaskSettingsModal ref={taskSettingsRef} />
+        <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} />
 
       </View>
     </GestureHandlerRootView>

@@ -14,7 +14,7 @@ import DueDatePickerBox from './DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
 
-const TaskSettingsModal = forwardRef ((props, ref) => {
+const TaskSettingsModal = forwardRef (({onSave}, ref) => {
 
   useImperativeHandle(ref, () => ({
 
@@ -22,7 +22,6 @@ const TaskSettingsModal = forwardRef ((props, ref) => {
       const isActive = bottomSheetRef?.current?.isActive()
       bottomSheetRef?.current?.scrollTo(1)
     }
-
   }));
 
 	const bottomSheetRef = useRef(null)
@@ -30,6 +29,11 @@ const TaskSettingsModal = forwardRef ((props, ref) => {
 	const onSavePress = () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 		bottomSheetRef?.current?.scrollTo(0)
+
+    settingsCopy = {...currentSettings}
+    settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
+    setCurrentSettings(settingsCopy)
+    onSave(settingsCopy)
 	  }
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
