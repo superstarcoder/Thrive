@@ -6,7 +6,7 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
 import SliderBar from './FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
-import { ACTIONS } from './TaskSettingsModal';
+import { ACTIONS } from './MyGlobalVars';
 
 const ImportanceBox = ({dispatch, importance}) => {
 

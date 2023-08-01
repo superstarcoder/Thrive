@@ -1292,10 +1292,10 @@
   "resolved" "https://registry.npmjs.org/@expo/config-types/-/config-types-48.0.0.tgz"
   "version" "48.0.0"
 
-"@expo/config@~8.0.0", "@expo/config@8.0.2":
-  "integrity" "sha512-WubrzTNNdAXy1FU8TdyQ7D9YtDj2tN3fWXDq+C8In+nB7Qc08zwH9cVdaGZ+rBVmjFZBh5ACfObKq/m9cm4QQA=="
-  "resolved" "https://registry.npmjs.org/@expo/config/-/config-8.0.2.tgz"
-  "version" "8.0.2"
+"@expo/config@~8.0.0", "@expo/config@8.0.5":
+  "integrity" "sha512-3CnLmtAQUWqLZwTRliS23QoFwdyhg4AWtp6gZ0qfcXthR84RvlZKcCDQQIyPiRUgu8dZa+gQDcdRJtgE+GM5XQ=="
+  "resolved" "https://registry.npmjs.org/@expo/config/-/config-8.0.5.tgz"
+  "version" "8.0.5"
   dependencies:
     "@babel/code-frame" "~7.10.4"
     "@expo/config-plugins" "~6.0.0"
@@ -1501,9 +1501,9 @@
   "version" "13.0.0"
 
 "@expo/webpack-config@^18.0.1":
-  "integrity" "sha512-P2P5MjbcIqSlepr8216eIy+rI8UK+K10r/3Y+eoV/pNABKXc/bjk/QSJICLayouxQSOp2YU6GipdfnwJRUsEUA=="
-  "resolved" "https://registry.npmjs.org/@expo/webpack-config/-/webpack-config-18.1.0.tgz"
-  "version" "18.1.0"
+  "integrity" "sha512-nlYVzcheaOZdxSt31he16f/ZgcdS3BT4BjEU85TwgFUdUJngjhT9wcmmkvXmOYz0o0NBMtZCkX8S0Z2Ta3yuNQ=="
+  "resolved" "https://registry.npmjs.org/@expo/webpack-config/-/webpack-config-18.1.2.tgz"
+  "version" "18.1.2"
   dependencies:
     "@babel/core" "^7.20.2"
     "babel-loader" "^8.3.0"
@@ -1512,7 +1512,7 @@
     "copy-webpack-plugin" "^10.2.0"
     "css-loader" "^6.5.1"
     "css-minimizer-webpack-plugin" "^3.4.1"
-    "expo-pwa" "0.0.125"
+    "expo-pwa" "0.0.126"
     "find-up" "^5.0.0"
     "find-yarn-workspace-root" "~2.0.0"
     "getenv" "^1.0.0"
@@ -4238,10 +4238,10 @@
     "compare-versions" "^3.4.0"
     "invariant" "^2.2.4"
 
-"expo-pwa@0.0.125":
-  "integrity" "sha512-A40Man5vMO1WWHwVDJr/7Y2N6vwHCQDX4gQ1LM9GngEFHRMK2lxx/tMVV2v+UF2g1lr84RVRGzMvO/tV9LYiaA=="
-  "resolved" "https://registry.npmjs.org/expo-pwa/-/expo-pwa-0.0.125.tgz"
-  "version" "0.0.125"
+"expo-pwa@0.0.126":
+  "integrity" "sha512-9qb6aIY0awez4FTyIiNhqyekb6sKnbvODOFCDPg23PqpkvdhuzzDRtP/Avgippt8kqRAgPpFXmIp2LaAyH1/aw=="
+  "resolved" "https://registry.npmjs.org/expo-pwa/-/expo-pwa-0.0.126.tgz"
+  "version" "0.0.126"
   dependencies:
     "@expo/image-utils" "0.3.23"
     "chalk" "^4.0.0"
@@ -4262,13 +4262,13 @@
   "version" "1.4.4"
 
 "expo@*", "expo@^48.0.17", "expo@~48.0.18":
-  "integrity" "sha512-Pmz2HEwcDdjWPq5fM3vF++je0hjZIBX9aTZEkm6sBv09Vfhe4+CuiuKDq3iE+N6G9l2+eFYoRCApDwLqcRMiPA=="
-  "resolved" "https://registry.npmjs.org/expo/-/expo-48.0.19.tgz"
-  "version" "48.0.19"
+  "integrity" "sha512-SDRlLRINWWqf/OIPaUr/BsFZLhR5oEj1u9Cn06h1mPeo8pqv6ei/QTSZql4e0ixHIu3PWMPrUx9k/47nnTyTpg=="
+  "resolved" "https://registry.npmjs.org/expo/-/expo-48.0.20.tgz"
+  "version" "48.0.20"
   dependencies:
     "@babel/runtime" "^7.20.0"
     "@expo/cli" "0.7.3"
-    "@expo/config" "8.0.2"
+    "@expo/config" "8.0.5"
     "@expo/config-plugins" "6.0.2"
     "@expo/vector-icons" "^13.0.0"
     "babel-preset-expo" "~9.3.2"
@@ -8055,19 +8055,19 @@
     "node-forge" "^1"
 
 "semver@^5.5.0":
-  "integrity" "sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ=="
-  "resolved" "https://registry.npmjs.org/semver/-/semver-5.7.1.tgz"
-  "version" "5.7.1"
+  "integrity" "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="
+  "resolved" "https://registry.npmjs.org/semver/-/semver-5.7.2.tgz"
+  "version" "5.7.2"
 
 "semver@^5.6.0":
-  "integrity" "sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ=="
-  "resolved" "https://registry.npmjs.org/semver/-/semver-5.7.1.tgz"
-  "version" "5.7.1"
+  "integrity" "sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g=="
+  "resolved" "https://registry.npmjs.org/semver/-/semver-5.7.2.tgz"
+  "version" "5.7.2"
 
 "semver@^6.0.0", "semver@^6.1.1", "semver@^6.1.2", "semver@^6.3.0":
-  "integrity" "sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw=="
-  "resolved" "https://registry.npmjs.org/semver/-/semver-6.3.0.tgz"
-  "version" "6.3.0"
+  "integrity" "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="
+  "resolved" "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz"
+  "version" "6.3.1"
 
 "semver@^7.3.5":
   "integrity" "sha512-QBlUtyVk/5EeHbi7X0fw6liDZc7BBmEaSYn01fMU1OUYbf6GPsbTtd8WmnqbI20SeycoHSeiybkE/q1Q+qlThQ=="

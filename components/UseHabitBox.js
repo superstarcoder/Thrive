@@ -4,8 +4,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import CheckBox from './FormComponents/CheckBox';
 import * as Haptics from 'expo-haptics';
-import { ACTIONS } from './TaskSettingsModal';
-
+import { ACTIONS } from './MyGlobalVars';
 
 const UseHabitBox = ({dispatch, selected}) => {
 

@@ -5,7 +5,7 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import CheckBox from './FormComponents/CheckBox';
 import HighlightSelect from './FormComponents/HighlightSelect';
 import * as Haptics from 'expo-haptics';
-import { ACTIONS } from './TaskSettingsModal';
+import { ACTIONS } from './MyGlobalVars';
 
 const RepeatBox = ({dispatch, repeatDays}) => {
 

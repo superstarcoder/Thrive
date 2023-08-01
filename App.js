@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback} from 'react';
+import React, {useState, useRef, useCallback, useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
 import Task from './components/Task';
 import Color from './assets/themes/Color'
@@ -8,11 +8,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
 import TaskSettingsModal from './components/TaskSettingsModal';
+import { LogBox } from 'react-native';
 
 
 export default function App() {
   const [task, setTask] = useState(null);
   const [taskItems, setTaskItems] = useState([]);
+
+  useEffect(() => {
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+}, [])
 
   const onSave = (newTaskSettings) => {
     setTaskItems([...taskItems, newTaskSettings])
