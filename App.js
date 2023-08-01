@@ -14,15 +14,6 @@ export default function App() {
   const [task, setTask] = useState(null);
   const [taskItems, setTaskItems] = useState([]);
 
-  const handleAddTask = () => {
-    // if (task != null) {
-    //   Keyboard.dismiss();
-    //   setTaskItems([...taskItems, task])
-    //   setTask(null);
-    //   this.textInput.clear()
-    // }
-  }
-
   const onSave = (newTaskSettings) => {
     setTaskItems([...taskItems, newTaskSettings])
   }
@@ -34,8 +25,8 @@ export default function App() {
   }
 
   const onButtonPress = () => {
-    handleAddTask();
     // initializeBottomSheet();
+    setInitialSettings(defaultSettings)
     taskSettingsRef?.current?.showTaskSettings()
   }
 
@@ -53,6 +44,11 @@ export default function App() {
     "MPlusRegular": require("./assets/fonts/mplusRegular.ttf"),
     "MPlusMedium": require("./assets/fonts/mplusMedium.ttf")
   })
+
+  const defaultSettings = {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: {}, dueDate: new Date(), includeOnlyTime: false}
+  const [initialSettings, setInitialSettings] = useState(defaultSettings)
+
+
   if (!fontsLoaded) {
     return null
   }
@@ -96,7 +92,7 @@ export default function App() {
           </TouchableOpacity>
         </KeyboardAvoidingView>
 
-        <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} />
+        <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} initialSettings={initialSettings} />
 
       </View>
     </GestureHandlerRootView>

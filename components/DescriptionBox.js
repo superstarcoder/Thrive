@@ -4,21 +4,12 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState } from 'react'
 import MyTextInput from './FormComponents/MyTextInput';
+import { ACTIONS } from './TaskSettingsModal';
 
-const DescriptionBox = ({onChange}) => {
-
-  const [currentText, setCurrentText] = useState("")
-
-  useEffect(() => {
-    onChange(currentText)
-  }, [currentText])
-
-	const onTextUpdate = (text) => {
-    setCurrentText(text)
-	}
+const DescriptionBox = ({description, dispatch}) => {
 
   let title;
-  if (currentText == "") {
+  if (description == "") {
     title = <StyledH2 text={"Description"}/>
   }
   else {
@@ -26,14 +17,10 @@ const DescriptionBox = ({onChange}) => {
   }
 
   return (
-  // <KeyboardAvoidingView style={{ flex: 1 }}
-  // keyboardVerticalOffset={100}
-  // behavior={"position"}>
     <View style={styles.titleBox}>
       {title}
-      <MyTextInput placeholderText={'Optional'} getText={onTextUpdate} multiline={true}/>
+      <MyTextInput placeholderText={'Optional'} onChangeText={(text) => {dispatch({type: ACTIONS.UPDATE_DESCRIPTION, payload: {description: text} })}} multiline={true}/>
     </View>
-  // </KeyboardAvoidingView>
   )
 }
 

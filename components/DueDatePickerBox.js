@@ -7,15 +7,16 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import * as Haptics from 'expo-haptics'
 import CheckBox from './FormComponents/CheckBox';
 import HighlightSelect from './FormComponents/HighlightSelect';
+import { ACTIONS } from './TaskSettingsModal';
 
-const DueDatePickerBox = ({onChange, includeOnlyTime=false}) => {
+const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 
 	const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDateTime, setSelectedDateTime] = useState(new Date())
+  // const [selectedDateTime, setSelectedDateTime] = useState(new Date())
   
-  useEffect(() => {
-    onChange(selectedDateTime, includeOnlyTime)
-  }, [selectedDateTime])
+  // useEffect(() => {
+  //   onChange(selectedDateTime, includeOnlyTime)
+  // }, [selectedDateTime])
 
 	const showDatePicker = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -28,7 +29,8 @@ const DueDatePickerBox = ({onChange, includeOnlyTime=false}) => {
 
 	const handleConfirm = (date) => {
 		hideDatePicker(); // must be first
-    setSelectedDateTime(new Date(date))
+    // setSelectedDateTime(new Date(date))
+    dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(date)}})
 		console.log("A date has been picked: ", date);
 	};
 
@@ -40,13 +42,13 @@ const DueDatePickerBox = ({onChange, includeOnlyTime=false}) => {
 
         <TouchableOpacity onPress={showDatePicker}>
           <View style={styles.currentDateContainer}>
-            <StyledH3 text={selectedDateTime.toLocaleDateString()} style={styles.currentDate}/>
+            <StyledH3 text={dateTime.toLocaleDateString()} style={styles.currentDate}/>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={showDatePicker}>
           <View style={styles.currentTimeContainer}>
-            <StyledH3 text={selectedDateTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
+            <StyledH3 text={dateTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
           </View>
         </TouchableOpacity>
 
@@ -64,7 +66,7 @@ const DueDatePickerBox = ({onChange, includeOnlyTime=false}) => {
         display='inline'
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
-        date={selectedDateTime}
+        date={dateTime}
       />
     </View>
   )

@@ -5,42 +5,32 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import CheckBox from './FormComponents/CheckBox';
 import HighlightSelect from './FormComponents/HighlightSelect';
 import * as Haptics from 'expo-haptics';
+import { ACTIONS } from './TaskSettingsModal';
 
-const RepeatBox = ({onChange}) => {
+const RepeatBox = ({dispatch, repeatDays}) => {
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   let myDict = {} 
   for (day of daysOfWeek) {
     myDict[day] = "false"
   }
-  const [selectedList, setSelectedList] = useState(myDict)
-
-  useEffect(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    onChange(selectedList)
-  }, [selectedList])
-
-  // useEffect(() => {
-  //   console.log(selectedList)
-  // }, [selectedList])
-  
   const updateSelectedList = (value, text) => {
-    let selectedListCopy = {...selectedList}
-    selectedListCopy[text] = value
-    setSelectedList(selectedListCopy)
+    dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {day: text, selected: value}})
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    console.log("yuh")
   }
 
   return (
     <View style={styles.inputBox}>
       <StyledH2 text={"Repeat"} style={styles.inputTitle}/>
       <View style={styles.multiSelect}>
-        <HighlightSelect text="Mon" getSelectedValue={updateSelectedList}/>
-        <HighlightSelect text="Tue" getSelectedValue={updateSelectedList}/>
-        <HighlightSelect text="Wed" getSelectedValue={updateSelectedList}/>
-        <HighlightSelect text="Thu" getSelectedValue={updateSelectedList}/>
-        <HighlightSelect text="Fri" getSelectedValue={updateSelectedList}/>
-        <HighlightSelect text="Sat" getSelectedValue={updateSelectedList}/>
-        <HighlightSelect text="Sun" getSelectedValue={updateSelectedList}/>
+        <HighlightSelect text="Mon" onChange={updateSelectedList} selected={repeatDays["Mon"]}/>
+        <HighlightSelect text="Tue" onChange={updateSelectedList} selected={repeatDays["Tue"]}/>
+        <HighlightSelect text="Wed" onChange={updateSelectedList} selected={repeatDays["Wed"]}/>
+        <HighlightSelect text="Thu" onChange={updateSelectedList} selected={repeatDays["Thu"]}/>
+        <HighlightSelect text="Fri" onChange={updateSelectedList} selected={repeatDays["Fri"]}/>
+        <HighlightSelect text="Sat" onChange={updateSelectedList} selected={repeatDays["Sat"]}/>
+        <HighlightSelect text="Sun" onChange={updateSelectedList} selected={repeatDays["Sun"]}/>
       </View>
     </View>
   )

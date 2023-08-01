@@ -4,26 +4,27 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './t
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import CheckBox from './FormComponents/CheckBox';
 import * as Haptics from 'expo-haptics';
+import { ACTIONS } from './TaskSettingsModal';
 
 
-const UseHabitBox = ({onChange}) => {
+const UseHabitBox = ({dispatch, selected}) => {
 
-  const [selected, setSelected] = useState(false)
+  // const [selected, setSelected] = useState(false)
 
-  const setCheckValue = (value) => {
-    setSelected(value)
-    console.log("set check value to: "+value)
-  }
+  // const setCheckValue = (value) => {
+  //   setSelected(value)
+  //   console.log("set check value to: "+value)
+  // }
 
-  useEffect(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    onChange(selected)
-  }, [selected])
+  // useEffect(() => {
+  //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  //   onChange(selected)
+  // }, [selected])
 
   return (
     <View style={styles.inputBox}>
       <StyledH2 text={"Use as a habit:"} style={styles.inputTitle}/>
-      <CheckBox getCheckValue={setCheckValue}/>
+      <CheckBox onChange={(value) => {dispatch({type: ACTIONS.UPDATE_IS_HABIT, payload: {isHabit: value}})}} checked={selected}/>
     </View>
   )
 }

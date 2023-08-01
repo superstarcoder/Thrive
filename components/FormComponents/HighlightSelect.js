@@ -5,15 +5,13 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { Square, CheckSquare } from 'phosphor-react-native';
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 
-const HighlightSelect = ({text, getSelectedValue, backgroundColor=Color.LightBlue}) => {
-
-
-  const [selected, setSelected] = useState(false)
+const HighlightSelect = ({text, selected, onChange, backgroundColor=Color.LightBlue}) => {
 
   const onCheckPress = () => {
-    getSelectedValue(!selected, text)
-    setSelected(!selected)
+    onChange(!selected, text)
   }
+
+  // console.log(text+" selected: "+selected)
 
   let hText;
   if (selected) {

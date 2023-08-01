@@ -6,12 +6,13 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
 import SliderBar from './FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
+import { ACTIONS } from './TaskSettingsModal';
 
-const ImportanceBox = ({onChange}) => {
+const ImportanceBox = ({dispatch, importance}) => {
 
 
   const sliderBarRef = useRef(null)
-  const [importance, setImportance] = useState("medium") // low, medium, high
+  const [importanceText, setImportanceText] = useState("medium") // low, medium, high
   const [importanceNumber, setImportanceNumber] = useState(0)
   const [finalImportanceNumber, setFinalImportanceNumber] = useState(0)
 
@@ -21,31 +22,32 @@ const ImportanceBox = ({onChange}) => {
 
   useEffect(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-  }, [importance])
+  }, [importanceText])
 
-  useEffect(() => {
-    onChange(finalImportanceNumber)
+  // useEffect(() => {
+  //   onChange(finalImportanceNumber)
     
-    // console.log(importanceNumber)
-  }, [finalImportanceNumber])
+  //   // console.log(importanceNumber)
+  // }, [finalImportanceNumber])
 
 
   const setSliderPercent = (value) => {
     // console.log("SLIDER PERCENT: "+value)
     if (value <= 0.4) {
-      setImportance("low")
+      setImportanceText("low")
     }
     else if (value <= 0.7) {
-      setImportance("medium")
+      setImportanceText("medium")
     }
     else {
-      setImportance("high")
+      setImportanceText("high")
     }
     setImportanceNumber((value*10).toFixed(1))
   }
 
   const onSliderMoveEnd = (value) => {
-    setFinalImportanceNumber((value*10).toFixed(1))
+    // setFinalImportanceNumber((value*10).toFixed(1))
+    dispatch({type: ACTIONS.UPDATE_IMPORTANCE, payload: {importance: (value*10).toFixed(1)}})
   }
 
   // code to get sliderBarPercentage
@@ -70,7 +72,7 @@ const ImportanceBox = ({onChange}) => {
       </View>
         <View style={styles.importanceText}>
           <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
-          <StyledH4 text={importance+" importance "}/>
+          <StyledH4 text={importanceText+" importance "}/>
         </View>
       </View>
       <View style={styles.inputBoxRight}>

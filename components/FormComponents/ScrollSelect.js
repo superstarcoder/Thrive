@@ -4,13 +4,14 @@ import Color from '../../assets/themes/Color'
 import { StyledH2 } from '../text/StyledText'
 import { CaretUp, TextH } from 'phosphor-react-native';
 import * as Haptics from 'expo-haptics';
+import { ACTIONS } from '../TaskSettingsModal';
 
 // note:
 // yet to implement feature in which parent can change scroll select's data state
 
 // scroll select input
 // use variable "value" to get the input's current value 
-const ScrollSelect = ({dataArray, getScrollValue}) => {
+const ScrollSelect = ({dataArray, dispatch}) => {
 
   const options = {
     enableVibrateFallback: true,
@@ -63,7 +64,8 @@ const ScrollSelect = ({dataArray, getScrollValue}) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
       }
       setValue(number)
-      getScrollValue(number)
+      // dispatch({type: ACTIONS.UPDATE_DURATION, payload: {duration: number} })
+      // getScrollValue(number)
     }
   }
 
@@ -72,7 +74,8 @@ const ScrollSelect = ({dataArray, getScrollValue}) => {
     let number = data[Math.round(index)].text
 
     setValue(number)
-    getScrollValue(number)
+    // getScrollValue(number)
+    dispatch({type: ACTIONS.UPDATE_DURATION, payload: {duration: number} })
 
     // below is useful. don't delete
     // console.log("scroll ended: "+event.nativeEvent.contentOffset.y)

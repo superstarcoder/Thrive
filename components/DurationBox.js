@@ -6,13 +6,13 @@ import React, { useEffect, useState } from 'react'
 import { Clock } from 'phosphor-react-native';
 import ScrollSelect from './FormComponents/ScrollSelect';
 
-const DurationBox = ({onChange}) => {
+const DurationBox = ({dispatch, duration}) => {
 
-  const [duration, setDuration] = useState(0)
+  // const [duration, setDuration] = useState(0)
 
-  useEffect(() => {
-    onChange(duration)
-  }, [duration])
+  // useEffect(() => {
+  //   onChange(duration)
+  // }, [duration])
 
   // load fonts
   var [fontsLoaded] = useFonts({
@@ -47,7 +47,7 @@ const DurationBox = ({onChange}) => {
         </View>
       </View>
       <View style={styles.inputBoxRight}>
-        <ScrollSelect dataArray={dataArray} getScrollValue={(value) => setDurationOnUpdate(value)}/>
+        <ScrollSelect dataArray={dataArray} dispatch={dispatch} duration={duration}/>
       </View >
     </View>
   )
