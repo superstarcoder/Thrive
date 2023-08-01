@@ -2,19 +2,18 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-n
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
 import SliderBar from './FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
 import { ACTIONS } from './MyGlobalVars';
 
-const ImportanceBox = ({dispatch, importance}) => {
+const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
 
 
   const sliderBarRef = useRef(null)
   const [importanceText, setImportanceText] = useState("medium") // low, medium, high
-  const [importanceNumber, setImportanceNumber] = useState(0)
-  const [finalImportanceNumber, setFinalImportanceNumber] = useState(0)
+  const [importanceNumber, setImportanceNumber] = useState(importance)
 
   var [fontsLoaded] = useFonts({
     "MPlus": require("../assets/fonts/mplusRegular.ttf")
@@ -24,30 +23,34 @@ const ImportanceBox = ({dispatch, importance}) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
   }, [importanceText])
 
-  // useEffect(() => {
-  //   onChange(finalImportanceNumber)
-    
-  //   // console.log(importanceNumber)
-  // }, [finalImportanceNumber])
-
-
-  const setSliderPercent = (value) => {
-    // console.log("SLIDER PERCENT: "+value)
-    if (value <= 0.4) {
+  const updateImportanceText = (myImportanceNum) => {
+    if (myImportanceNum <= 4) {
       setImportanceText("low")
     }
-    else if (value <= 0.7) {
+    else if (myImportanceNum <= 7) {
       setImportanceText("medium")
     }
     else {
       setImportanceText("high")
     }
-    setImportanceNumber((value*10).toFixed(1))
   }
+
+  const setSliderPercent = (value) => {
+    const myImportanceNum = parseFloat((value*10).toFixed(1))
+    updateImportanceText(myImportanceNum)
+    setImportanceNumber(myImportanceNum)
+  }
+
+  useImperativeHandle(ref, () => ({
+    setImportance (importance) {
+      setSliderPercent(importance/10)
+      sliderBarRef?.current?.setSliderTo(importance/10)
+    }
+  }));
 
   const onSliderMoveEnd = (value) => {
     // setFinalImportanceNumber((value*10).toFixed(1))
-    dispatch({type: ACTIONS.UPDATE_IMPORTANCE, payload: {importance: (value*10).toFixed(1)}})
+    dispatch({type: ACTIONS.UPDATE_IMPORTANCE, payload: {importance: parseFloat((value*10).toFixed(1))}})
   }
 
   // code to get sliderBarPercentage
@@ -59,28 +62,27 @@ const ImportanceBox = ({dispatch, importance}) => {
   
   return (
     <KeyboardAvoidingView>
-
-    {/* <View style={styles.inputBox} onTouchStart={() => {console.log(sliderBarRef?.current?.getSliderPercent())}}> */}
-    <View style={styles.inputBox}>
-      <View style={styles.inputBoxLeft}>
-        <Text style={styles.boxTitleContainer}>
-            <StyledH2 text={"Importance"}/>
-        </Text>
-      <View style={styles.sliderRow}>
-        <SliderBar getSliderPercent={(value) => setSliderPercent(value)} ref={sliderBarRef} onSliderMoveEnd={onSliderMoveEnd}/>
-        <StyledH4 text={importanceNumber} style={styles.sliderInfo}/>
-      </View>
-        <View style={styles.importanceText}>
-          <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
-          <StyledH4 text={importanceText+" importance "}/>
+      {/* <View style={styles.inputBox} onTouchStart={() => {console.log(sliderBarRef?.current?.getSliderPercent())}}> */}
+      <View style={styles.inputBox}>
+        <View style={styles.inputBoxLeft}>
+          <Text style={styles.boxTitleContainer}>
+              <StyledH2 text={"Importance"}/>
+          </Text>
+        <View style={styles.sliderRow}>
+          <SliderBar getSliderPercent={setSliderPercent} ref={sliderBarRef} onSliderMoveEnd={onSliderMoveEnd}/>
+          <StyledH4 text={importanceNumber} style={styles.sliderInfo}/>
         </View>
+          <View style={styles.importanceText}>
+            <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
+            <StyledH4 text={importanceText+" importance "}/>
+          </View>
+        </View>
+        <View style={styles.inputBoxRight}>
+        </View >
       </View>
-      <View style={styles.inputBoxRight}>
-      </View >
-    </View>
     </KeyboardAvoidingView>
   )
-}
+})
 
 export default ImportanceBox
 

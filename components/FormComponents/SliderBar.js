@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState, useCallback, useImperativeHandle } from 'react'
+import React, { useEffect, useState, useCallback, useImperativeHandle, forwardRef } from 'react'
 import Color from '../../assets/themes/Color'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import Animated, { Extrapolate, runOnJS, useAnimatedReaction, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 
-const SliderBar = React.forwardRef (({getSliderPercent, onSliderMoveEnd}, sliderBarRef) => {
+const SliderBar = forwardRef (({getSliderPercent, onSliderMoveEnd}, sliderBarRef) => {
 
   const translateX = useSharedValue(0)
   const context = useSharedValue({x: 0})

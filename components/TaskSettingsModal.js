@@ -13,8 +13,9 @@ import RepeatBox from './RepeatBox';
 import DueDatePickerBox from './DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
-import { ACTIONS } from './MyGlobalVars';
-
+import { ACTIONS, TASK_SETTINGS_MODES } from './MyGlobalVars';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 function reducer(taskSettings, action) {
   switch (action.type) {
@@ -22,7 +23,8 @@ function reducer(taskSettings, action) {
       console.log(action.payload.title)
       return {...taskSettings, title: action.payload.title}
     case "update_duration":
-      console.log(action.payload.duration)
+      console.log("update_duration: "+action.payload.duration)
+      console.log("update_duration payload: "+JSON.stringify(action.payload))
       return {...taskSettings, duration: action.payload.duration}
     case "update_importance":
       console.log(action.payload.importance)
@@ -45,36 +47,61 @@ function reducer(taskSettings, action) {
       console.log(action.payload.dueDate)
       return {...taskSettings, dueDate: action.payload.dueDate}
     case "update_all":
+      // console.log("updated duration: "+action.payload.newTaskSettings.duration)
       return action.payload.newTaskSettings
     default:
       return taskSettings
   }
 }
 
-const TaskSettingsModal = forwardRef (({onSave, initialSettings}, ref) => {
+const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
 
   // const titleBoxRef = useRef()
 
   useImperativeHandle(ref, () => ({
 
-    showTaskSettings () {
-      const isActive = bottomSheetRef?.current?.isActive()
+    showAddTaskModal () {
       bottomSheetRef?.current?.scrollTo(1)
-      // titleBoxRef?.current?.setValue("initial")
+      const initSettings = {title: "", duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4()}
+      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: initSettings}})
+      durationBoxRef?.current?.setDuration(initSettings.duration)
+      importanceBoxRef?.current?.setImportance(initSettings.importance)
+      setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
+    },
+    showEditTaskModal (myTaskSettings) {
+      bottomSheetRef?.current?.scrollTo(1)
+      console.log("going to update duration to: "+myTaskSettings.duration)
+      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: myTaskSettings}})
+      durationBoxRef?.current?.setDuration(myTaskSettings.duration)
+      importanceBoxRef?.current?.setImportance(myTaskSettings.importance)
+      setSettingsMode(TASK_SETTINGS_MODES.EDIT_TASK)
     }
   }));
 
 	const bottomSheetRef = useRef(null)
+  const durationBoxRef = useRef(null)
+  const importanceBoxRef = useRef(null)
+  const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
 
 	const onSavePress = () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 		bottomSheetRef?.current?.scrollTo(0)
 
-    settingsCopy = {...taskSettings}
-    settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
-    settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-    dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
-    onSave(settingsCopy)
+    if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
+      settingsCopy = {...taskSettings}
+      settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
+      settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
+      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
+      onSave(settingsCopy)
+    }
+    else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
+      settingsCopy = {...taskSettings}
+      settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
+      settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
+      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
+      onEdit(settingsCopy)
+    }
+
 
 	  }
   const onCancelPress = () => {
@@ -84,6 +111,7 @@ const TaskSettingsModal = forwardRef (({onSave, initialSettings}, ref) => {
   const onDeletePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
+    onDelete(taskSettings)
   }
 
 
@@ -96,7 +124,7 @@ const TaskSettingsModal = forwardRef (({onSave, initialSettings}, ref) => {
   for (day of daysOfWeek) {
     initRepeatDays[day] = false
   }
-  const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false})
+  const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4()})
 
 	return (
 	<BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
@@ -104,8 +132,8 @@ const TaskSettingsModal = forwardRef (({onSave, initialSettings}, ref) => {
 	{/* <KeyboardAvoidingView behavior="padding" enabled> */}
 		<ScrollView style={[styles.addTaskModalSettings]}>
 		  <TitleBox title={taskSettings.title} dispatch={dispatch}/>
-		  <DurationBox duration={taskSettings.duration} dispatch={dispatch}/>
-		  <ImportanceBox importance={taskSettings.importance} dispatch={dispatch}/>
+		  <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef}/>
+		  <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef}/>
 		  <DescriptionBox description={taskSettings.description} dispatch={dispatch}/>
 		  <StyledH1 style={styles.settingsTitle} text={"Habit Settings"}/>
 		  <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit}/>
@@ -130,11 +158,13 @@ const TaskSettingsModal = forwardRef (({onSave, initialSettings}, ref) => {
         </View>
 		  </TouchableOpacity>
 
-		  <TouchableOpacity onPress={onDeletePress}>
-        <View style={styles.deleteTaskButton}>
-          <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-        </View>
-		  </TouchableOpacity>
+      {settingsMode != TASK_SETTINGS_MODES.ADD_TASK && 
+        <TouchableOpacity onPress={onDeletePress}>
+          <View style={styles.deleteTaskButton}>
+            <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+          </View>
+        </TouchableOpacity>
+      }
 		
 		</View>
 	</BottomSheet>

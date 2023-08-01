@@ -19,7 +19,7 @@ const DescriptionBox = ({description, dispatch}) => {
   return (
     <View style={styles.titleBox}>
       {title}
-      <MyTextInput placeholderText={'Optional'} onChangeText={(text) => {dispatch({type: ACTIONS.UPDATE_DESCRIPTION, payload: {description: text} })}} multiline={true}/>
+      <MyTextInput placeholderText={'Optional'} text={description} onChangeText={(text) => {dispatch({type: ACTIONS.UPDATE_DESCRIPTION, payload: {description: text} })}} multiline={true}/>
     </View>
   )
 }

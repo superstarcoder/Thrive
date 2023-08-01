@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native'
-import React, { useEffect, useRef, useState, useLayoutEffect } from 'react'
+import React, { useEffect, useRef, useState, useLayoutEffect, forwardRef, useImperativeHandle } from 'react'
 import Color from '../../assets/themes/Color'
 import { StyledH2 } from '../text/StyledText'
 import { CaretUp, TextH } from 'phosphor-react-native';
@@ -11,12 +11,22 @@ import { ACTIONS } from '../MyGlobalVars';
 
 // scroll select input
 // use variable "value" to get the input's current value 
-const ScrollSelect = ({dataArray, dispatch}) => {
+const ScrollSelect = forwardRef (({dataArray, dispatch}, ref) => {
 
   const options = {
     enableVibrateFallback: true,
     ignoreAndroidSystemSettings: false,
   };
+
+  const flatListRef = useRef()
+
+  useImperativeHandle(ref, () => ({
+
+    scrollToIndex (index) {
+      console.log("scrolling to: "+(Math.round(textHeight)*index))
+      flatListRef?.current?.scrollToOffset({offset: Math.round(textHeight)*index, animated: false})
+    }
+  }));
 
 
   // helper function for rounding
@@ -38,7 +48,7 @@ const ScrollSelect = ({dataArray, dispatch}) => {
 
   let ls = []
     for (arrayItem of dataArray) {
-      ls.push({text: arrayItem.toString(), id: arrayItem})
+      ls.push({text: arrayItem, id: arrayItem})
     }
   const [data, setData] = useState(ls)
 
@@ -62,6 +72,7 @@ const ScrollSelect = ({dataArray, dispatch}) => {
       let number = data[Math.round(index)].text
       if (number != value) {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+        dispatch({type: ACTIONS.UPDATE_DURATION, payload: {duration: number} })
       }
       setValue(number)
       // dispatch({type: ACTIONS.UPDATE_DURATION, payload: {duration: number} })
@@ -103,13 +114,13 @@ const ScrollSelect = ({dataArray, dispatch}) => {
         onMomentumScrollEnd={handleOnMomentumScrollEnd}
         onScroll={handleOnScroll}
         // contentOffset={{x:100, y:100}}
-        ref={(ref) => this.flatListRef = ref}
+        ref={flatListRef}
       />
 		</View>
 		<CaretUp size={5} />
 	</View>
   )
-}
+})
 
 export default ScrollSelect
 

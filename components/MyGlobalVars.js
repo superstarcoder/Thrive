@@ -9,3 +9,9 @@ export const ACTIONS = {
 	UPDATE_DUE_DATE_TIME: "update_due_date_time",
 	UPDATE_ALL: "update_all"
   }
+
+export const TASK_SETTINGS_MODES = {
+	INACTIVE: "inactive",
+	ADD_TASK: "add_task",
+	EDIT_TASK: "edit_task",
+}

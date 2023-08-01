@@ -10,7 +10,6 @@ import * as Haptics from "expo-haptics"
 import TaskSettingsModal from './components/TaskSettingsModal';
 import { LogBox } from 'react-native';
 
-
 export default function App() {
   const [task, setTask] = useState(null);
   const [taskItems, setTaskItems] = useState([]);
@@ -29,10 +28,40 @@ export default function App() {
     setTaskItems(itemsCopy)
   }
 
-  const onButtonPress = () => {
+  const onAddTask = () => {
     // initializeBottomSheet();
-    setInitialSettings(defaultSettings)
-    taskSettingsRef?.current?.showTaskSettings()
+    // setInitialSettings(defaultSettings)
+    taskSettingsRef?.current?.showAddTaskModal()
+  }
+
+  const onEditTask = (taskSettings) => {
+    taskSettingsRef?.current?.showEditTaskModal(taskSettings)
+  }
+
+  const onEditTaskComplete = (taskSettingsEdited) => {
+    const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
+
+    let taskItemsCopy = [...taskItems]
+    const index = taskItemsCopy.indexOf(oldTask)
+    if (index == -1) {
+      console.error("App.js: onEditTaskComplete: unable to edit task since task is not found in array state")
+    }
+    taskItemsCopy[index] = taskSettingsEdited //replace 1st occurance of this task
+    setTaskItems(taskItemsCopy)
+    console.log("edited")
+  }
+
+  const onDelete = (taskSettingsToDelete) => {
+    const oldTask = taskItems.find(x => x.id == taskSettingsToDelete.id)
+
+    let taskItemsCopy = [...taskItems]
+    const index = taskItemsCopy.indexOf(oldTask)
+    if (index == -1) {
+      console.error("App.js: onEditTaskComplete: unable to dlete task since task is not found in array state")
+    }
+    taskItemsCopy.splice(index, 1) //delete 1st occurance of this task
+    setTaskItems(taskItemsCopy)
+    console.log("deleted")
   }
 
 
@@ -50,8 +79,8 @@ export default function App() {
     "MPlusMedium": require("./assets/fonts/mplusMedium.ttf")
   })
 
-  const defaultSettings = {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: {}, dueDate: new Date(), includeOnlyTime: false}
-  const [initialSettings, setInitialSettings] = useState(defaultSettings)
+  // const defaultSettings = {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: {}, dueDate: new Date(), includeOnlyTime: false}
+  // const [initialSettings, setInitialSettings] = useState(defaultSettings)
 
 
   if (!fontsLoaded) {
@@ -74,7 +103,7 @@ export default function App() {
             {
               taskItems.map((task, index) => {
                 return (
-                  <TouchableOpacity key={index}  onPress={() => {completeTask(index);}}>
+                  <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
                     <Task text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                   </TouchableOpacity>
                 )
@@ -90,14 +119,14 @@ export default function App() {
           style={styles.writeTaskWrapper}
         >
           <TextInput style={styles.input} placeholder={'Write a task'} onChangeText={text => setTask({text:text, priority: 9, duration: 7})} ref={(myInput) => { this.textInput = myInput }} />
-          <TouchableOpacity onPress={onButtonPress}>
+          <TouchableOpacity onPress={onAddTask}>
             <View style={styles.addWrapper}>
               <Text style={styles.addText}>+</Text>
             </View>
           </TouchableOpacity>
         </KeyboardAvoidingView>
 
-        <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} initialSettings={initialSettings} />
+        <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} onEdit={onEditTaskComplete} onDelete={onDelete} />
 
       </View>
     </GestureHandlerRootView>

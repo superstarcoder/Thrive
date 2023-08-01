@@ -2,11 +2,11 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-n
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
 import { useFonts } from 'expo-font'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Clock } from 'phosphor-react-native';
 import ScrollSelect from './FormComponents/ScrollSelect';
 
-const DurationBox = ({dispatch, duration}) => {
+const DurationBox =  forwardRef(({dispatch, duration}, ref) => {
 
   // const [duration, setDuration] = useState(0)
 
@@ -15,12 +15,7 @@ const DurationBox = ({dispatch, duration}) => {
   // }, [duration])
 
   // load fonts
-  var [fontsLoaded] = useFonts({
-    "MPlus": require("../assets/fonts/mplusRegular.ttf")
-  })
-  if (!fontsLoaded) {
-    return null
-  }
+ 
 
   let dataArray = [0, 0.2, 0.5, 0.8]
 
@@ -28,8 +23,30 @@ const DurationBox = ({dispatch, duration}) => {
     dataArray.push(i)
   }
 
-  const setDurationOnUpdate = (value) => {
-    setDuration(value)
+  // const setDurationOnUpdate = (value) => {
+  //   setDuration(value)
+  // }
+
+  const scrollSelectRef = useRef()
+
+  useImperativeHandle(ref, () => ({
+
+    setDuration (duration) {
+      const index = dataArray.indexOf(duration)
+      if (index == -1) {
+        console.error("DurationBox.js: setDuration: duration not in list of possible durations")
+      }
+      // console.log(index, duration, dataArray)
+      scrollSelectRef?.current?.scrollToIndex(index)
+    }
+
+  }));
+
+  var [fontsLoaded] = useFonts({
+    "MPlus": require("../assets/fonts/mplusRegular.ttf")
+  })
+  if (!fontsLoaded) {
+    return null
   }
 
   // console.log("dataArray: "+dataArray)
@@ -47,11 +64,11 @@ const DurationBox = ({dispatch, duration}) => {
         </View>
       </View>
       <View style={styles.inputBoxRight}>
-        <ScrollSelect dataArray={dataArray} dispatch={dispatch} duration={duration}/>
+        <ScrollSelect dataArray={dataArray} dispatch={dispatch} duration={duration} ref={scrollSelectRef}/>
       </View >
     </View>
   )
-}
+});
 
 export default DurationBox
 
