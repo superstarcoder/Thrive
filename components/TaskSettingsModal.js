@@ -39,9 +39,9 @@ function reducer(taskSettings, action) {
       console.log(action.payload.repeatDays)
       return {...taskSettings, repeatDays: action.payload.repeatDays}
     case "single_update_repeatDays":
-      console.log(action.payload.day, action.payload.selected)
+      console.log(action.payload.dayInt, action.payload.selected)
       const newRepeatDays = taskSettings.repeatDays
-      newRepeatDays[action.payload.day] = action.payload.selected
+      newRepeatDays[action.payload.dayInt] = action.payload.selected
       return {...taskSettings, repeatDays: newRepeatDays}
     case "update_due_date_time":
       console.log(action.payload.dueDate)
@@ -120,10 +120,12 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
   // const [currentSettings, setCurrentSettings] = useState(initialSettings)
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  let initRepeatDays = {} 
-  for (day of daysOfWeek) {
-    initRepeatDays[day] = false
-  }
+  // let initRepeatDays = {} 
+  // for (day of daysOfWeek) {
+  //   initRepeatDays[day] = false
+  // }
+  let initRepeatDays =  Array(7).fill(false)
+
   const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4()})
 
 	return (

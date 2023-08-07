@@ -7,8 +7,10 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../
 
 const HighlightSelect = ({text, selected, onChange, backgroundColor=Color.LightBlue}) => {
 
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
   const onCheckPress = () => {
-    onChange(!selected, text)
+    onChange(!selected, daysOfWeek.indexOf(text))
   }
 
   // console.log(text+" selected: "+selected)

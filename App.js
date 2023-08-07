@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto'
 import React, {useState, useRef, useCallback, useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
 import Task from './components/Task';
@@ -9,17 +10,86 @@ import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
 import TaskSettingsModal from './components/TaskSettingsModal';
 import { LogBox } from 'react-native';
+import { Session } from '@supabase/supabase-js'
+import { supabase } from './lib/supabase'
+import Auth from './components/Auth';
+
+// import 'react-native-url-polyfill/auto'
+// import { createClient } from "@supabase/supabase-js";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
+// const supabase = createClient("https://yzbfybzztgrtnagvvmzv.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6YmZ5Ynp6dGdydG5hZ3Z2bXp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTExNzQxMDcsImV4cCI6MjAwNjc1MDEwN30.Yyja16-OfD98Z37i25zO5YSMOFqK6N4ZVQpuUETPQfE"
+//  , {auth: {
+//     storage: AsyncStorage,
+//     autoRefreshToken: true,
+//     persistSession: true,
+//     detectSessionInUrl: false,
+//   }},
+// );
+
 
 export default function App() {
   const [task, setTask] = useState(null);
+  const [session, setSession] = useState(null)
+
   const [taskItems, setTaskItems] = useState([]);
 
+  supabase
+  .channel('any')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'Tasks' }, payload => {
+    console.log('Change received!', payload)
+  })
+  .subscribe()
+
+  // async function getTaskItems() {
+  //   const { data } = await supabase.from("Tasks").select();
+  //   setTaskItems(data);
+  //   console.log(data)
+  // }
+
+  // const [dbTasks, setDbTasks] = useState([]);
+
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 }, [])
 
-  const onSave = (newTaskSettings) => {
+
+  const signOutUser = async () => {
+    if (session.user && session) {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        throw error
+      }
+    }
+  }
+
+  const onSave = async (newTaskSettings) => {
+    console.log(newTaskSettings)
     setTaskItems([...taskItems, newTaskSettings])
+
+
+    let taskSettingsCopy = {...newTaskSettings} 
+    taskSettingsCopy["dueDate"] = newTaskSettings["dueDate"].toISOString()
+    taskSettingsCopy["email"] = session.user.email
+    delete taskSettingsCopy["id"]
+
+
+    console.log("adding task: "+taskSettingsCopy)
+
+    const { error } = await supabase
+    .from('Tasks')
+    .insert(taskSettingsCopy)
+
+    console.log("error adding task?: "+error)
   }
 
   const completeTask = (index) => {
@@ -36,6 +106,7 @@ export default function App() {
 
   const onEditTask = (taskSettings) => {
     taskSettingsRef?.current?.showEditTaskModal(taskSettings)
+    // getTaskItems()
   }
 
   const onEditTaskComplete = (taskSettingsEdited) => {
@@ -87,49 +158,63 @@ export default function App() {
     return null
   }
 
+
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <View style={styles.container}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1
-          }}
-          keyboardShouldPersistTaps='handled'
-        >
+    
+      <GestureHandlerRootView style={{flex: 1}}>
+        {session && session.user ? (
 
-        <View style={styles.tasksWrapper}>
-          <StyledH1 style={styles.sectionTitle} text={"Today's tasks"}/>
-          <View style={styles.items}>
-            {
-              taskItems.map((task, index) => {
-                return (
-                  <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                    <Task text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-                  </TouchableOpacity>
-                )
-              })
-            }
-          </View>
-        </View>
-          
-        </ScrollView>
+        <View style={styles.container}>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1
+            }}
+            keyboardShouldPersistTaps='handled'
+          >
 
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.writeTaskWrapper}
-        >
-          <TextInput style={styles.input} placeholder={'Write a task'} onChangeText={text => setTask({text:text, priority: 9, duration: 7})} ref={(myInput) => { this.textInput = myInput }} />
-          <TouchableOpacity onPress={onAddTask}>
-            <View style={styles.addWrapper}>
-              <Text style={styles.addText}>+</Text>
+          <View style={styles.tasksWrapper}>
+            <StyledH1 style={styles.sectionTitle} text={"Today's tasks"}/>
+            <View style={styles.items}>
+              {
+                taskItems.map((task, index) => {
+                  return (
+                    <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+                      <Task text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                    </TouchableOpacity>
+                  )
+                })
+              }
             </View>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
+          </View>
+            
+          </ScrollView>
 
-        <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} onEdit={onEditTaskComplete} onDelete={onDelete} />
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.writeTaskWrapper}
+          >
+            <TextInput style={styles.input} placeholder={'Write a task'} onChangeText={text => setTask({text:text, priority: 9, duration: 7})} ref={(myInput) => { this.textInput = myInput }} />
 
-      </View>
-    </GestureHandlerRootView>
+            <TouchableOpacity onPress={onAddTask}>
+              <View style={styles.addWrapper}>
+                <Text style={styles.addText}>+</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={signOutUser}>
+              <View style={styles.addWrapper}>
+              </View>
+            </TouchableOpacity>
+
+          </KeyboardAvoidingView>
+
+          <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} onEdit={onEditTaskComplete} onDelete={onDelete} />
+
+         
+        </View>) : 
+        (<Auth />)}
+
+      </GestureHandlerRootView>
   );
 }
 

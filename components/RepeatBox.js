@@ -10,27 +10,28 @@ import { ACTIONS } from './MyGlobalVars';
 const RepeatBox = ({dispatch, repeatDays}) => {
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  let myDict = {} 
-  for (day of daysOfWeek) {
-    myDict[day] = "false"
-  }
+  // console.log("repeat days: "+repeatDays)
+  // let myDict = {} 
+  // for (day of daysOfWeek) {
+  //   myDict[day] = "false"
+  // }
   const updateSelectedList = (value, text) => {
-    dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {day: text, selected: value}})
+    dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {dayInt: text, selected: value}})
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    console.log("yuh")
+    // console.log("yuh")
   }
 
   return (
     <View style={styles.inputBox}>
       <StyledH2 text={"Repeat"} style={styles.inputTitle}/>
       <View style={styles.multiSelect}>
-        <HighlightSelect text="Mon" onChange={updateSelectedList} selected={repeatDays["Mon"]}/>
-        <HighlightSelect text="Tue" onChange={updateSelectedList} selected={repeatDays["Tue"]}/>
-        <HighlightSelect text="Wed" onChange={updateSelectedList} selected={repeatDays["Wed"]}/>
-        <HighlightSelect text="Thu" onChange={updateSelectedList} selected={repeatDays["Thu"]}/>
-        <HighlightSelect text="Fri" onChange={updateSelectedList} selected={repeatDays["Fri"]}/>
-        <HighlightSelect text="Sat" onChange={updateSelectedList} selected={repeatDays["Sat"]}/>
-        <HighlightSelect text="Sun" onChange={updateSelectedList} selected={repeatDays["Sun"]}/>
+        <HighlightSelect text="Mon" onChange={updateSelectedList} selected={repeatDays[0]}/>
+        <HighlightSelect text="Tue" onChange={updateSelectedList} selected={repeatDays[1]}/>
+        <HighlightSelect text="Wed" onChange={updateSelectedList} selected={repeatDays[2]}/>
+        <HighlightSelect text="Thu" onChange={updateSelectedList} selected={repeatDays[3]}/>
+        <HighlightSelect text="Fri" onChange={updateSelectedList} selected={repeatDays[4]}/>
+        <HighlightSelect text="Sat" onChange={updateSelectedList} selected={repeatDays[5]}/>
+        <HighlightSelect text="Sun" onChange={updateSelectedList} selected={repeatDays[6]}/>
       </View>
     </View>
   )
