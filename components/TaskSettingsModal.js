@@ -69,8 +69,12 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
       setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
     },
     showEditTaskModal (myTaskSettings) {
+
+      // console.log("task that we're going to edit: "+JSON.stringify(myTaskSettings))
+      // console.log("dueDate in task we're going to edit: "+myTaskSettings["dueDate"])
+      // console.log("dueDate type in task we're going to edit: "+typeof myTaskSettings["dueDate"])
       bottomSheetRef?.current?.scrollTo(1)
-      console.log("going to update duration to: "+myTaskSettings.duration)
+      // console.log("going to update duration to: "+myTaskSettings.duration)
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: myTaskSettings}})
       durationBoxRef?.current?.setDuration(myTaskSettings.duration)
       importanceBoxRef?.current?.setImportance(myTaskSettings.importance)

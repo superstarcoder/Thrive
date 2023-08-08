@@ -35,13 +35,6 @@ export default function App() {
 
   const [taskItems, setTaskItems] = useState([]);
 
-  supabase
-  .channel('any')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'Tasks' }, payload => {
-    console.log('Change received!', payload)
-  })
-  .subscribe()
-
   // async function getTaskItems() {
   //   const { data } = await supabase.from("Tasks").select();
   //   setTaskItems(data);
@@ -50,7 +43,17 @@ export default function App() {
 
   // const [dbTasks, setDbTasks] = useState([]);
 
+  supabase
+  .channel('any')
+  // .on('postgres_changes', { event: '*', schema: 'public', table: 'Tasks' }, payload => {
+  //   syncLocalAndDb()
+  // })
+  // .subscribe()
+
   useEffect(() => {
+
+
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
     })
@@ -62,6 +65,22 @@ export default function App() {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 }, [])
 
+  useEffect(() => {
+
+
+    if (session && session.user) {
+      console.log("syncing data")
+
+      const fetchData = async () => {
+        await syncLocalAndDb()
+      }
+  
+      fetchData()
+    }
+
+
+  }, [session])
+
 
   const signOutUser = async () => {
     if (session.user && session) {
@@ -72,36 +91,51 @@ export default function App() {
     }
   }
 
+
+  const syncLocalAndDb = async () => {
+    const { data, error } = await supabase
+    .from('Tasks')
+    .select()
+    .eq('email', session.user.email)
+    .order('created_at', { ascending: true })
+
+    if (error) console.log(error)
+
+    let newTaskItems = []
+    for (const task of data) {
+      task["dueDate"] = new Date(task["dueDate"])
+      newTaskItems = [...newTaskItems, task]
+    }
+
+    console.log("new task items: "+JSON.stringify(newTaskItems))
+
+    setTaskItems(newTaskItems)
+
+    // console.log("current tasks db: "+JSON.stringify(data))    
+  }
+
+  const addTaskToDB = async (newTaskSettings) => {
+
+  }
+
+
   const onSave = async (newTaskSettings) => {
-    console.log(newTaskSettings)
-    setTaskItems([...taskItems, newTaskSettings])
-
-
+    // make data ready for inserting into db
     let taskSettingsCopy = {...newTaskSettings} 
     taskSettingsCopy["dueDate"] = newTaskSettings["dueDate"].toISOString()
     taskSettingsCopy["email"] = session.user.email
     delete taskSettingsCopy["id"]
 
-
-    console.log("adding task: "+taskSettingsCopy)
-
-    const { error } = await supabase
+    // insert into db
+    const { data, error } = await supabase
     .from('Tasks')
     .insert(taskSettingsCopy)
+    .select()
 
-    console.log("error adding task?: "+error)
-  }
+    if (error) console.log(error)
+    console.log("db updated")
 
-  const completeTask = (index) => {
-    let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
-    setTaskItems(itemsCopy)
-  }
-
-  const onAddTask = () => {
-    // initializeBottomSheet();
-    // setInitialSettings(defaultSettings)
-    taskSettingsRef?.current?.showAddTaskModal()
+    await syncLocalAndDb()
   }
 
   const onEditTask = (taskSettings) => {
@@ -109,30 +143,79 @@ export default function App() {
     // getTaskItems()
   }
 
-  const onEditTaskComplete = (taskSettingsEdited) => {
-    const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
+  const onEditTaskComplete = async (taskSettingsEdited) => {
 
-    let taskItemsCopy = [...taskItems]
-    const index = taskItemsCopy.indexOf(oldTask)
-    if (index == -1) {
-      console.error("App.js: onEditTaskComplete: unable to edit task since task is not found in array state")
-    }
-    taskItemsCopy[index] = taskSettingsEdited //replace 1st occurance of this task
-    setTaskItems(taskItemsCopy)
-    console.log("edited")
+    const idToEdit = taskSettingsEdited["id"]
+
+    let taskSettingsCopy = {...taskSettingsEdited} 
+    taskSettingsCopy["dueDate"] = taskSettingsEdited["dueDate"].toISOString()
+    taskSettingsCopy["email"] = session.user.email
+    delete taskSettingsCopy["id"]
+
+    // insert into db
+    const { error } = await supabase
+    .from('Tasks')
+    .update(taskSettingsCopy)
+    .eq('id', idToEdit)
+
+    if (error) console.log(error)
+    console.log("db updated")
+
+    await syncLocalAndDb()
+
+    // const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
+
+    // let taskItemsCopy = [...taskItems]
+    // const index = taskItemsCopy.indexOf(oldTask)
+    // if (index == -1) {
+    //   console.error("App.js: onEditTaskComplete: unable to edit task since task is not found in array state")
+    // }
+    // taskItemsCopy[index] = taskSettingsEdited //replace 1st occurance of this task
+    // setTaskItems(taskItemsCopy)
+    // console.log("edited")
   }
 
-  const onDelete = (taskSettingsToDelete) => {
-    const oldTask = taskItems.find(x => x.id == taskSettingsToDelete.id)
+  // const completeTask = (index) => {
+  //   let itemsCopy = [...taskItems];
+  //   itemsCopy.splice(index, 1);
+  //   setTaskItems(itemsCopy)
+  // }
 
-    let taskItemsCopy = [...taskItems]
-    const index = taskItemsCopy.indexOf(oldTask)
-    if (index == -1) {
-      console.error("App.js: onEditTaskComplete: unable to dlete task since task is not found in array state")
+  const onAddTask = () => {
+    // initializeBottomSheet();
+    // setInitialSettings(defaultSettings)
+    taskSettingsRef?.current?.showAddTaskModal()
+  }
+
+
+
+  const onDelete = async (taskSettingsToDelete) => {
+
+    console.log("deleting: "+taskSettingsToDelete.id)
+    const { error } = await supabase
+    .from('Tasks')
+    .delete()
+    .eq('id', taskSettingsToDelete.id)
+
+    console.log("error: "+error)
+
+
+    if (error) {
+      console.log(error)
     }
-    taskItemsCopy.splice(index, 1) //delete 1st occurance of this task
-    setTaskItems(taskItemsCopy)
-    console.log("deleted")
+
+    await syncLocalAndDb()
+
+    // const oldTask = taskItems.find(x => x.id == taskSettingsToDelete.id)
+
+    // let taskItemsCopy = [...taskItems]
+    // const index = taskItemsCopy.indexOf(oldTask)
+    // if (index == -1) {
+    //   console.error("App.js: onEditTaskComplete: unable to dlete task since task is not found in array state")
+    // }
+    // taskItemsCopy.splice(index, 1) //delete 1st occurance of this task
+    // setTaskItems(taskItemsCopy)
+    // console.log("deleted")
   }
 
 

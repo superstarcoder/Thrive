@@ -34,6 +34,9 @@ const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 		console.log("A date has been picked: ", date);
 	};
 
+
+  console.log("this is dateTime: "+typeof dateTime)
+
   return (
     <View style={styles.inputBox}>
       <StyledH2 text={"Due Date / Time"} style={styles.inputTitle}/>
