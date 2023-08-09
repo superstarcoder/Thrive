@@ -13,8 +13,6 @@ const HighlightSelect = ({text, selected, onChange, backgroundColor=Color.LightB
     onChange(!selected, daysOfWeek.indexOf(text))
   }
 
-  // console.log(text+" selected: "+selected)
-
   let hText;
   if (selected) {
 	  hText = <View style={[styles.highlighted, {backgroundColor: backgroundColor}]}>

@@ -8,14 +8,6 @@ import React, {useState, forwardRef, useImperativeHandle} from 'react'
 
 const MyTextInput = ({placeholderText, onChangeText, text, multiline=false}) => {
 
-  // const [text, setText] = useState("");
-
-  // useImperativeHandle(ref, () => ({
-  //   setValue (newValue) {
-  //     setText(newValue)
-  //   }
-  // }))
-
   // load fonts
   var [fontsLoaded] = useFonts({
     "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
@@ -24,11 +16,6 @@ const MyTextInput = ({placeholderText, onChangeText, text, multiline=false}) => 
   if (!fontsLoaded) {
     return null
   }
-
-  // const onChangeText = (newText) => {
-  //   getText(newText)
-  //   setText(newText)
-  // }
 
   return (
     <View>

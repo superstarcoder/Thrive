@@ -14,20 +14,6 @@ import { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth';
 
-// import 'react-native-url-polyfill/auto'
-// import { createClient } from "@supabase/supabase-js";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
-// const supabase = createClient("https://yzbfybzztgrtnagvvmzv.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6YmZ5Ynp6dGdydG5hZ3Z2bXp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTExNzQxMDcsImV4cCI6MjAwNjc1MDEwN30.Yyja16-OfD98Z37i25zO5YSMOFqK6N4ZVQpuUETPQfE"
-//  , {auth: {
-//     storage: AsyncStorage,
-//     autoRefreshToken: true,
-//     persistSession: true,
-//     detectSessionInUrl: false,
-//   }},
-// );
-
 
 export default function App() {
   const [task, setTask] = useState(null);
@@ -35,24 +21,21 @@ export default function App() {
 
   const [taskItems, setTaskItems] = useState([]);
 
-  // async function getTaskItems() {
-  //   const { data } = await supabase.from("Tasks").select();
-  //   setTaskItems(data);
-  //   console.log(data)
-  // }
+  // supabase realtime:
 
-  // const [dbTasks, setDbTasks] = useState([]);
-
-  supabase
-  .channel('any')
+  // supabase
+  // .channel('any')
   // .on('postgres_changes', { event: '*', schema: 'public', table: 'Tasks' }, payload => {
   //   syncLocalAndDb()
   // })
   // .subscribe()
 
+
+  // ----------------------------------------------------------
+  // auth stuff
+  // ----------------------------------------------------------
+
   useEffect(() => {
-
-
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -65,19 +48,15 @@ export default function App() {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 }, [])
 
+  // sync local data if logged in
   useEffect(() => {
 
-
     if (session && session.user) {
-      console.log("syncing data")
-
       const fetchData = async () => {
         await syncLocalAndDb()
       }
-  
       fetchData()
     }
-
 
   }, [session])
 
@@ -91,7 +70,9 @@ export default function App() {
     }
   }
 
-
+  // ----------------------------------------------------------
+  // database changes
+  // ----------------------------------------------------------
   const syncLocalAndDb = async () => {
     const { data, error } = await supabase
     .from('Tasks')
@@ -107,17 +88,8 @@ export default function App() {
       newTaskItems = [...newTaskItems, task]
     }
 
-    console.log("new task items: "+JSON.stringify(newTaskItems))
-
     setTaskItems(newTaskItems)
-
-    // console.log("current tasks db: "+JSON.stringify(data))    
   }
-
-  const addTaskToDB = async (newTaskSettings) => {
-
-  }
-
 
   const onSave = async (newTaskSettings) => {
     // make data ready for inserting into db
@@ -133,14 +105,8 @@ export default function App() {
     .select()
 
     if (error) console.log(error)
-    console.log("db updated")
 
     await syncLocalAndDb()
-  }
-
-  const onEditTask = (taskSettings) => {
-    taskSettingsRef?.current?.showEditTaskModal(taskSettings)
-    // getTaskItems()
   }
 
   const onEditTaskComplete = async (taskSettingsEdited) => {
@@ -159,7 +125,6 @@ export default function App() {
     .eq('id', idToEdit)
 
     if (error) console.log(error)
-    console.log("db updated")
 
     await syncLocalAndDb()
 
@@ -174,21 +139,7 @@ export default function App() {
     // setTaskItems(taskItemsCopy)
     // console.log("edited")
   }
-
-  // const completeTask = (index) => {
-  //   let itemsCopy = [...taskItems];
-  //   itemsCopy.splice(index, 1);
-  //   setTaskItems(itemsCopy)
-  // }
-
-  const onAddTask = () => {
-    // initializeBottomSheet();
-    // setInitialSettings(defaultSettings)
-    taskSettingsRef?.current?.showAddTaskModal()
-  }
-
-
-
+  
   const onDelete = async (taskSettingsToDelete) => {
 
     console.log("deleting: "+taskSettingsToDelete.id)
@@ -197,50 +148,37 @@ export default function App() {
     .delete()
     .eq('id', taskSettingsToDelete.id)
 
-    console.log("error: "+error)
-
-
     if (error) {
       console.log(error)
     }
 
     await syncLocalAndDb()
-
-    // const oldTask = taskItems.find(x => x.id == taskSettingsToDelete.id)
-
-    // let taskItemsCopy = [...taskItems]
-    // const index = taskItemsCopy.indexOf(oldTask)
-    // if (index == -1) {
-    //   console.error("App.js: onEditTaskComplete: unable to dlete task since task is not found in array state")
-    // }
-    // taskItemsCopy.splice(index, 1) //delete 1st occurance of this task
-    // setTaskItems(taskItemsCopy)
-    // console.log("deleted")
   }
 
 
-  // const bottomSheetRef = useRef(null)
+  // ----------------------------------------------------------
+  // UI stuff
+  // ----------------------------------------------------------
+
+  const onEditTask = (taskSettings) => {
+    taskSettingsRef?.current?.showEditTaskModal(taskSettings)
+  }
+
+  const onAddTask = () => {
+    taskSettingsRef?.current?.showAddTaskModal()
+  }
+
+
   const taskSettingsRef = useRef();
-
-  // const initializeBottomSheet = useCallback(() => {
-
-  //   const isActive = bottomSheetRef?.current?.isActive()
-  //   bottomSheetRef?.current?.scrollTo(1)
-  // }, [])
 
   var [fontsLoaded] = useFonts({
     "MPlusRegular": require("./assets/fonts/mplusRegular.ttf"),
     "MPlusMedium": require("./assets/fonts/mplusMedium.ttf")
   })
 
-  // const defaultSettings = {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: {}, dueDate: new Date(), includeOnlyTime: false}
-  // const [initialSettings, setInitialSettings] = useState(defaultSettings)
-
-
   if (!fontsLoaded) {
     return null
   }
-
 
   return (
     
@@ -248,6 +186,8 @@ export default function App() {
         {session && session.user ? (
 
         <View style={styles.container}>
+
+          {/* display tasks */}
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1
@@ -272,6 +212,7 @@ export default function App() {
             
           </ScrollView>
 
+          {/* bottom bar/buttons */}
           <KeyboardAvoidingView 
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.writeTaskWrapper}
@@ -292,7 +233,6 @@ export default function App() {
           </KeyboardAvoidingView>
 
           <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} onEdit={onEditTaskComplete} onDelete={onDelete} />
-
          
         </View>) : 
         (<Auth />)}

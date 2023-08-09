@@ -31,11 +31,7 @@ const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 		hideDatePicker(); // must be first
     // setSelectedDateTime(new Date(date))
     dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(date)}})
-		console.log("A date has been picked: ", date);
 	};
-
-
-  console.log("this is dateTime: "+typeof dateTime)
 
   return (
     <View style={styles.inputBox}>

@@ -56,8 +56,6 @@ function reducer(taskSettings, action) {
 
 const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
 
-  // const titleBoxRef = useRef()
-
   useImperativeHandle(ref, () => ({
 
     showAddTaskModal () {
@@ -70,11 +68,7 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
     },
     showEditTaskModal (myTaskSettings) {
 
-      // console.log("task that we're going to edit: "+JSON.stringify(myTaskSettings))
-      // console.log("dueDate in task we're going to edit: "+myTaskSettings["dueDate"])
-      // console.log("dueDate type in task we're going to edit: "+typeof myTaskSettings["dueDate"])
       bottomSheetRef?.current?.scrollTo(1)
-      // console.log("going to update duration to: "+myTaskSettings.duration)
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: myTaskSettings}})
       durationBoxRef?.current?.setDuration(myTaskSettings.duration)
       importanceBoxRef?.current?.setImportance(myTaskSettings.importance)
@@ -118,16 +112,6 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
     onDelete(taskSettings)
   }
 
-
-  // task structure:
-  // const initialSettings = {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: {}, dueDate: new Date(), includeOnlyTime: false}
-  // const [currentSettings, setCurrentSettings] = useState(initialSettings)
-
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  // let initRepeatDays = {} 
-  // for (day of daysOfWeek) {
-  //   initRepeatDays[day] = false
-  // }
   let initRepeatDays =  Array(7).fill(false)
 
   const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4()})
@@ -135,7 +119,6 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
 	return (
 	<BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
 
-	{/* <KeyboardAvoidingView behavior="padding" enabled> */}
 		<ScrollView style={[styles.addTaskModalSettings]}>
 		  <TitleBox title={taskSettings.title} dispatch={dispatch}/>
 		  <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef}/>
@@ -148,7 +131,6 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
 		  <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime}/>
 		</ScrollView>
 
-	  {/* </ KeyboardAvoidingView > */}
 	  <View style={styles.addTaskModalButtons}>
 		  <TouchableOpacity onPress={onSavePress}>
         <View style={styles.saveTaskButton}>

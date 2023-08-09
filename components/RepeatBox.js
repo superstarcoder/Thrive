@@ -9,16 +9,9 @@ import { ACTIONS } from './MyGlobalVars';
 
 const RepeatBox = ({dispatch, repeatDays}) => {
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  // console.log("repeat days: "+repeatDays)
-  // let myDict = {} 
-  // for (day of daysOfWeek) {
-  //   myDict[day] = "false"
-  // }
   const updateSelectedList = (value, text) => {
     dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {dayInt: text, selected: value}})
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    // console.log("yuh")
   }
 
   return (
