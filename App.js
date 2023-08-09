@@ -176,6 +176,24 @@ export default function App() {
     "MPlusMedium": require("./assets/fonts/mplusMedium.ttf")
   })
 
+  const onComplete = async (newComplete, taskId) => {
+
+    // local changes
+    const taskItemsCopy = [...taskItems]
+    const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
+    taskItemsCopy[indexToChange]["complete"] = newComplete
+    setTaskItems(taskItemsCopy)
+
+    // db changes
+    const { error } = await supabase
+    .from('Tasks')
+    .update({complete: newComplete})
+    .eq('id', taskId)
+
+    if (error) console.log(error)
+
+  }
+
   if (!fontsLoaded) {
     return null
   }
@@ -202,7 +220,7 @@ export default function App() {
                 taskItems.map((task, index) => {
                   return (
                     <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                      <Task text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                      <Task taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                     </TouchableOpacity>
                   )
                 })

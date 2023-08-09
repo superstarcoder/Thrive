@@ -5,13 +5,9 @@ import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledText';
 import { Clock, WarningCircle } from 'phosphor-react-native';
 import TaskCheckBox from './TaskCheckBox';
 
-const Task = ({text, duration, priority, points, description, completeDefault=false}) => {
+const Task = ({text, duration, priority, points, description, complete, onComplete, taskId}) => {
 
-  // 1, 2, 3
-  // 4, 5, 6, 7
-  // 8, 9, 10
-
-  const [complete, setComplete] = useState(completeDefault)
+  // const [complete, setComplete] = useState(completeDefault)
 
   if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
@@ -58,7 +54,7 @@ const Task = ({text, duration, priority, points, description, completeDefault=fa
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
       <View style={styles.checkBoxSection}>
-        <TaskCheckBox size={45} onChange={setComplete} checked={complete}/>
+        <TaskCheckBox size={45} onChange={onComplete} checked={complete} taskId={taskId}/>
       </View>
     </View>
   )
