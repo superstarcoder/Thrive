@@ -65,11 +65,12 @@ const SliderBar = forwardRef (({getSliderPercent, onSliderMoveEnd}, sliderBarRef
   const sliderCircleStyle = useAnimatedStyle(() => {
 
     var backgroundColor;
+    const myImportanceNum = parseFloat(((translateX.value/MAX_TRANSLATE_X)*10).toFixed(1))
 
-    if (translateX.value <= 0.40*MAX_TRANSLATE_X) {
+    if (myImportanceNum <= 4) {
       backgroundColor = "#153816"
     }
-    else if (translateX.value <= 0.70*MAX_TRANSLATE_X) {
+    else if (myImportanceNum <= 7) {
       backgroundColor = "#00224d"
     }
     else {
@@ -85,10 +86,12 @@ const SliderBar = forwardRef (({getSliderPercent, onSliderMoveEnd}, sliderBarRef
   const sliderBarFilledStyle = useAnimatedStyle(() => {
 
     var backgroundColor;
-    if (translateX.value <= 0.40*MAX_TRANSLATE_X) {
+    const myImportanceNum = parseFloat(((translateX.value/MAX_TRANSLATE_X)*10).toFixed(1))
+
+    if (myImportanceNum <= 4) {
       backgroundColor = Color.GreenAccent
     }
-    else if (translateX.value <= 0.70*MAX_TRANSLATE_X) {
+    else if (myImportanceNum <= 7) {
       backgroundColor = Color.BlueAccent
     }
     else {

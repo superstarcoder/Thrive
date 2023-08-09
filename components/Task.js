@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Color from '../assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledText';
 import { Clock, WarningCircle } from 'phosphor-react-native';
+import TaskCheckBox from './TaskCheckBox';
 
-
-const Task = ({text, duration, priority, points, description}) => {
+const Task = ({text, duration, priority, points, description, completeDefault=false}) => {
 
   // 1, 2, 3
   // 4, 5, 6, 7
   // 8, 9, 10
+
+  const [complete, setComplete] = useState(completeDefault)
 
   if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
@@ -23,11 +25,22 @@ const Task = ({text, duration, priority, points, description}) => {
     accent = <View style={styles.highPriorityAccent}></View>
     importanceText = <StyledH4 text={"high importance"} style={styles.importanceText}/>
   }
+  
+  if (complete) {
+    taskConditionalStyle = {
+      backgroundColor: "#28265c",
+    }
+  }
+  else {
+    taskConditionalStyle = {
+      backgroundColor: Color.DarkBlue,
+    }
+  }
 
   return (
-    <View style={styles.task}>
+    <View style={[styles.task, taskConditionalStyle]}>
       {accent}
-      <View style={styles.taskContent}>
+      <View style={[styles.taskContent]}>
         <StyledH1 text={text} style={styles.title}/>
 
         {description != "" ? ( <StyledH4 text={description}/> ) : ( null )}
@@ -44,13 +57,17 @@ const Task = ({text, duration, priority, points, description}) => {
         </View>
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
+      <View style={styles.checkBoxSection}>
+        <TaskCheckBox size={45} onChange={setComplete} checked={complete}/>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   title: {
-    // color: Color.Blue
+    flex: 1,
+    flexWrap: 'wrap',
   },
   clockIcon: {
     marginRight: 6,
@@ -100,7 +117,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   task: {
-    backgroundColor: Color.DarkBlue,
+
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -109,7 +126,15 @@ const styles = StyleSheet.create({
   taskContent: {
     flexDirection: 'column',
     padding: 15,
+    paddingRight: 0,
+    flex: 1,
   },
+  checkBoxSection: {
+    margin: 20,
+    marginLeft: "auto",
+    // width: 50,
+    
+  }
 });
 
 export default Task;

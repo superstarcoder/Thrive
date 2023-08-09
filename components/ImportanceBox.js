@@ -24,10 +24,10 @@ const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
   }, [importanceText])
 
   const updateImportanceText = (myImportanceNum) => {
-    if (myImportanceNum <= 4) {
+    if (myImportanceNum <= 4.0) {
       setImportanceText("low")
     }
-    else if (myImportanceNum <= 7) {
+    else if (myImportanceNum <= 7.0) {
       setImportanceText("medium")
     }
     else {
