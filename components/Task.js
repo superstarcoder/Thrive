@@ -5,7 +5,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledText';
 import { Clock, WarningCircle } from 'phosphor-react-native';
 import TaskCheckBox from './TaskCheckBox';
 
-const Task = ({text, duration, priority, points, description, complete, onComplete, taskId}) => {
+const Task = ({text, duration, priority, points, description, complete, onComplete, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
 
   // const [complete, setComplete] = useState(completeDefault)
 
@@ -33,11 +33,27 @@ const Task = ({text, duration, priority, points, description, complete, onComple
     }
   }
 
+  if (showDueTime) {
+    dueDateTimeInfo =
+    <View style={styles.dateTimeInfoContainer}>
+      <StyledH4 text={dueDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
+    </View>
+  }
+  else if (showDueDate) {
+    dueDateTimeInfo = <View style={styles.dateTimeInfoContainer}>
+      <StyledH4 text={dueDate.toLocaleDateString()} style={styles.currentDate}/>
+    </View>
+  }
+  else {
+    dueDateTimeInfo = <View></View>
+  }
+
+
   return (
     <View style={[styles.task, taskConditionalStyle]}>
       {accent}
       <View style={[styles.taskContent]}>
-        <StyledH1 text={text} style={styles.title}/>
+        <StyledH2 text={text} style={styles.title}/>
 
         {description != "" ? ( <StyledH4 text={description}/> ) : ( null )}
         
@@ -51,6 +67,8 @@ const Task = ({text, duration, priority, points, description, complete, onComple
             {importanceText}
           </View>
         </View>
+
+        {dueDateTimeInfo}
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
       <View style={styles.checkBoxSection}>
@@ -130,7 +148,17 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     // width: 50,
     
-  }
+  },
+  dateTimeInfoContainer: {
+    backgroundColor: "hsl(0, 0%, 24%)",
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+    padding: 2,
+    alignSelf: "flex-start",
+    marginTop: 8,
+  },
 });
 
 export default Task;

@@ -59,8 +59,11 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
   useImperativeHandle(ref, () => ({
 
     showAddTaskModal () {
+      var endOfDayObj = new Date();
+      endOfDayObj.setHours(23,59,59,999);
+
       bottomSheetRef?.current?.scrollTo(1)
-      const initSettings = {title: "", duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4()}
+      const initSettings = {title: "", duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, id: uuidv4()}
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: initSettings}})
       durationBoxRef?.current?.setDuration(initSettings.duration)
       importanceBoxRef?.current?.setImportance(initSettings.importance)

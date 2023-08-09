@@ -198,6 +198,42 @@ export default function App() {
     return null
   }
 
+  function TodaysTasks() {
+
+    return taskItems.map((task, index) => {
+      var endOfDayObj = new Date();
+      endOfDayObj.setHours(23,59,59,999);
+      var dueDateObj = new Date(task["dueDate"])
+
+      // due before end of day
+      if (endOfDayObj >= dueDateObj) {
+        return (
+          <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+            <Task dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+          </TouchableOpacity>
+        )
+      }
+    })
+  }
+
+  function DueLaterTasks() {
+
+    return taskItems.map((task, index) => {
+      var endOfDayObj = new Date();
+      endOfDayObj.setHours(23,59,59,999);
+      var dueDateObj = new Date(task["dueDate"])
+
+      // due after end of day
+      if (endOfDayObj < dueDateObj) {
+        return (
+          <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+            <Task dueDate={task.dueDate} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+          </TouchableOpacity>
+        )
+      }
+    })
+  }
+
   return (
     
       <GestureHandlerRootView style={{flex: 1}}>
@@ -216,16 +252,15 @@ export default function App() {
           <View style={styles.tasksWrapper}>
             <StyledH1 style={styles.sectionTitle} text={"Today's tasks"}/>
             <View style={styles.items}>
-              {
-                taskItems.map((task, index) => {
-                  return (
-                    <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                      <Task taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-                    </TouchableOpacity>
-                  )
-                })
-              }
+              <TodaysTasks />
             </View>
+
+            <StyledH1 style={styles.sectionTitle} text={"Due Later"}/>
+
+            <View style={styles.items}>
+              <DueLaterTasks />
+            </View>
+
           </View>
             
           </ScrollView>
@@ -274,7 +309,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
   },
   items: {
-    marginTop: 30,
+    marginTop: 20,
   },
   writeTaskWrapper: {
     position: 'absolute',
