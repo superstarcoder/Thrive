@@ -13,6 +13,7 @@ import { LogBox } from 'react-native';
 import { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth';
+// import BackgroundImg from './components/BackgroundImage';
 
 
 export default function App() {
@@ -209,7 +210,7 @@ export default function App() {
       if (endOfDayObj >= dueDateObj) {
         return (
           <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-            <Task dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+            <Task isHabit={task.isHabit} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
           </TouchableOpacity>
         )
       }
@@ -237,6 +238,7 @@ export default function App() {
   return (
     
       <GestureHandlerRootView style={{flex: 1}}>
+        {/* <BackgroundImg /> */}
         {session && session.user ? (
 
         <View style={styles.container}>
