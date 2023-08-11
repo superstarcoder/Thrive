@@ -5,6 +5,7 @@ import Task from './components/Task';
 import Color from './assets/themes/Color'
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from './components/text/StyledText';
 // import { XCircle } from 'phosphor-react-native';
+import { CaretRight, CaretLeft } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
@@ -13,12 +14,15 @@ import { LogBox } from 'react-native';
 import { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 // import BackgroundImg from './components/BackgroundImage';
 
 
 export default function App() {
   const [task, setTask] = useState(null);
   const [session, setSession] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(new Date(2023, 7, 10))
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const [taskItems, setTaskItems] = useState([]);
 
@@ -199,41 +203,215 @@ export default function App() {
     return null
   }
 
+
+	const showDatePicker = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+		setDatePickerVisibility(true);
+	};
+
+	const hideDatePicker = () => {
+		setDatePickerVisibility(false);
+	};
+
+  const handleConfirm = (date) => {
+    console.log(date.toLocaleDateString())
+    setSelectedDate(date)
+		hideDatePicker(); // must be first
+	};
+
+  
+
+  // if the date selected is today
+
+  const todaysDate = new Date()
+  const dateTomorrow = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate()+1)
+  const dateYesterday  = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate()-1)
+  console.log(selectedDate.toDateString(), dateTomorrow.toDateString())
+  if (selectedDate.toDateString() == (new Date()).toDateString()) {
+    dateText = "Today"
+  }
+  else if (selectedDate.toDateString() == dateTomorrow.toDateString()){
+    dateText = "Tomorrow"
+  }
+  else if (selectedDate.toDateString() == dateYesterday.toDateString()){
+    dateText = "Yesterday"
+  }
+  else {
+    dateText = selectedDate.toLocaleDateString()
+  }
+
+  const goToNextDay = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    const nextDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()+1)
+    setSelectedDate(nextDay)
+  }
+
+  const goToPreviousDay = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    const previousDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()-1)
+    setSelectedDate(previousDay)
+  }
+
   function TodaysTasks() {
+    /**
+     * todays tasks includes tasks that are due between the start and end of the selected date
+     */
 
-    return taskItems.map((task, index) => {
-      var endOfDayObj = new Date();
-      endOfDayObj.setHours(23,59,59,999);
+    var endOfDayObj = new Date(selectedDate.getFullYear()
+    ,selectedDate.getMonth()
+    ,selectedDate.getDate()
+    ,23,59,59);
+
+    var startOfDayObj = new Date(selectedDate.getFullYear()
+    ,selectedDate.getMonth()
+    ,selectedDate.getDate()
+    ,0,0,0);
+
+
+    // code to count how many tasks to display (that meet the conditions)
+    let count = 0
+    for (const task of taskItems) {
       var dueDateObj = new Date(task["dueDate"])
-
-      // due before end of day
-      if (endOfDayObj >= dueDateObj) {
-        return (
-          <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-            <Task isHabit={task.isHabit} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-          </TouchableOpacity>
-        )
+      if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
+        count += 1 
       }
-    })
+    }
+    // return if there's no tasks to display
+    if (count == 0) {
+      return
+    }
+
+    return (
+      <View>
+        <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/>
+        <View style={styles.items}>
+        {
+          taskItems.map((task, index) => {
+            var dueDateObj = new Date(task["dueDate"])
+            if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
+              return (
+                <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+                  <Task isHabit={task.isHabit} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                </TouchableOpacity>
+              )
+            }
+          })
+        }
+      </View>
+    </View>
+    )
   }
 
   function DueLaterTasks() {
+    /**
+     * Due later tasks include tasks that are incomplete and are due after the end of the selected date
+     * displays ONLY if selected date is today
+     */
 
-    return taskItems.map((task, index) => {
-      var endOfDayObj = new Date();
-      endOfDayObj.setHours(23,59,59,999);
+    // if selected date is not today, return nothing
+    var todaysDate = new Date()
+    if (selectedDate.toDateString() != todaysDate.toDateString()) {
+      return <View></View>
+    }
+
+    var endOfDayObj = new Date(selectedDate.getFullYear()
+    ,selectedDate.getMonth()
+    ,selectedDate.getDate()
+    ,23,59,59);
+
+
+
+
+    // code to count how many tasks to display (that meet the conditions)
+    let count = 0
+    for (const task of taskItems) {
       var dueDateObj = new Date(task["dueDate"])
-
-      // due after end of day
-      if (endOfDayObj < dueDateObj) {
-        return (
-          <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-            <Task dueDate={task.dueDate} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-          </TouchableOpacity>
-        )
+      if (endOfDayObj < dueDateObj && task.complete == false) {
+        count += 1 
       }
-    })
-  }
+    }
+    // return if there's no tasks to display
+    if (count == 0) {
+      return
+    }
+
+    return (
+      <View>
+        <StyledH2 style={styles.sectionTitle} text={"Due Later"}/>
+        <View style={styles.items}>
+        {
+          taskItems.map((task, index) => {
+
+          var dueDateObj = new Date(task["dueDate"])
+
+          // due after end of day
+          if (endOfDayObj < dueDateObj && task.complete == false) {
+            return (
+              <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+                <Task dueDate={task.dueDate} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+              </TouchableOpacity>
+            )
+          }
+        })}
+        </View>
+      </View>
+  )}
+
+  function OverdueTasks() {
+    /**
+     * Due later tasks include tasks that are:
+     * 1. incomplete
+     * 2. are due after the end of the selected date
+     * 3. are not habits
+     * displays ONLY if selected date is today
+     */
+
+    // if selected date is not today, return nothing
+    var todaysDate = new Date()
+    if (selectedDate.toDateString() != todaysDate.toDateString()) {
+      return <View></View>
+    }
+
+    var startOfDayObj = new Date(selectedDate.getFullYear()
+    ,selectedDate.getMonth()
+    ,selectedDate.getDate()
+    ,0,0,0);
+
+
+    // code to count how many tasks to display (that meet the conditions)
+    let count = 0
+    for (const task of taskItems) {
+      var dueDateObj = new Date(task["dueDate"])
+      if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
+        count += 1 
+      }
+    }
+    // return if there's no tasks to display
+    if (count == 0) {
+      return
+    }
+
+    return (
+      <View>
+        <StyledH2 style={styles.sectionTitle} text={"Overdue"}/>
+        <View style={styles.items}>
+        {
+          taskItems.map((task, index) => {
+
+          var dueDateObj = new Date(task["dueDate"])
+
+          // due before the start of selected date and incomplete
+          if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
+            return (
+              <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+                <Task dueDate={task.dueDate} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+              </TouchableOpacity>
+            )
+          }
+        })}
+        </View>
+      </View>
+  )}
 
   return (
     
@@ -242,6 +420,35 @@ export default function App() {
         {session && session.user ? (
 
         <View style={styles.container}>
+
+          <View style={styles.tasksHeader}>
+            <View style={styles.dateSettings}>
+              <View style={styles.currentDateContainer}>
+
+                <TouchableOpacity style={styles.caretLeftContainer} onPress={goToPreviousDay}>
+                  <CaretLeft size={25} weight="fill" color={Color.Blue} style={styles.caretLeft}/>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={showDatePicker}>
+                  <StyledH2 text={dateText} style={styles.currentDate}/>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.caretRightContainer} onPress={goToNextDay}>
+                  <CaretRight size={25} weight="fill" color={Color.Blue} style={styles.caretRight}/>
+                </TouchableOpacity>
+
+                <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                display='inline'
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+                date={selectedDate}
+              />
+
+              </View>
+            </View>
+          </View>
 
           {/* display tasks */}
           <ScrollView
@@ -252,16 +459,17 @@ export default function App() {
           >
 
           <View style={styles.tasksWrapper}>
-            <StyledH1 style={styles.sectionTitle} text={"Today's tasks"}/>
-            <View style={styles.items}>
-              <TodaysTasks />
-            </View>
 
-            <StyledH1 style={styles.sectionTitle} text={"Due Later"}/>
+            <OverdueTasks />
+            <TodaysTasks />
 
-            <View style={styles.items}>
-              <DueLaterTasks />
-            </View>
+            {/* <StyledH2 style={styles.sectionTitle} text={"Due Later"}/> */}
+
+            {/* <View style={styles.items}> */}
+
+            <DueLaterTasks />
+              
+            {/* </View> */}
 
           </View>
             
@@ -297,6 +505,44 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  dateSettings: {
+    // backgroundColor: Color.Blue,
+    paddingHorizontal: 10,
+    bottom: 12,
+    alignSelf: "flex-end",
+    alignItems: "center",
+    justifyContent: "center"
+
+  },
+  caretLeft: {
+    marginHorizontal: 14,
+    marginLeft: 20,
+    marginVertical: 8,
+  },
+  caretRight: {
+    marginHorizontal: 14,
+    marginRight: 20,
+    marginVertical: 8,
+  },
+  tasksHeader: {
+    top: 0,
+    height: 110,
+    width: "100%",
+    backgroundColor: Color.DarkestBlue,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "black",
+    shadowOpacity: 1,
+    shadowRadius: 8,
+  },
+  currentDateContainer: {
+    flexDirection: "row",
+    backgroundColor: "#101326",
+    borderRadius: 8,
+    paddingHorizontal: 0,
+    alignItems: "center"
+  },
   container: {
     flex: 1,
     backgroundColor: Color.DarkestBlue,
@@ -305,13 +551,14 @@ const styles = StyleSheet.create({
     color: Color.White,
   },
   tasksWrapper: {
-    paddingTop: 80,
+    marginTop: 20,
     paddingHorizontal: 20,
   },
   sectionTitle: {
+    marginBottom: 20,
   },
   items: {
-    marginTop: 20,
+    // marginTop: 20,
   },
   writeTaskWrapper: {
     position: 'absolute',

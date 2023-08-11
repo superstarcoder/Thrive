@@ -59,8 +59,11 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
   useImperativeHandle(ref, () => ({
 
     showAddTaskModal () {
-      var endOfDayObj = new Date();
-      endOfDayObj.setHours(23,59,59,999);
+      const todaysDate = new Date();
+      var endOfDayObj = new Date(todaysDate.getFullYear()
+      ,todaysDate.getMonth()
+      ,todaysDate.getDate()
+      ,23,59,59);
 
       bottomSheetRef?.current?.scrollTo(1)
       const initSettings = {title: "", duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, id: uuidv4()}
