@@ -6,7 +6,7 @@ import CheckBox from './FormComponents/CheckBox';
 import * as Haptics from 'expo-haptics';
 import { ACTIONS } from './MyGlobalVars';
 
-const UseHabitBox = ({dispatch, selected}) => {
+const UseHabitBox = ({dispatch, selected, repeatDays, dueDate}) => {
 
   // const [selected, setSelected] = useState(false)
 
@@ -23,7 +23,7 @@ const UseHabitBox = ({dispatch, selected}) => {
   return (
     <View style={styles.inputBox}>
       <StyledH2 text={"Use as a habit:"} style={styles.inputTitle}/>
-      <CheckBox onChange={(value) => {dispatch({type: ACTIONS.UPDATE_IS_HABIT, payload: {isHabit: value}})}} checked={selected}/>
+      <CheckBox onChange={(value) => {dispatch({type: ACTIONS.UPDATE_IS_HABIT, payload: {isHabit: value, repeatDays: repeatDays, dueDate: dueDate}})}} checked={selected}/>
     </View>
   )
 }

@@ -17,6 +17,63 @@ import { ACTIONS, TASK_SETTINGS_MODES } from './MyGlobalVars';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
+// finds the next due date after "initialDate" based on repeatDays
+const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
+  // const todaysDate = new Date()
+  var dayIndex = initialDate.getDay()-1
+  var daysAfterToday = 0
+  if (dayIndex == -1) dayIndex = 6 
+
+  // console.log("dayIndex: "+dayIndex)
+  // console.log("repeatDays[dayIndex]: "+dayIndex)
+
+  // find the next day where repeatDays[dayIndex] == true
+  if ( repeatDays[dayIndex] == false ) {
+    var i = dayIndex+1
+    if (i == 7) i = 0
+    daysAfterToday = 1
+    var dayFound = false
+
+    while (i != dayIndex) {
+
+      if (repeatDays[i] == false) {
+        i += 1
+        daysAfterToday += 1
+      }
+      else {
+        dayFound = true
+        break
+      }
+
+      if (i == 7) i = 0
+      console.log({i, dayIndex})
+    }
+
+    if (dayFound) {
+      dayIndex = i
+    }
+    else {
+      console.log("no repeatDays was selected!")
+      return null
+    }
+  }
+
+  // this isn't working properly. FIX. TODO
+  console.log({daysAfterToday})
+
+  const dueDate = new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate()+daysAfterToday, dueTime.getHours(), dueTime.getMinutes(), dueTime.getSeconds())
+
+  console.log(dueDate.toLocaleString())
+  return dueDate
+
+}
+
+const initHabitHistory = (repeatDays, dueTime) => {
+  var dueDate = findHabitNextDueDate(new Date(), repeatDays, dueTime)
+  if (dueDate == null) return []
+  return [{exactDueDate: dueDate, status: "pending",}]
+}
+
 function reducer(taskSettings, action) {
   switch (action.type) {
     case "update_title":
@@ -34,14 +91,36 @@ function reducer(taskSettings, action) {
       return {...taskSettings, description: action.payload.description}
     case "update_isHabit":
       console.log(action.payload.isHabit)
-      return {...taskSettings, isHabit: action.payload.isHabit}
-    case "update_repeatDays":
-      console.log(action.payload.repeatDays)
-      return {...taskSettings, repeatDays: action.payload.repeatDays}
+      if (action.payload.isHabit == true) {
+        var habitHistory = initHabitHistory(action.payload.repeatDays, action.payload.dueDate)
+        console.log("=============================")
+        console.log("habitHistory: "+JSON.stringify(habitHistory))
+        console.log("=============================")
+      }
+      return {...taskSettings, isHabit: action.payload.isHabit, habitHistory: habitHistory, habitInitDate : new Date()}
+    // case "update_repeatDays":
+    //   // console.log(action.payload.repeatDays)
+    //   if (action.payload.isHabit == true) {
+    //     var habitHistory = updateHistoryWithRepeatDays(action.payload.repeatDays, action.payload.habitHistory)
+    //     console.log("=============================")
+    //     console.log("habitHistory: "+JSON.stringify(habitHistory))
+    //     console.log("=============================")
+    //   }
+      
+    //   return {...taskSettings, repeatDays: action.payload.repeatDays}
     case "single_update_repeatDays":
       console.log(action.payload.dayInt, action.payload.selected)
       const newRepeatDays = taskSettings.repeatDays
       newRepeatDays[action.payload.dayInt] = action.payload.selected
+
+      //  TODO: IMPLEMENT FUNCTION
+      if (action.payload.isHabit == true) {
+        var habitHistory = updateHistoryWithRepeatDays(action.payload.repeatDays, action.payload.dueDate)
+        console.log("=============================")
+        console.log("habitHistory: "+JSON.stringify(habitHistory))
+        console.log("=============================")
+      }
+
       return {...taskSettings, repeatDays: newRepeatDays}
     case "update_due_date_time":
       console.log(action.payload.dueDate)
@@ -66,7 +145,7 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
       ,23,59,59);
 
       bottomSheetRef?.current?.scrollTo(1)
-      const initSettings = {title: "", duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, id: uuidv4()}
+      const initSettings = {title: "", habitHistory: null, habitInitDate: null, duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, id: uuidv4()}
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: initSettings}})
       durationBoxRef?.current?.setDuration(initSettings.duration)
       importanceBoxRef?.current?.setImportance(initSettings.importance)
@@ -111,6 +190,7 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
+    console.log("hiii")
   }
   const onDeletePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -131,7 +211,7 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
 		  <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef}/>
 		  <DescriptionBox description={taskSettings.description} dispatch={dispatch}/>
 		  <StyledH1 style={styles.settingsTitle} text={"Habit Settings"}/>
-		  <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit}/>
+		  <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate}/>
 		  <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays}/>
 		  <StyledH1 style={styles.settingsTitle} text={"Advanced"}/>
 		  <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime}/>

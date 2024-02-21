@@ -10,18 +10,43 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
 import TaskSettingsModal from './components/TaskSettingsModal';
-import { LogBox } from 'react-native';
+import { LogBox, Platform } from 'react-native';
 import { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { onlyDatesAreSame } from './components/DateHelper';
 // import BackgroundImg from './components/BackgroundImage';
+
+/**
+ * alternate method:
+ * each history item contains: habit's due date, whether habit is complete/incomplete/pending (values of "status")
+ * eg:
+ * 
+ * 8/8/23 complete
+ * 8/9/23 incomplete
+ * 8/10/23 (today) pending
+ * 
+ * on log in / db update, update habit log:
+ * 
+ * * for all "pending" habits that were due before today, mark their status as: incomplete
+ * 
+ * * for day "myDay" between last habit log and today:
+ * * * if habit "repeatDays" conditions meet AND habit due on myDay has not been added to log:
+ * * * add "incomplete" (if myDay is not today) or "pending" (if myDay is today) to log data
+ * 
+ * on completing habit before due date:
+ * * update as "complete" in habit log
+ * 
+ * Note: "incomplete" habits cannot be completed
+ * 
+ */
 
 
 export default function App() {
   const [task, setTask] = useState(null);
   const [session, setSession] = useState(null)
-  const [selectedDate, setSelectedDate] = useState(new Date(2023, 7, 10))
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const [taskItems, setTaskItems] = useState([]);
@@ -86,10 +111,23 @@ export default function App() {
     .order('created_at', { ascending: true })
 
     if (error) console.log(error)
+    // console.log("here is my data :(: "+data)
 
     let newTaskItems = []
     for (const task of data) {
       task["dueDate"] = new Date(task["dueDate"])
+
+      // update habit history dates (convert from string to date)
+      if (task["habitHistory"] != null) {
+        const newhabitHistory = []
+        for (const entry of task["habitHistory"]) {
+          newhabitHistory.push({...entry, exactDueDate: new Date(entry["exactDueDate"])})
+        }
+        task["habitHistory"] = newhabitHistory
+      }
+
+
+
       newTaskItems = [...newTaskItems, task]
     }
 
@@ -102,6 +140,15 @@ export default function App() {
     taskSettingsCopy["dueDate"] = newTaskSettings["dueDate"].toISOString()
     taskSettingsCopy["email"] = session.user.email
     delete taskSettingsCopy["id"]
+    // convert habit history dates to ISO string 
+
+    if (taskSettingsCopy["habitHistory"] != null) {
+      const newhabitHistory = []
+      for (const entry of taskSettingsCopy["habitHistory"]) {
+        newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
+      }
+      taskSettingsCopy["habitHistory"] = newhabitHistory
+    }
 
     // insert into db
     const { data, error } = await supabase
@@ -122,6 +169,14 @@ export default function App() {
     taskSettingsCopy["dueDate"] = taskSettingsEdited["dueDate"].toISOString()
     taskSettingsCopy["email"] = session.user.email
     delete taskSettingsCopy["id"]
+    // convert habit history dates to ISO string 
+    if (taskSettingsCopy["habitHistory"] != null) {
+      const newhabitHistory = []
+      for (const entry of taskSettingsCopy["habitHistory"]) {
+        newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
+      }
+      taskSettingsCopy["habitHistory"] = newhabitHistory
+    }
 
     // insert into db
     const { error } = await supabase
@@ -147,7 +202,6 @@ export default function App() {
   
   const onDelete = async (taskSettingsToDelete) => {
 
-    console.log("deleting: "+taskSettingsToDelete.id)
     const { error } = await supabase
     .from('Tasks')
     .delete()
@@ -214,7 +268,7 @@ export default function App() {
 	};
 
   const handleConfirm = (date) => {
-    console.log(date.toLocaleDateString())
+    // console.log(date.toLocaleDateString())
     setSelectedDate(date)
 		hideDatePicker(); // must be first
 	};
@@ -226,7 +280,7 @@ export default function App() {
   const todaysDate = new Date()
   const dateTomorrow = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate()+1)
   const dateYesterday  = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate()-1)
-  console.log(selectedDate.toDateString(), dateTomorrow.toDateString())
+  // console.log(selectedDate.toDateString(), dateTomorrow.toDateString())
   if (selectedDate.toDateString() == (new Date()).toDateString()) {
     dateText = "Today"
   }
@@ -267,13 +321,23 @@ export default function App() {
     ,selectedDate.getDate()
     ,0,0,0);
 
-
-    // code to count how many tasks to display (that meet the conditions)
     let count = 0
+
+    // code to count how many tasks/habits to display (that meet the conditions)
     for (const task of taskItems) {
-      var dueDateObj = new Date(task["dueDate"])
-      if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
-        count += 1 
+
+
+
+      if (task.isHabit) {
+        const found = task.habitHistory.some(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
+        if (found) count += 1
+      }
+      // if task
+      else {
+        var dueDateObj = new Date(task["dueDate"])
+        if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
+          count += 1 
+        }
       }
     }
     // return if there's no tasks to display
@@ -288,10 +352,20 @@ export default function App() {
         {
           taskItems.map((task, index) => {
             var dueDateObj = new Date(task["dueDate"])
-            if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
+            var habitHistoryEntry = undefined
+            if (task.isHabit) {
+              var found = false
+              habitHistoryEntry = task.habitHistory.find(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
+              if (habitHistoryEntry != undefined) {
+                found = true
+              }
+              // var found = task.habitHistory.some(myDay => onlyDatesAreSame(myDay, selectedDate));
+            }
+
+            if ((task.isHabit && found) || (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj)) {
               return (
                 <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                  <Task isHabit={task.isHabit} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                  <Task selectedDate={selectedDate} habitHistoryEntry={habitHistoryEntry} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} isHabit={task.isHabit} repeatDays={task.repeatDays} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                 </TouchableOpacity>
               )
             }
@@ -345,10 +419,10 @@ export default function App() {
           var dueDateObj = new Date(task["dueDate"])
 
           // due after end of day
-          if (endOfDayObj < dueDateObj && task.complete == false) {
+          if (endOfDayObj < dueDateObj && task.complete == false && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task dueDate={task.dueDate} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
               </TouchableOpacity>
             )
           }
@@ -404,7 +478,7 @@ export default function App() {
           if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task dueDate={task.dueDate} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
               </TouchableOpacity>
             )
           }

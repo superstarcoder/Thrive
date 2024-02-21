@@ -5,9 +5,10 @@ import {StyledH1, StyledH2, StyledH3, StyledH4} from './text/StyledText';
 import { Clock, WarningCircle, Fire, Repeat } from 'phosphor-react-native';
 import TaskCheckBox from './TaskCheckBox';
 import { BlurView } from 'expo-blur';
+import { onlyDatesAreSame } from './DateHelper';
 
 
-const Task = ({text, duration, isHabit, priority, points, description, complete, onComplete, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
+const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, complete, onComplete, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
 
   // const [complete, setComplete] = useState(completeDefault)
 
@@ -54,6 +55,23 @@ const Task = ({text, duration, isHabit, priority, points, description, complete,
 
   if (isHabit) {
 
+
+
+
+    // habit db stuff
+    // console.log({habitHistory, habitInitDate})
+    // get habit due time
+
+    // const habitItem = habitHistory.find(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
+    // if (habitItem != undefined) {
+    //   console.log(habitItem.exactDueDate)
+    // }
+
+    // console.log(exactDueDate)
+
+    console.log("HABIT HISTORY ENTRY!!: "+habitHistoryEntry)
+
+    // UPDATE UI FOR HABIT
     const streaks = 2
     const goal = 4
     const progressBarMaxWidth = 200
@@ -76,10 +94,26 @@ const Task = ({text, duration, isHabit, priority, points, description, complete,
       <StyledH4 text={"2 streaks (goal: 4)"} style={{marginRight: 10,}}/>
     </View> 
 
+    console.log("repeat days: "+repeatDays)
+    const daysOfWeek = ["M", "T", "W", "Th", "F", "S", "Su"]
+    var repeatDaysStr = ""
+    for (var i = 0; i < daysOfWeek.length; i++) {
+      if (repeatDays[i]) {
+        repeatDaysStr += (daysOfWeek[i]+" ")
+      }
+    }
+
+    // remove last char from string
+    repeatDaysStr = repeatDaysStr.substring(0, repeatDaysStr.length - 1);
+    
+    if (repeatDaysStr == "S Su") repeatDaysStr = "weekends"
+    if (repeatDaysStr == "M T W Th F") repeatDaysStr = "weekdays"
+    if (repeatDaysStr == "M T W Th F S Su") repeatDaysStr = "daily"
+
     repeatDetail =
     <View style={styles.repeatDetail}>
       <Repeat size={20} weight="fill" color={Color.Blue} style={styles.repeatIcon} />
-      <StyledH4 text={"repeats: M W Th"} style={{color: Color.Gray }}/>
+      <StyledH4 text={"repeats: "+repeatDaysStr} style={{color: Color.Gray }}/>
     </View>
 
   }
