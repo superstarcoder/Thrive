@@ -1,22 +1,28 @@
+import TasksHeader from './components/TasksHeader';
 import 'react-native-url-polyfill/auto'
 import React, {useState, useRef, useCallback, useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
-import Task from './components/Task';
+import Task from './components/TasksWrapper/Task';
 import Color from './assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from './components/text/StyledText';
 // import { XCircle } from 'phosphor-react-native';
-import { CaretRight, CaretLeft } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
-import TaskSettingsModal from './components/TaskSettingsModal';
+import TaskSettingsModal from './components/TaskSettingsModal/TaskSettingsModal';
 import { LogBox, Platform } from 'react-native';
 import { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { onlyDatesAreSame } from './components/DateHelper';
+// import { onlyDatesAreSame } from './utils/DateHelper';
+import TasksWrapper from './components/TasksWrapper/TasksWrapper';
 // import BackgroundImg from './components/BackgroundImage';
+
+
+// TODO: use supabase in a more scalable way, move syncLocalDb to a place that makes sense
+// TODO: setTaskItems is not defined. figure out where to put supabase/state code
+
+
+// when do we need to sync local states with 
 
 /**
  * alternate method:
@@ -43,6 +49,25 @@ import { onlyDatesAreSame } from './components/DateHelper';
  */
 
 
+/**
+ * simple solution:
+ * 
+ * habit entry:
+ * 
+ * Displaying habits on a page:
+ * 
+ * DISPLAY HABITS AFTER INIT (filter: habitInitDate <= selectedDate)
+ * if habit_DAY == selected_DAY, then display (eg: "monday" == "monday")
+ * 
+ * EACH TIME A HABIT IS MARKED COMPLETE:
+ *    add/modify entry into habitHistory as status:"complete" with "exactDueDate"
+ * 
+ * for all:
+ * if there is an entry in habit's habitHistory where exactDueDate == selected_date:
+ *      then display habit as complete
+ * 
+ */
+
 export default function App() {
   const [task, setTask] = useState(null);
   const [session, setSession] = useState(null)
@@ -61,21 +86,24 @@ export default function App() {
   // .subscribe()
 
 
-  // ----------------------------------------------------------
-  // auth stuff
-  // ----------------------------------------------------------
+  // =================================================================================
+  // =================================================================================
+  // =================================================================================
+  // authenticate the user
+  // =================================================================================
+  // =================================================================================
+  // =================================================================================
 
+  // authorize user into session
   useEffect(() => {
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
     })
-
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
-
-    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    // ignoring logs since it's giving a dumb warning with probably no solution
+    // LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 }, [])
 
   // sync local data if logged in
@@ -87,7 +115,6 @@ export default function App() {
       }
       fetchData()
     }
-
   }, [session])
 
 
@@ -100,9 +127,12 @@ export default function App() {
     }
   }
 
-  // ----------------------------------------------------------
+  // =================================================================================
+  // =================================================================================
   // database changes
-  // ----------------------------------------------------------
+  // =================================================================================
+  // =================================================================================
+
   const syncLocalAndDb = async () => {
     const { data, error } = await supabase
     .from('Tasks')
@@ -126,102 +156,16 @@ export default function App() {
         task["habitHistory"] = newhabitHistory
       }
 
-
-
       newTaskItems = [...newTaskItems, task]
     }
 
     setTaskItems(newTaskItems)
   }
 
-  const onSave = async (newTaskSettings) => {
-    // make data ready for inserting into db
-    let taskSettingsCopy = {...newTaskSettings} 
-    taskSettingsCopy["dueDate"] = newTaskSettings["dueDate"].toISOString()
-    taskSettingsCopy["email"] = session.user.email
-    delete taskSettingsCopy["id"]
-    // convert habit history dates to ISO string 
-
-    if (taskSettingsCopy["habitHistory"] != null) {
-      const newhabitHistory = []
-      for (const entry of taskSettingsCopy["habitHistory"]) {
-        newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
-      }
-      taskSettingsCopy["habitHistory"] = newhabitHistory
-    }
-
-    // insert into db
-    const { data, error } = await supabase
-    .from('Tasks')
-    .insert(taskSettingsCopy)
-    .select()
-
-    if (error) console.log(error)
-
-    await syncLocalAndDb()
-  }
-
-  const onEditTaskComplete = async (taskSettingsEdited) => {
-
-    const idToEdit = taskSettingsEdited["id"]
-
-    let taskSettingsCopy = {...taskSettingsEdited} 
-    taskSettingsCopy["dueDate"] = taskSettingsEdited["dueDate"].toISOString()
-    taskSettingsCopy["email"] = session.user.email
-    delete taskSettingsCopy["id"]
-    // convert habit history dates to ISO string 
-    if (taskSettingsCopy["habitHistory"] != null) {
-      const newhabitHistory = []
-      for (const entry of taskSettingsCopy["habitHistory"]) {
-        newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
-      }
-      taskSettingsCopy["habitHistory"] = newhabitHistory
-    }
-
-    // insert into db
-    const { error } = await supabase
-    .from('Tasks')
-    .update(taskSettingsCopy)
-    .eq('id', idToEdit)
-
-    if (error) console.log(error)
-
-    await syncLocalAndDb()
-
-    // const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
-
-    // let taskItemsCopy = [...taskItems]
-    // const index = taskItemsCopy.indexOf(oldTask)
-    // if (index == -1) {
-    //   console.error("App.js: onEditTaskComplete: unable to edit task since task is not found in array state")
-    // }
-    // taskItemsCopy[index] = taskSettingsEdited //replace 1st occurance of this task
-    // setTaskItems(taskItemsCopy)
-    // console.log("edited")
-  }
-  
-  const onDelete = async (taskSettingsToDelete) => {
-
-    const { error } = await supabase
-    .from('Tasks')
-    .delete()
-    .eq('id', taskSettingsToDelete.id)
-
-    if (error) {
-      console.log(error)
-    }
-
-    await syncLocalAndDb()
-  }
-
-
   // ----------------------------------------------------------
   // UI stuff
   // ----------------------------------------------------------
 
-  const onEditTask = (taskSettings) => {
-    taskSettingsRef?.current?.showEditTaskModal(taskSettings)
-  }
 
   const onAddTask = () => {
     taskSettingsRef?.current?.showAddTaskModal()
@@ -235,23 +179,6 @@ export default function App() {
     "MPlusMedium": require("./assets/fonts/mplusMedium.ttf")
   })
 
-  const onComplete = async (newComplete, taskId) => {
-
-    // local changes
-    const taskItemsCopy = [...taskItems]
-    const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
-    taskItemsCopy[indexToChange]["complete"] = newComplete
-    setTaskItems(taskItemsCopy)
-
-    // db changes
-    const { error } = await supabase
-    .from('Tasks')
-    .update({complete: newComplete})
-    .eq('id', taskId)
-
-    if (error) console.log(error)
-
-  }
 
   if (!fontsLoaded) {
     return null
@@ -306,186 +233,8 @@ export default function App() {
     setSelectedDate(previousDay)
   }
 
-  function TodaysTasks() {
-    /**
-     * todays tasks includes tasks that are due between the start and end of the selected date
-     */
-
-    var endOfDayObj = new Date(selectedDate.getFullYear()
-    ,selectedDate.getMonth()
-    ,selectedDate.getDate()
-    ,23,59,59);
-
-    var startOfDayObj = new Date(selectedDate.getFullYear()
-    ,selectedDate.getMonth()
-    ,selectedDate.getDate()
-    ,0,0,0);
-
-    let count = 0
-
-    // code to count how many tasks/habits to display (that meet the conditions)
-    for (const task of taskItems) {
 
 
-
-      if (task.isHabit) {
-        const found = task.habitHistory.some(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
-        if (found) count += 1
-      }
-      // if task
-      else {
-        var dueDateObj = new Date(task["dueDate"])
-        if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
-          count += 1 
-        }
-      }
-    }
-    // return if there's no tasks to display
-    if (count == 0) {
-      return
-    }
-
-    return (
-      <View>
-        <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/>
-        <View style={styles.items}>
-        {
-          taskItems.map((task, index) => {
-            var dueDateObj = new Date(task["dueDate"])
-            var habitHistoryEntry = undefined
-            if (task.isHabit) {
-              var found = false
-              habitHistoryEntry = task.habitHistory.find(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
-              if (habitHistoryEntry != undefined) {
-                found = true
-              }
-              // var found = task.habitHistory.some(myDay => onlyDatesAreSame(myDay, selectedDate));
-            }
-
-            if ((task.isHabit && found) || (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj)) {
-              return (
-                <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                  <Task selectedDate={selectedDate} habitHistoryEntry={habitHistoryEntry} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} isHabit={task.isHabit} repeatDays={task.repeatDays} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-                </TouchableOpacity>
-              )
-            }
-          })
-        }
-      </View>
-    </View>
-    )
-  }
-
-  function DueLaterTasks() {
-    /**
-     * Due later tasks include tasks that are incomplete and are due after the end of the selected date
-     * displays ONLY if selected date is today
-     */
-
-    // if selected date is not today, return nothing
-    var todaysDate = new Date()
-    if (selectedDate.toDateString() != todaysDate.toDateString()) {
-      return <View></View>
-    }
-
-    var endOfDayObj = new Date(selectedDate.getFullYear()
-    ,selectedDate.getMonth()
-    ,selectedDate.getDate()
-    ,23,59,59);
-
-
-
-
-    // code to count how many tasks to display (that meet the conditions)
-    let count = 0
-    for (const task of taskItems) {
-      var dueDateObj = new Date(task["dueDate"])
-      if (endOfDayObj < dueDateObj && task.complete == false) {
-        count += 1 
-      }
-    }
-    // return if there's no tasks to display
-    if (count == 0) {
-      return
-    }
-
-    return (
-      <View>
-        <StyledH2 style={styles.sectionTitle} text={"Due Later"}/>
-        <View style={styles.items}>
-        {
-          taskItems.map((task, index) => {
-
-          var dueDateObj = new Date(task["dueDate"])
-
-          // due after end of day
-          if (endOfDayObj < dueDateObj && task.complete == false && task.isHabit == false) {
-            return (
-              <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-              </TouchableOpacity>
-            )
-          }
-        })}
-        </View>
-      </View>
-  )}
-
-  function OverdueTasks() {
-    /**
-     * Due later tasks include tasks that are:
-     * 1. incomplete
-     * 2. are due after the end of the selected date
-     * 3. are not habits
-     * displays ONLY if selected date is today
-     */
-
-    // if selected date is not today, return nothing
-    var todaysDate = new Date()
-    if (selectedDate.toDateString() != todaysDate.toDateString()) {
-      return <View></View>
-    }
-
-    var startOfDayObj = new Date(selectedDate.getFullYear()
-    ,selectedDate.getMonth()
-    ,selectedDate.getDate()
-    ,0,0,0);
-
-
-    // code to count how many tasks to display (that meet the conditions)
-    let count = 0
-    for (const task of taskItems) {
-      var dueDateObj = new Date(task["dueDate"])
-      if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
-        count += 1 
-      }
-    }
-    // return if there's no tasks to display
-    if (count == 0) {
-      return
-    }
-
-    return (
-      <View>
-        <StyledH2 style={styles.sectionTitle} text={"Overdue"}/>
-        <View style={styles.items}>
-        {
-          taskItems.map((task, index) => {
-
-          var dueDateObj = new Date(task["dueDate"])
-
-          // due before the start of selected date and incomplete
-          if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
-            return (
-              <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
-              </TouchableOpacity>
-            )
-          }
-        })}
-        </View>
-      </View>
-  )}
 
   return (
     
@@ -495,59 +244,9 @@ export default function App() {
 
         <View style={styles.container}>
 
-          <View style={styles.tasksHeader}>
-            <View style={styles.dateSettings}>
-              <View style={styles.currentDateContainer}>
-
-                <TouchableOpacity style={styles.caretLeftContainer} onPress={goToPreviousDay}>
-                  <CaretLeft size={25} weight="fill" color={Color.Blue} style={styles.caretLeft}/>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={showDatePicker}>
-                  <StyledH2 text={dateText} style={styles.currentDate}/>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.caretRightContainer} onPress={goToNextDay}>
-                  <CaretRight size={25} weight="fill" color={Color.Blue} style={styles.caretRight}/>
-                </TouchableOpacity>
-
-                <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                display='inline'
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-                date={selectedDate}
-              />
-
-              </View>
-            </View>
-          </View>
-
+        <TasksHeader   goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate}  />
           {/* display tasks */}
-          <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1
-            }}
-            keyboardShouldPersistTaps='handled'
-          >
-
-          <View style={styles.tasksWrapper}>
-
-            <OverdueTasks />
-            <TodaysTasks />
-
-            {/* <StyledH2 style={styles.sectionTitle} text={"Due Later"}/> */}
-
-            {/* <View style={styles.items}> */}
-
-            <DueLaterTasks />
-              
-            {/* </View> */}
-
-          </View>
-            
-          </ScrollView>
+          <TasksWrapper taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems}/>
 
           {/* bottom bar/buttons */}
           <KeyboardAvoidingView 
@@ -569,7 +268,7 @@ export default function App() {
 
           </KeyboardAvoidingView>
 
-          <TaskSettingsModal ref={taskSettingsRef} onSave={onSave} onEdit={onEditTaskComplete} onDelete={onDelete} />
+          <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalAndDb={syncLocalAndDb}/>
          
         </View>) : 
         (<Auth />)}
@@ -579,44 +278,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  dateSettings: {
-    // backgroundColor: Color.Blue,
-    paddingHorizontal: 10,
-    bottom: 12,
-    alignSelf: "flex-end",
-    alignItems: "center",
-    justifyContent: "center"
-
-  },
-  caretLeft: {
-    marginHorizontal: 14,
-    marginLeft: 20,
-    marginVertical: 8,
-  },
-  caretRight: {
-    marginHorizontal: 14,
-    marginRight: 20,
-    marginVertical: 8,
-  },
-  tasksHeader: {
-    top: 0,
-    height: 110,
-    width: "100%",
-    backgroundColor: Color.DarkestBlue,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "black",
-    shadowOpacity: 1,
-    shadowRadius: 8,
-  },
-  currentDateContainer: {
-    flexDirection: "row",
-    backgroundColor: "#101326",
-    borderRadius: 8,
-    paddingHorizontal: 0,
-    alignItems: "center"
-  },
   container: {
     flex: 1,
     backgroundColor: Color.DarkestBlue,

@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
-import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
+import Color from '../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from 'react'
-import MyTextInput from './FormComponents/MyTextInput';
-import { ACTIONS } from './MyGlobalVars';
+import MyTextInput from '../FormComponents/MyTextInput';
+import { ACTIONS } from '../../utils/MyGlobalVars';
 
 const TitleBox = ({title, dispatch}) => {
 

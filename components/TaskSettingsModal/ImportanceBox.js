@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
-import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
+import Color from '../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
-import SliderBar from './FormComponents/SliderBar';
+import SliderBar from '../FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
-import { ACTIONS } from './MyGlobalVars';
+import { ACTIONS } from '../../utils/MyGlobalVars';
 
 const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
 
@@ -16,7 +16,7 @@ const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
   const [importanceNumber, setImportanceNumber] = useState(importance)
 
   var [fontsLoaded] = useFonts({
-    "MPlus": require("../assets/fonts/mplusRegular.ttf")
+    "MPlus": require("../../assets/fonts/mplusRegular.ttf")
   })
 
   useEffect(() => {

@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
-import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
+import Color from '../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Clock } from 'phosphor-react-native';
-import ScrollSelect from './FormComponents/ScrollSelect';
+import ScrollSelect from '../FormComponents/ScrollSelect';
 
 const DurationBox =  forwardRef(({dispatch, duration}, ref) => {
 
@@ -43,7 +43,7 @@ const DurationBox =  forwardRef(({dispatch, duration}, ref) => {
   }));
 
   var [fontsLoaded] = useFonts({
-    "MPlus": require("../assets/fonts/mplusRegular.ttf")
+    "MPlus": require("../../assets/fonts/mplusRegular.ttf")
   })
   if (!fontsLoaded) {
     return null

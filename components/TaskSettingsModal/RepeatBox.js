@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
-import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from './text/StyledText';
+import Color from '../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import React, {useState, useRef, useEffect, useCallback} from 'react';
-import CheckBox from './FormComponents/CheckBox';
-import HighlightSelect from './FormComponents/HighlightSelect';
+import CheckBox from '../FormComponents/CheckBox';
+import HighlightSelect from '../FormComponents/HighlightSelect';
 import * as Haptics from 'expo-haptics';
-import { ACTIONS } from './MyGlobalVars';
+import { ACTIONS } from '../../utils/MyGlobalVars';
 
 const RepeatBox = ({dispatch, repeatDays}) => {
 

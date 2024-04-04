@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, Dimensions } from 'react-native'
 import React, { useCallback, useEffect, useImperativeHandle } from 'react'
-import Color from '../assets/themes/Color'
+import Color from '../../assets/themes/Color'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 

@@ -1,9 +1,9 @@
 import React, {useState, useRef, useCallback,  forwardRef, useImperativeHandle, useEffect, useReducer } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
-import Color from '../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from './text/StyledText';
+import Color from '../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../text/StyledText';
 import { useFonts } from 'expo-font'
-import BottomSheet from './BottomSheet';
+import BottomSheet from '../FormComponents/BottomSheet';
 import TitleBox from './TitleBox';
 import DurationBox from './DurationBox'
 import ImportanceBox from './ImportanceBox';
@@ -13,9 +13,10 @@ import RepeatBox from './RepeatBox';
 import DueDatePickerBox from './DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
-import { ACTIONS, TASK_SETTINGS_MODES } from './MyGlobalVars';
+import { ACTIONS, TASK_SETTINGS_MODES } from '../../utils/MyGlobalVars';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '../../lib/supabase'
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -67,6 +68,11 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
   return dueDate
 
 }
+
+
+
+
+
 
 const initHabitHistory = (repeatDays, dueTime) => {
   var dueDate = findHabitNextDueDate(new Date(), repeatDays, dueTime)
@@ -133,7 +139,7 @@ function reducer(taskSettings, action) {
   }
 }
 
-const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
+const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
 
   useImperativeHandle(ref, () => ({
 
@@ -175,14 +181,14 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
-      onSave(settingsCopy)
+      onSaveTask(settingsCopy)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
       settingsCopy = {...taskSettings}
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
-      onEdit(settingsCopy)
+      onEditTaskComplete(settingsCopy)
     }
 
 
@@ -197,6 +203,91 @@ const TaskSettingsModal = forwardRef (({onSave, onEdit, onDelete}, ref) => {
     bottomSheetRef?.current?.scrollTo(0)
     onDelete(taskSettings)
   }
+
+  const onSaveTask = async (newTaskSettings) => {
+    // make data ready for inserting into db
+    let taskSettingsCopy = {...newTaskSettings} 
+    taskSettingsCopy["dueDate"] = newTaskSettings["dueDate"].toISOString()
+    taskSettingsCopy["email"] = session.user.email
+    delete taskSettingsCopy["id"]
+  
+    // convert habit history dates to ISO string 
+  
+    if (taskSettingsCopy["habitHistory"] != null) {
+      const newhabitHistory = []
+      for (const entry of taskSettingsCopy["habitHistory"]) {
+        newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
+      }
+      taskSettingsCopy["habitHistory"] = newhabitHistory
+    }
+  
+    // insert into db
+    const { data, error } = await supabase
+    .from('Tasks')
+    .insert(taskSettingsCopy)
+    .select()
+  
+    if (error) console.log(error)
+  
+    await syncLocalAndDb()
+  }
+  
+  const onEditTaskComplete = async (taskSettingsEdited) => {
+  
+    const idToEdit = taskSettingsEdited["id"]
+  
+    let taskSettingsCopy = {...taskSettingsEdited} 
+    taskSettingsCopy["dueDate"] = taskSettingsEdited["dueDate"].toISOString()
+    taskSettingsCopy["email"] = session.user.email
+    delete taskSettingsCopy["id"]
+    // convert habit history dates to ISO string 
+    if (taskSettingsCopy["habitHistory"] != null) {
+      const newhabitHistory = []
+      for (const entry of taskSettingsCopy["habitHistory"]) {
+        newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
+      }
+      taskSettingsCopy["habitHistory"] = newhabitHistory
+    }
+  
+    // insert into db
+    const { error } = await supabase
+    .from('Tasks')
+    .update(taskSettingsCopy)
+    .eq('id', idToEdit)
+  
+    if (error) console.log(error)
+  
+    await syncLocalAndDb()
+  
+    // const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
+  
+    // let taskItemsCopy = [...taskItems]
+    // const index = taskItemsCopy.indexOf(oldTask)
+    // if (index == -1) {
+    //   console.error("App.js: onEditTaskComplete: unable to edit task since task is not found in array state")
+    // }
+    // taskItemsCopy[index] = taskSettingsEdited //replace 1st occurance of this task
+    // setTaskItems(taskItemsCopy)
+    // console.log("edited")
+  }
+  
+  const onDelete = async (taskSettingsToDelete) => {
+  
+    const { error } = await supabase
+    .from('Tasks')
+    .delete()
+    .eq('id', taskSettingsToDelete.id)
+  
+    if (error) {
+      console.log(error)
+    }
+  
+    await syncLocalAndDb()
+  }
+  
+
+
+
 
   let initRepeatDays =  Array(7).fill(false)
 
