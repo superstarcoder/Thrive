@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
-import Color from '../../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle} from 'react';
 import { WarningCircle } from 'phosphor-react-native';
-import SliderBar from '../FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../../text/StyledText';
+import SliderBar from '../../FormComponents/SliderBar';
+import Color from '../../../assets/themes/Color'
 import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
 const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {

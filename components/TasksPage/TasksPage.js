@@ -7,10 +7,10 @@ import Color from '../../assets/themes/Color'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
-import TaskSettingsModal from '../TaskSettingsModal/TaskSettingsModal';
+import TaskSettingsModal from './TaskSettingsModal/TaskSettingsModal';
 import { LogBox, Platform } from 'react-native';
 // import { onlyDatesAreSame } from './utils/DateHelper';
-import TasksWrapper from '../TasksWrapper/TasksWrapper';
+import TasksWrapper from './TasksWrapper/TasksWrapper';
 // import BackgroundImg from './components/BackgroundImage';
 
 
@@ -119,7 +119,7 @@ const TasksPage = forwardRef(({
   const dateTomorrow = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate() + 1)
   const dateYesterday = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate() - 1)
 
-  let dateText;
+  var dateText;
   switch (selectedDate.toDateString()) {
     case (new Date()).toDateString():
       dateText = "Today";
@@ -143,7 +143,7 @@ const TasksPage = forwardRef(({
     {
       /* display tasks */
     }
-    <TasksWrapper taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} />
+    <TasksWrapper taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} />
 
     {
       /* bottom bar/buttons */

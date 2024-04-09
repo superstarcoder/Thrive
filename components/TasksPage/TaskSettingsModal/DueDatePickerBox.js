@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, Button } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Color from '../../assets/themes/Color'
 import { PencilSimple } from 'phosphor-react-native';
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import * as Haptics from 'expo-haptics'
-import CheckBox from '../FormComponents/CheckBox';
-import HighlightSelect from '../FormComponents/HighlightSelect';
+// import CheckBox from '../FormComponents/CheckBox';
+// import HighlightSelect from '../FormComponents/HighlightSelect';
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../../text/StyledText';
 import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
+import Color from '../../../assets/themes/Color'
 
 const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 

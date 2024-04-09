@@ -6,7 +6,7 @@ import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
 
 
-const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems}) => {
+const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText}) => {
 
 const onComplete = async (newComplete, taskId) => {
 

@@ -1,9 +1,6 @@
 import React, {useState, useRef, useCallback,  forwardRef, useImperativeHandle, useEffect, useReducer } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
-import Color from '../../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../text/StyledText';
 import { useFonts } from 'expo-font'
-import BottomSheet from '../FormComponents/BottomSheet';
 import TitleBox from './TitleBox';
 import DurationBox from './DurationBox'
 import ImportanceBox from './ImportanceBox';
@@ -13,11 +10,14 @@ import RepeatBox from './RepeatBox';
 import DueDatePickerBox from './DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
-import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
 // import { ACTIONS, TASK_SETTINGS_MODES } from '../../utils/MyGlobalVars';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
-import { supabase } from '../../lib/supabase'
+import BottomSheet from '../../FormComponents/BottomSheet';
+import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../../text/StyledText';
+import Color from '../../../assets/themes/Color'
+import { supabase } from '../../../lib/supabase'
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
