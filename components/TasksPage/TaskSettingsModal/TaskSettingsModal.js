@@ -13,7 +13,8 @@ import RepeatBox from './RepeatBox';
 import DueDatePickerBox from './DueDatePickerBox';
 import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
-import { ACTIONS, TASK_SETTINGS_MODES } from '../../utils/MyGlobalVars';
+import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
+// import { ACTIONS, TASK_SETTINGS_MODES } from '../../utils/MyGlobalVars';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../../lib/supabase'

@@ -4,7 +4,7 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState } from 'react'
 import MyTextInput from '../FormComponents/MyTextInput';
-import { ACTIONS } from '../../utils/MyGlobalVars';
+import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
 const DescriptionBox = ({description, dispatch}) => {
 

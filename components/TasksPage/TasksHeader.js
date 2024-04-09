@@ -1,9 +1,9 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { CaretRight, CaretLeft } from 'phosphor-react-native';
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from './text/StyledText';
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../text/StyledText';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Color from '../assets/themes/Color'
+import Color from '../../assets/themes/Color'
 
 
 const TaskHeader = ({
@@ -39,7 +39,6 @@ const TaskHeader = ({
           </View>
   )
 }
-
 
 const styles = StyleSheet.create({ 
 	dateSettings: {

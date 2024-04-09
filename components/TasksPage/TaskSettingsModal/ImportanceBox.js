@@ -6,7 +6,7 @@ import React, {useState, useRef, useEffect, useCallback, forwardRef, useImperati
 import { WarningCircle } from 'phosphor-react-native';
 import SliderBar from '../FormComponents/SliderBar';
 import * as Haptics from 'expo-haptics';
-import { ACTIONS } from '../../utils/MyGlobalVars';
+import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
 const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
 
@@ -16,7 +16,7 @@ const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
   const [importanceNumber, setImportanceNumber] = useState(importance)
 
   var [fontsLoaded] = useFonts({
-    "MPlus": require("../../assets/fonts/mplusRegular.ttf")
+    "MPlus": require("../../../assets/fonts/mplusRegular.ttf")
   })
 
   useEffect(() => {

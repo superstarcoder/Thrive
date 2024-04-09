@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Color from '../../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4} from '../text/StyledText';
+import Color from '../../../assets/themes/Color'
+import {StyledH1, StyledH2, StyledH3, StyledH4} from '../../text/StyledText';
 import { Clock, WarningCircle, Fire, Repeat } from 'phosphor-react-native';
 import TaskCheckBox from './TaskCheckBox';
 import { BlurView } from 'expo-blur';
-import { onlyDatesAreSame } from '../../utils/DateHelper';
+import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
 const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, complete, onComplete, taskId, dueDate, showDueDate=false, showDueTime=false}) => {

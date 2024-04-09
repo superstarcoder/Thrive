@@ -43,7 +43,7 @@ const DurationBox =  forwardRef(({dispatch, duration}, ref) => {
   }));
 
   var [fontsLoaded] = useFonts({
-    "MPlus": require("../../assets/fonts/mplusRegular.ttf")
+    "MPlus": require("../../../assets/fonts/mplusRegular.ttf")
   })
   if (!fontsLoaded) {
     return null

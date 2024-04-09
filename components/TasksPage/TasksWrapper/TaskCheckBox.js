@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
-import Color from '../../assets/themes/Color'
+import Color from '../../../assets/themes/Color'
 import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { Square, CheckSquare } from 'phosphor-react-native';

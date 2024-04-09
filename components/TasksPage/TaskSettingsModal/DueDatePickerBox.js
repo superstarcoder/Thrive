@@ -7,7 +7,7 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import * as Haptics from 'expo-haptics'
 import CheckBox from '../FormComponents/CheckBox';
 import HighlightSelect from '../FormComponents/HighlightSelect';
-import { ACTIONS } from '../../utils/MyGlobalVars';
+import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
 const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 

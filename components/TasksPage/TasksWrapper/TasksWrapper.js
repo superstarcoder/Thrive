@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView, } from 'react-native';
 import Task from './Task';
-import {StyledH2, fontStyles} from '../text/StyledText';
+import {StyledH2, fontStyles} from '../../text/StyledText';
 import { useFonts } from 'expo-font'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 
 
 const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems}) => {
@@ -222,8 +222,8 @@ function TodaysTasks() {
 
 
   var [fontsLoaded] = useFonts({
-    "MPlusRegular": require("./../../assets/fonts/mplusRegular.ttf"),
-    "MPlusMedium": require("./../../assets/fonts/mplusMedium.ttf")
+    "MPlusRegular": require("./../../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("./../../../assets/fonts/mplusMedium.ttf")
   })
 
 
