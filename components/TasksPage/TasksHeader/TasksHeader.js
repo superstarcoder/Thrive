@@ -1,9 +1,10 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { CaretRight, CaretLeft } from 'phosphor-react-native';
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../text/StyledText';
+import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../../text/StyledText';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Color from '../../assets/themes/Color'
+import Color from '../../../assets/themes/Color'
+import AddTasksButton from "./AddTasksButton";
 
 
 const TaskHeader = ({
@@ -16,7 +17,12 @@ const TaskHeader = ({
   hideDatePicker,
   selectedDate
 }) => {
-  return (<View style={styles.tasksHeader}>
+  return (
+
+	<View>
+
+  
+  		<View style={styles.datePicker}>
             <View style={styles.dateSettings}>
               <View style={styles.currentDateContainer}>
 
@@ -37,6 +43,8 @@ const TaskHeader = ({
               </View>
             </View>
           </View>
+	<AddTasksButton />
+	</View>
   )
 }
 
@@ -60,7 +68,7 @@ const styles = StyleSheet.create({
 		marginRight: 20,
 		marginVertical: 8,
 	  },
-	  tasksHeader: {
+	  datePicker: {
 		top: 0,
 		height: 110,
 		width: "100%",

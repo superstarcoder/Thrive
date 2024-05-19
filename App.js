@@ -7,11 +7,13 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import { supabase } from './lib/supabase'
-import Auth from './components/Auth';
+import Auth from './components/AuthPage';
 
-// TODO: move syncLocalAndDb to TasksPage and use useImperativeHandle if needed
-// TODO: setTaskItems is not defined. figure out where to put supabase/state code
+// TODO: figure out how database gets updated onEditTaskComplete or onSaveTask
+// TODO: update local states (tasks) on page load!!
 
+// email: danny@gmail.com
+// password: danny danny
 
 // when do we need to sync local states with 
 
@@ -28,7 +30,7 @@ import Auth from './components/Auth';
  * 
  * * for all "pending" habits that were due before today, mark their status as: incomplete
  * 
- * * for day "myDay" between last habit log and today:
+ * * for day "myDay" between created_date and today:
  * * * if habit "repeatDays" conditions meet AND habit due on myDay has not been added to log:
  * * * add "incomplete" (if myDay is not today) or "pending" (if myDay is today) to log data
  * 
@@ -75,11 +77,15 @@ export default function App() {
 
   // authorize user into session
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
+      // await tasksPageRef?.current?.syncLocalWithDb()
+
     })
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session)
+      // await tasksPageRef?.current?.syncLocalWithDb()
+
     })
     // ignoring logs since it's giving a dumb warning with probably no solution
     // LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
@@ -90,7 +96,9 @@ export default function App() {
 
     if (session && session.user) {
       const fetchData = async () => {
-        await tasksPageRef?.current?.syncLocalAndDb()
+        if (tasksPageRef != null) {
+          await tasksPageRef?.current?.syncLocalWithDb()
+        }
       }
       fetchData()
     }

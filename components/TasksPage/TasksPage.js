@@ -1,6 +1,6 @@
 // import { TasksPage } from './components/TasksPage/TasksPage';
-import TasksHeader from './TasksHeader';
-import React, { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react';
+import TasksHeader from './TasksHeader/TasksHeader';
+import React, { useState, useRef, useCallback, useEffect, useReducer, forwardRef, useImperativeHandle } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
 import Color from '../../assets/themes/Color'
 // import { XCircle } from 'phosphor-react-native';
@@ -30,7 +30,9 @@ const TasksPage = forwardRef(({
   }
 
 
-  const syncLocalAndDb = async () => {
+  const syncLocalWithDb = async () => {
+
+    console.log("NOTE: syncing local states with db")
     const { data, error } = await supabase
       .from('Tasks')
       .select()
@@ -51,6 +53,7 @@ const TasksPage = forwardRef(({
           newhabitHistory.push({ ...entry, exactDueDate: new Date(entry["exactDueDate"]) })
         }
         task["habitHistory"] = newhabitHistory
+        console.log({"updating created_at" : task["created_at"]})
       }
 
       newTaskItems = [...newTaskItems, task]
@@ -60,7 +63,7 @@ const TasksPage = forwardRef(({
   }
 
   useImperativeHandle(ref, () => ({
-    syncLocalAndDb
+    syncLocalWithDb: syncLocalWithDb
 
   }));
 
@@ -73,6 +76,10 @@ const TasksPage = forwardRef(({
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
+  // const [taskSettings, dispatch] = useReducer(reducer, {})
+  
+
+
   const taskSettingsRef = useRef();
 
 
@@ -166,7 +173,7 @@ const TasksPage = forwardRef(({
 
     </KeyboardAvoidingView>
 
-    <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalAndDb={syncLocalAndDb} />
+    <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} />
 
   </View>);
 });

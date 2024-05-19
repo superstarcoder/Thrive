@@ -17,7 +17,8 @@ import BottomSheet from '../../FormComponents/BottomSheet';
 import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
 import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../../text/StyledText';
 import Color from '../../../assets/themes/Color'
-import { supabase } from '../../../lib/supabase'
+import { getDateFromDatetime, onlyDatesAreSame } from '../../../utils/DateHelper';
+// import { supabase } from '../../../lib/supabase'
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -48,24 +49,24 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
       }
 
       if (i == 7) i = 0
-      console.log({i, dayIndex})
+      // console.log({i, dayIndex})
     }
 
     if (dayFound) {
       dayIndex = i
     }
     else {
-      console.log("no repeatDays was selected!")
+      // console.log("no repeatDays was selected!")
       return null
     }
   }
 
   // this isn't working properly. FIX. TODO
-  console.log({daysAfterToday})
+  // console.log({daysAfterToday})
 
   const dueDate = new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate()+daysAfterToday, dueTime.getHours(), dueTime.getMinutes(), dueTime.getSeconds())
 
-  console.log(dueDate.toLocaleString())
+  // console.log(dueDate.toLocaleString())
   return dueDate
 
 }
@@ -84,25 +85,25 @@ const initHabitHistory = (repeatDays, dueTime) => {
 function reducer(taskSettings, action) {
   switch (action.type) {
     case "update_title":
-      console.log(action.payload.title)
+      // console.log(action.payload.title)
       return {...taskSettings, title: action.payload.title}
     case "update_duration":
-      console.log("update_duration: "+action.payload.duration)
-      console.log("update_duration payload: "+JSON.stringify(action.payload))
+      // console.log("update_duration: "+action.payload.duration)
+      // console.log("update_duration payload: "+JSON.stringify(action.payload))
       return {...taskSettings, duration: action.payload.duration}
     case "update_importance":
-      console.log(action.payload.importance)
+      // console.log(action.payload.importance)
       return {...taskSettings, importance: action.payload.importance}
     case "update_description":
-      console.log(action.payload.description)
+      // console.log(action.payload.description)
       return {...taskSettings, description: action.payload.description}
     case "update_isHabit":
-      console.log(action.payload.isHabit)
+      // console.log(action.payload.isHabit)
       if (action.payload.isHabit == true) {
         var habitHistory = initHabitHistory(action.payload.repeatDays, action.payload.dueDate)
-        console.log("=============================")
-        console.log("habitHistory: "+JSON.stringify(habitHistory))
-        console.log("=============================")
+        // console.log("=============================")
+        // console.log("habitHistory: "+JSON.stringify(habitHistory))
+        // console.log("=============================")
       }
       return {...taskSettings, isHabit: action.payload.isHabit, habitHistory: habitHistory, habitInitDate : new Date()}
     // case "update_repeatDays":
@@ -116,16 +117,16 @@ function reducer(taskSettings, action) {
       
     //   return {...taskSettings, repeatDays: action.payload.repeatDays}
     case "single_update_repeatDays":
-      console.log(action.payload.dayInt, action.payload.selected)
+      // console.log(action.payload.dayInt, action.payload.selected)
       const newRepeatDays = taskSettings.repeatDays
       newRepeatDays[action.payload.dayInt] = action.payload.selected
 
       //  TODO: IMPLEMENT FUNCTION
       if (action.payload.isHabit == true) {
         var habitHistory = updateHistoryWithRepeatDays(action.payload.repeatDays, action.payload.dueDate)
-        console.log("=============================")
-        console.log("habitHistory: "+JSON.stringify(habitHistory))
-        console.log("=============================")
+        // console.log("=============================")
+        // console.log("habitHistory: "+JSON.stringify(habitHistory))
+        // console.log("=============================")
       }
 
       return {...taskSettings, repeatDays: newRepeatDays}
@@ -140,7 +141,7 @@ function reducer(taskSettings, action) {
   }
 }
 
-const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
+const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref) => {
 
   useImperativeHandle(ref, () => ({
 
@@ -152,7 +153,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
       ,23,59,59);
 
       bottomSheetRef?.current?.scrollTo(1)
-      const initSettings = {title: "", habitHistory: null, habitInitDate: null, duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, id: uuidv4()}
+      const initSettings = {created_at: new Date(), title: "", habitHistory: null, habitInitDate: null, duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, id: uuidv4()}
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: initSettings}})
       durationBoxRef?.current?.setDuration(initSettings.duration)
       importanceBoxRef?.current?.setImportance(initSettings.importance)
@@ -197,7 +198,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
-    console.log("hiii")
+    // console.log("hiii")
   }
   const onDeletePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -205,11 +206,150 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
     onDelete(taskSettings)
   }
 
+
+  // returns entry where due date matches
+  const findEntryWithDate = (habitHistoryEntries, myDate) => {
+    for (let entry of habitHistoryEntries) {
+      // found a match, return entry
+      if (onlyDatesAreSame( new Date(entry["habit_due_date"]), myDate)) {
+        return entry;
+      }
+    }
+    // No match found
+    return -1;
+
+  }
+
+
+  // call this function when: habit is added and when page loads
+  const updateHabitHistoryAll = async () => {
+    const { data, error } = await supabase
+    .from('Tasks')
+    .select()
+    .eq('isHabit', true)
+    .order('created_at', { ascending: true })
+
+    for (var habitSettings of data) {
+      updateHistoryForSingleHabit(habitSettings, habitSettings["id"])
+    }
+    // }
+  }
+
+
+  // basic logic
+
+  // habit added on 1/1/24 and is valid for wednesday and thursday. assume 1/1/24 is a monday
+  // assume today is wednesday
+
+  // updateHistoryForSingleHabit(habitSettings):
+
+  // from supabase, get habit histories for a particular habit
+
+  // loop between habit creation date and today's date:
+  //     if day is valid:  
+  //         if entry does not exist already for this date:
+  //             add entry ("pending" if it is today's date and "incomplete" if it is old date)
+  //         if entry does exist for this date & is "pending" & selected date is today & habit_due_date != today:
+  //             change from "pending" to "incomplete"
+
+  
+  const updateHistoryForSingleHabit = async (habitSettings, habitId) => {
+    console.log("===============================")
+
+    // get list of entries for specific habit
+    const { data, error } = await supabase
+      .from('HabitHistory')
+      .select()
+      .eq('id', habitId)
+      .order('created_at', { ascending: true })
+    
+    const habitHistoryEntries = data
+
+    // create a list of dates between habit's creation date and today that are all valid dates for the habit
+    const now = getDateFromDatetime(new Date())
+    var dayAfterNow = new Date(now)
+    dayAfterNow.setDate(dayAfterNow.getDate() + 1)
+
+    var daysToCheck = [];
+    const start_date = getDateFromDatetime(new Date(habitSettings["created_at"]))
+    for (var d = start_date; d < dayAfterNow; d.setDate(d.getDate() + 1)) {
+      if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true) daysToCheck.push(new Date(d));
+    }
+    console.log({daysToCheck, "id" : habitSettings["id"]})
+
+
+
+    for (var i = 0; i < daysToCheck.length; i += 1) {
+      const selectedDate = daysToCheck[i]
+      const selectedEntry = findEntryWithDate(habitHistoryEntries, selectedDate)
+
+
+      // if entry with selected date does not exist, add entry
+      if (selectedEntry == -1) {
+        var status
+        if (onlyDatesAreSame(selectedDate, now)) {
+          status = "pending"
+        } else {
+          status = "incomplete"
+        }
+
+        const other = new Date(habitSettings["dueDate"])
+        const habit_due_date =  new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(),
+        other.getHours(), other.getMinutes(), other.getSeconds(), other.getMilliseconds())
+
+        const newEntry = {
+          "habit_due_date" : habit_due_date,
+          "status" : status,
+          "is_streak" : false, // not sure if an is_streak column is even needed!
+          "id" : habitId,
+        }
+
+        const { error } = await supabase
+        .from('HabitHistory')
+        .insert(newEntry)
+        if (error) {
+          console.warn("error during insertion: ")
+          console.warn(error)
+          console.log({selectedDate, "id" : habitSettings["id"]})
+        }
+      }
+
+      // if entry does exist for this date (given bcuz else if)
+      else if (selectedEntry["status"] == "pending" // & is "pending"
+        && !(onlyDatesAreSame(new Date(selectedEntry["habit_due_date"]), now)) // & habit_due_date != today:
+        ){
+
+        // update entry
+
+        const { error } = await supabase
+        .from('HabitHistory')
+        .update({status : "incomplete"})
+        .match({id: selectedEntry["id"], habit_due_date: selectedEntry["habit_due_date"]})
+
+        if (error) {
+          consolee.warn("error during update: ")
+          console.log({selectedDate, "id" : habitSettings["id"]})
+        }
+      
+      }
+    // console.log(onlyDatesAreSame(now, selectedEntry["created_at"]))
+
+      // if entry with selected date exists but is valid
+      // do nothing
+    }
+
+
+    // console.log({daysToCheck})
+    console.log("===============================")
+  }
+
   const onSaveTask = async (newTaskSettings) => {
+    // console.log("onSaveTask!!!")
     // make data ready for inserting into db
     let taskSettingsCopy = {...newTaskSettings} 
     taskSettingsCopy["dueDate"] = newTaskSettings["dueDate"].toISOString()
     taskSettingsCopy["email"] = session.user.email
+    const taskId = taskSettingsCopy["id"]
     delete taskSettingsCopy["id"]
   
     // convert habit history dates to ISO string 
@@ -221,16 +361,49 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
       }
       taskSettingsCopy["habitHistory"] = newhabitHistory
     }
+
+
+
+
+    // console.log((await supabase.auth.getUser()).data.user.email)
   
+    // console.log("sheeeeeeeeesh")
     // insert into db
     const { data, error } = await supabase
     .from('Tasks')
     .insert(taskSettingsCopy)
-    .select()
+    .select().single()
+
+
+    if (taskSettingsCopy["isHabit"]) {
+
+
+      //  && taskSettingsCopy["repeatDays"][now.getDay()]
+      // check if habit is valid for current day
+
+      // const habitHistoryEntry = {
+      //   "habit_due_date" : taskSettingsCopy["dueDate"],
+      // } 
+      
+
+      // const { data, error } = await supabase
+      // .from('HabitHistory')
+      // .insert(habitHistoryEntry)
+      // .select()
+
+      // console.log({"yooo" : taskSettingsCopy})      
+
+      // updateHabitHistoryEntry(newTaskSettings, data["id"])
+
+      updateHabitHistoryAll();
+    }
+
+    // console.log("done inserting task brooo")
   
     if (error) console.log(error)
   
-    await syncLocalAndDb()
+    // console.log("await syncLocalWithDb()")
+    await syncLocalWithDb()
   }
   
   const onEditTaskComplete = async (taskSettingsEdited) => {
@@ -241,6 +414,18 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
     taskSettingsCopy["dueDate"] = taskSettingsEdited["dueDate"].toISOString()
     taskSettingsCopy["email"] = session.user.email
     delete taskSettingsCopy["id"]
+
+
+    // console.log(taskSettingsCopy["isHabit"])
+    if (taskSettingsCopy["isHabit"]) {
+
+      // if task is a habit, then add an entry in habit history:
+      // created_at
+      // habit_due_date
+      // status
+      // is_streak
+    }
+
     // convert habit history dates to ISO string 
     if (taskSettingsCopy["habitHistory"] != null) {
       const newhabitHistory = []
@@ -250,15 +435,15 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
       taskSettingsCopy["habitHistory"] = newhabitHistory
     }
   
-    // insert into db
+    // update into db
     const { error } = await supabase
     .from('Tasks')
     .update(taskSettingsCopy)
     .eq('id', idToEdit)
   
-    if (error) console.log(error)
+    if (error) console.warn(error)
   
-    await syncLocalAndDb()
+    await syncLocalWithDb()
   
     // const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
   
@@ -280,10 +465,10 @@ const TaskSettingsModal = forwardRef (({session, syncLocalAndDb}, ref) => {
     .eq('id', taskSettingsToDelete.id)
   
     if (error) {
-      console.log(error)
+      console.warn(error)
     }
   
-    await syncLocalAndDb()
+    await syncLocalWithDb()
   }
   
 
