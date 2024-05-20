@@ -2,7 +2,7 @@
 import TasksPage from './components/TasksPage/TasksPage';
 // import TasksHeader from './components/TasksHeader';
 import 'react-native-url-polyfill/auto'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
@@ -65,6 +65,11 @@ export default function App() {
   // const [task, setTask] = useState(null);
   const [session, setSession] = useState(null)
   const tasksPageRef = useRef();
+  // const tasksPageRef = useCallback(async (node) => {
+  //   if (node !== null) {
+  //     await fetchData()
+  //   }
+  // }, []);
 
   // supabase realtime:
 
@@ -75,34 +80,41 @@ export default function App() {
   // })
   // .subscribe()
 
+  const fetchData = async () => {
+    if (tasksPageRef != null) {
+      await tasksPageRef?.current?.syncLocalWithDb()
+      console.info("fetched data successfully.")
+    } else {
+      console.info("did not fetch data since tasks page has not loaded yet")
+    }
+  }
+
+
   // authorize user into session
   useEffect(() => {
+
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.info("logging in now")
       setSession(session)
-      // await tasksPageRef?.current?.syncLocalWithDb()
 
     })
-    supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session)
-      // await tasksPageRef?.current?.syncLocalWithDb()
 
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session)
+      console.info("changing login info")
+      console.info(event)
+      if ((event == "SIGNED_IN" || event == "INITIAL_SESSION") && session) {
+        console.log("fetching data")
+        await fetchData()
+      } else {
+        console.warn("inside authstatechange: unable to fetch data since user is not logged in for some reason!")
+      }
     })
+
     // ignoring logs since it's giving a dumb warning with probably no solution
     // LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  }, [])
-
-  // sync local data if logged in
-  useEffect(() => {
-
-    if (session && session.user) {
-      const fetchData = async () => {
-        if (tasksPageRef != null) {
-          await tasksPageRef?.current?.syncLocalWithDb()
-        }
-      }
-      fetchData()
-    }
-  }, [session])
+  }, []) // empty dependency array simulates componentDidMount
 
 
   const signOutUser = async () => {

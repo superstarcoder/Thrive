@@ -24,7 +24,7 @@ const ScrollSelect = forwardRef (({dataArray, dispatch}, ref) => {
   useImperativeHandle(ref, () => ({
 
     scrollToIndex (index) {
-      console.log("scrolling to: "+(Math.round(textHeight)*index))
+      // console.log("scrolling to: "+(Math.round(textHeight)*index))
       flatListRef?.current?.scrollToOffset({offset: Math.round(textHeight)*index, animated: false})
     }
   }));
@@ -63,9 +63,9 @@ const ScrollSelect = forwardRef (({dataArray, dispatch}, ref) => {
   }
 
   // use below in order to print current value of scrollSelect
-  useEffect(() => {
-    console.log('current input value: ', value);
-  }, [value]);
+  // useEffect(() => {
+  //   console.log('current input value: ', value);
+  // }, [value]);
 
   const handleOnScroll = (event) => {
     let index = Math.round(((event.nativeEvent.contentOffset.y)/Math.round(textHeight)))
