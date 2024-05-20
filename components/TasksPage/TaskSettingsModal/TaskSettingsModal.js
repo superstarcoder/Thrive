@@ -395,7 +395,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
 
       // updateHabitHistoryEntry(newTaskSettings, data["id"])
 
-      updateHabitHistoryAll();
+      await updateHabitHistoryAll();
     }
 
     // console.log("done inserting task brooo")

@@ -108,7 +108,7 @@ export default function App() {
         console.log("fetching data")
         await fetchData()
       } else {
-        console.warn("inside authstatechange: unable to fetch data since user is not logged in for some reason!")
+        console.info("inside authstatechange: unable to fetch data since user is not logged in for some reason!")
       }
     })
 

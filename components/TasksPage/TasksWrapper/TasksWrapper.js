@@ -4,9 +4,10 @@ import Task from './Task';
 import {StyledH2, fontStyles} from '../../text/StyledText';
 import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
+import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText}) => {
+const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory}) => {
 
 const onComplete = async (newComplete, taskId) => {
 
@@ -47,21 +48,27 @@ function TodaysTasks() {
 
     let count = 0
 
+
+
+
+
+
     // code to count how many tasks/habits to display (that meet the conditions)
     for (const task of taskItems) {
 
-
-
-      // if (task.isHabit) {
-      //   const found = task.habitHistory.some(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
-      //   if (found) count += 1
-      // }
-      // if task
-      // else {
+      if (task.isHabit && habitHistory[task.id] != undefined) {
+        for (const entry of habitHistory[task.id]) {
+          if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj )) {
+            habitEntryFound = true
+            count += 1
+          }
+        }
+      } else if (!task.isHabit){
         var dueDateObj = new Date(task["dueDate"])
         if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
           count += 1 
         }
+      }
       // }
     }
     // return if there's no tasks to display
@@ -69,25 +76,31 @@ function TodaysTasks() {
       return
     }
 
+
     return (
       <View>
         <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/>
         <View style={styles.items}>
         {
           taskItems.map((task, index) => {
-            var dueDateObj = new Date(task["dueDate"])
+            var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
-            var found = endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj
-            if (task.isHabit) {
-              // var found = false
-              // habitHistoryEntry = task.habitHistory.find(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
-              // if (habitHistoryEntry != undefined) {
-              //   found = true
-              // }
-              // var found = task.habitHistory.some(myDay => onlyDatesAreSame(myDay, selectedDate));
+            // var found = endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj
+            let habitEntryFound = false
+
+            if (task.isHabit && habitHistory[task.id] != undefined) {
+              for (const entry of habitHistory[task.id]) {
+                if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj )) {
+                  habitEntryFound = true
+                  count += 1
+                }
+              }
             }
 
-            if ((task.isHabit && found) || (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj)) {
+
+
+
+            if ((task.isHabit && habitEntryFound) || (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj)) {
               return (
                 <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
                   <Task selectedDate={selectedDate} habitHistoryEntry={habitHistoryEntry} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} isHabit={task.isHabit} repeatDays={task.repeatDays} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 

@@ -41,7 +41,7 @@ const TasksPage = forwardRef(({
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
-  const [habitHistory, setHabitHistory] = useState([])
+  const [habitHistory, setHabitHistory] = useState({})
   // const [taskSettings, dispatch] = useReducer(reducer, {})
   
 
@@ -108,16 +108,48 @@ const TasksPage = forwardRef(({
   }
 
 
+  const getAllTasks = async () => {
+    const { data, error } = await supabase
+    .from('Tasks')
+    .select()
+    .eq('email', session.user.email)
+    .order('created_at', { ascending: true })
+
+    if (error) console.warn(error)
+    return data
+  }
+
+
+  const getAllHabitHistories = async (taskItems) => {
+
+    let newHabitHistory = {}
+
+    for (const task of taskItems) {
+      if (task.isHabit) {
+        const { data, error } = await supabase
+        .from('HabitHistory')
+        .select()
+        .eq('id', task.id)
+        .order('created_at', { ascending: false })
+        if (error) console.warn(error)
+        newHabitHistory[task.id] = data
+      }
+    }
+    setHabitHistory(newHabitHistory)
+
+    // console.log(JSON.stringify(newHabitHistory, undefined, 2))
+
+  }
+
+
   const syncLocalWithDb = async () => {
 
-    console.log("NOTE: syncing local states with db")
-    const { data, error } = await supabase
-      .from('Tasks')
-      .select()
-      .eq('email', session.user.email)
-      .order('created_at', { ascending: true })
+    const data = await getAllTasks()
 
-    if (error) console.log(error)
+    // code to update taskItems state
+
+    console.log("NOTE: syncing local states with db")
+
     // console.log("here is my data :(: "+data)
 
     let newTaskItems = []
@@ -131,13 +163,20 @@ const TasksPage = forwardRef(({
           newhabitHistory.push({ ...entry, exactDueDate: new Date(entry["exactDueDate"]) })
         }
         task["habitHistory"] = newhabitHistory
-        console.log({"updating created_at" : task["created_at"]})
+        // console.log({"updating created_at" : task["created_at"]})
       }
 
       newTaskItems = [...newTaskItems, task]
     }
 
     setTaskItems(newTaskItems)
+
+
+    // code to update HabitHistory state
+    await getAllHabitHistories(newTaskItems)
+
+
+    
   }
 
   useEffect(() => {
@@ -149,7 +188,11 @@ const TasksPage = forwardRef(({
       await syncLocalWithDb()
     }
     fetchData()
+    // console.log(JSON.stringify(habitHistory[42], undefined, 2))
+
+
   }, []); // Empty dependency array simulates componentDidMount
+
 
 
 
@@ -161,7 +204,7 @@ const TasksPage = forwardRef(({
     {
       /* display tasks */
     }
-    <TasksWrapper taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} />
+    <TasksWrapper taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} />
 
     {
       /* bottom bar/buttons */
