@@ -3,11 +3,18 @@ import TasksPage from './components/TasksPage/TasksPage';
 // import TasksHeader from './components/TasksHeader';
 import 'react-native-url-polyfill/auto'
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import { supabase } from './lib/supabase'
 import Auth from './components/AuthPage';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import Color from './assets/themes/Color';
+import { Gear, House, Trash } from 'phosphor-react-native';
+
+
 
 // TODO: figure out how database gets updated onEditTaskComplete or onSaveTask
 // TODO: update local states (tasks) on page load!!
@@ -61,8 +68,11 @@ import Auth from './components/AuthPage';
  * 
  */
 
+const Tab = createBottomTabNavigator();
+
 export default function App() {
   // const [task, setTask] = useState(null);
+  
   const [session, setSession] = useState(null)
   const tasksPageRef = useRef();
   // const tasksPageRef = useCallback(async (node) => {
@@ -136,20 +146,81 @@ export default function App() {
     return null
   }
 
-  return (
-
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* <BackgroundImg /> */}
-      {session && session.user ? (
-
+  var MyTasksPage = () => {
+    return (
+      <>
         <TasksPage 
         signOutUser={signOutUser}
-        session={session}  ref={tasksPageRef} supabase={supabase} />) :
-        (<Auth />)}
+        session={session}  ref={tasksPageRef} supabase={supabase} />
+      </>
+    );
+  }
 
-    </GestureHandlerRootView>
+  var MySettingsPage = () => {
+    return (
+      <View style={{backgroundColor: Color.DarkestBlue, width: "100%", height: "100%"}}>
+      </View>
+    );
+  }
+
+  return (
+
+    <NavigationContainer style={{margin: 0}}>
+
+
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {/* <BackgroundImg /> */}
+        {session && session.user ? (
+          
+        <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarStyle: {
+            backgroundColor: Color.DarkBlue,
+            borderRadius: 0,
+            borderWidth: 0,
+          },
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => {
+            let my_icon;
+
+            if (route.name === 'Home') {
+              my_icon = focused
+                ? <House size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
+                : <House size={30} weight="regular" color={"white"} style={styles.buttonIcon} />
+            } else if (route.name === 'Settings') {
+              my_icon = focused
+              ? <Gear size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
+              : <Gear size={30} weight="regular" color={"white"} style={styles.buttonIcon} />;
+            }
+
+            // You can return any component that you like here!
+            return my_icon;
+          },
+          tabBarActiveTintColor: Color.LightBlue,
+          tabBarInactiveTintColor: 'gray',
+        })}
+
+        > 
+  
+          <Tab.Screen name="Home" component={MyTasksPage}/>
+          <Tab.Screen name="Settings" component={MySettingsPage}/>
+
+    
+          {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
+    
+        </Tab.Navigator>
+
+          ) :
+          (<Auth />)
+          
+          }
+
+      </GestureHandlerRootView>
+    </NavigationContainer>
+
   );
 }
 
 const styles = StyleSheet.create({
+
 });

@@ -8,6 +8,7 @@ import AddTasksButton from "./AddTasksButton";
 
 
 const TaskHeader = ({
+  onAddTask,
   goToPreviousDay,
   showDatePicker,
   dateText,
@@ -43,7 +44,7 @@ const TaskHeader = ({
               </View>
             </View>
           </View>
-	<AddTasksButton />
+	<AddTasksButton onPress={onAddTask} />
 	</View>
   )
 }

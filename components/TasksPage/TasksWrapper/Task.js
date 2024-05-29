@@ -258,11 +258,10 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   task: {
-
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 20,
   },
   taskContent: {
     flexDirection: 'column',

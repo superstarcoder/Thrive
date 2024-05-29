@@ -566,7 +566,8 @@ const styles = StyleSheet.create({
   addTaskModalButtons: {
     backgroundColor: Color.GrayBlue,
     height: 90,
-    marginBottom: 25,
+    marginBottom: 95,
+    zIndex: 20,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",

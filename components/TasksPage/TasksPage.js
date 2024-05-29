@@ -200,7 +200,7 @@ const TasksPage = forwardRef(({
 
   return (<View style={styles.container}>
 
-    <TasksHeader goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
+    <TasksHeader onAddTask={onAddTask} goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
     {
       /* display tasks */
     }
@@ -210,11 +210,8 @@ const TasksPage = forwardRef(({
       /* bottom bar/buttons */
     }
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.writeTaskWrapper}>
-      <TextInput style={styles.input} placeholder={'Write a task'} ref={myInput => {
-        textInput = myInput;
-      }} />
 
-      <TouchableOpacity onPress={onAddTask}>
+      {/* <TouchableOpacity>
         <View style={styles.addWrapper}>
           <Text style={styles.addText}>+</Text>
         </View>
@@ -223,7 +220,7 @@ const TasksPage = forwardRef(({
       <TouchableOpacity onPress={signOutUser}>
         <View style={styles.addWrapper}>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
     </KeyboardAvoidingView>
 
