@@ -27,6 +27,8 @@ export function StyledH2({text, style={}, weight="medium", onLayout}) {
     "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
   })
 
+  var fontFamily = (weight == "medium") ? "MPlusMedium" : "MPlusRegular"
+
 
 
   if (!fontsLoaded) {
@@ -34,7 +36,7 @@ export function StyledH2({text, style={}, weight="medium", onLayout}) {
   }
 
   return (
-	  <Text style={[fontStyles.styledH2, style]} onLayout={onLayout}>{text}</Text>
+	  <Text style={[fontStyles.styledH2, {fontFamily: fontFamily}, style]} onLayout={onLayout}>{text}</Text>
   )
 }
 

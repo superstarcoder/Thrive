@@ -42,6 +42,7 @@ const TasksPage = forwardRef(({
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [taskItems, setTaskItems] = useState([]);
   const [habitHistory, setHabitHistory] = useState({})
+  const [habitStats, setHabitStats] = useState({})
   // const [taskSettings, dispatch] = useReducer(reducer, {})
   
 
@@ -119,7 +120,13 @@ const TasksPage = forwardRef(({
     return data
   }
 
-
+  // updates the habitHistory state with all the habit histories that are associated with ALL the habits that have been loaded into the app 
+  // format of habitHistory state:
+    // dictionary in which:
+    // key = habit's id
+    // value = list of habit history entries associated with that id 
+    // NOTE: habit histories are sorted in descending order
+  
   const getAllHabitHistories = async (taskItems) => {
 
     let newHabitHistory = {}
@@ -137,7 +144,43 @@ const TasksPage = forwardRef(({
     }
     setHabitHistory(newHabitHistory)
 
+    return newHabitHistory
+
     // console.log(JSON.stringify(newHabitHistory, undefined, 2))
+
+  }
+  
+
+  const getHabitStats = async (newHabitHistory) => {
+
+    let newHabitStats = {}
+
+    for (const [habitId, habitEntriesArray] of Object.entries(newHabitHistory)) {
+
+      let streak = 0
+      let history = []
+
+      // get latest streak count
+      for (const historyEntry of habitEntriesArray) {
+        if (historyEntry.status == "incomplete") break;
+        else if (historyEntry.status == "complete") streak += 1;
+      }
+
+      // update history array
+      for (const historyEntry of habitEntriesArray) {
+        if (historyEntry.status == "incomplete") history.push(0);
+        else if (historyEntry.status == "complete") history.push(1);
+        else if (historyEntry.status == "exempt") history.push(-1);
+      }
+
+      // update streak count
+      newHabitStats[habitId] = {"streak" : streak, "history" :history}
+    }
+
+    console.log(JSON.stringify(newHabitStats, undefined, 2))
+
+    setHabitStats(newHabitStats)
+    return newHabitStats
 
   }
 
@@ -172,10 +215,11 @@ const TasksPage = forwardRef(({
     setTaskItems(newTaskItems)
 
 
-    // code to update HabitHistory state
-    await getAllHabitHistories(newTaskItems)
+    // update HabitHistory state
+    var newHabitHistory = await getAllHabitHistories(newTaskItems)
 
-
+    // update habit stats state
+    getHabitStats(newHabitHistory)
     
   }
 

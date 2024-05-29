@@ -332,14 +332,8 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
         }
       
       }
-    // console.log(onlyDatesAreSame(now, selectedEntry["created_at"]))
-
-      // if entry with selected date exists but is valid
-      // do nothing
     }
 
-
-    // console.log({daysToCheck})
     console.log("===============================")
   }
 
@@ -362,12 +356,6 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
       taskSettingsCopy["habitHistory"] = newhabitHistory
     }
 
-
-
-
-    // console.log((await supabase.auth.getUser()).data.user.email)
-  
-    // console.log("sheeeeeeeeesh")
     // insert into db
     const { data, error } = await supabase
     .from('Tasks')
@@ -376,33 +364,11 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
 
 
     if (taskSettingsCopy["isHabit"]) {
-
-
-      //  && taskSettingsCopy["repeatDays"][now.getDay()]
-      // check if habit is valid for current day
-
-      // const habitHistoryEntry = {
-      //   "habit_due_date" : taskSettingsCopy["dueDate"],
-      // } 
-      
-
-      // const { data, error } = await supabase
-      // .from('HabitHistory')
-      // .insert(habitHistoryEntry)
-      // .select()
-
-      // console.log({"yooo" : taskSettingsCopy})      
-
-      // updateHabitHistoryEntry(newTaskSettings, data["id"])
-
       await updateHabitHistoryAll();
     }
 
-    // console.log("done inserting task brooo")
-  
     if (error) console.log(error)
   
-    // console.log("await syncLocalWithDb()")
     await syncLocalWithDb()
   }
   

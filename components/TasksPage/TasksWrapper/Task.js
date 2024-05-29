@@ -129,7 +129,7 @@ const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, tex
       <BlurView style={styles.blurView} intensity={3} />
       {accent}
       <View style={[styles.taskContent]}>
-        <StyledH2 text={text} style={styles.title}/>
+        <StyledH2 text={text} weight='regular' style={styles.title}/>
 
         {description != "" ? ( <StyledH4 text={description} style={styles.description}/> ) : ( null )}
 
@@ -261,7 +261,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginBottom: 10,
+    marginTop: 10,
   },
   taskContent: {
     flexDirection: 'column',

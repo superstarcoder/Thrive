@@ -79,7 +79,7 @@ function TodaysTasks() {
 
     return (
       <View>
-        <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/>
+        {/* <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/> */}
         <View style={styles.items}>
         {
           taskItems.map((task, index) => {
@@ -249,10 +249,11 @@ function TodaysTasks() {
   return (
 	<ScrollView
 	contentContainerStyle={{
-	  flexGrow: 1
+	  flexGrow: 1,
+    paddingBottom: 20,
 	}}
 	keyboardShouldPersistTaps='handled'
-  >
+   style={styles.taskWrapperContainer}>
 
   <View style={styles.tasksWrapper}>
 	<OverdueTasks />
@@ -268,7 +269,10 @@ export default TasksWrapper
 
 const styles = StyleSheet.create({
 	tasksWrapper: {
-		marginTop: 20,
 		paddingHorizontal: 20,
 	  },
+    sectionTitle: {
+      
+
+    }
 })

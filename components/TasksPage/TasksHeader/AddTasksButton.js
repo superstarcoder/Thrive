@@ -11,19 +11,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 const AddTasksButton = ({onPress}) => {
   return (
   <View>
-	<TouchableOpacity onPress={onPress} >
+	<TouchableOpacity onPress={onPress} style={styles.addTasksButton}>
 
-	<LinearGradient
+	{/* <LinearGradient
 	x1='0%'
 	y1='0%'
 	x2='0%'
 	y2='100%'
         // Button Linear Gradient
         colors={['#3848a0', '#252F68', '#030a2a']}
-        style={styles.addTasksButton}>
+        > */}
 			
-		<StyledH2 text={"Add Task"} />
-      </LinearGradient>
+		<StyledH2 text={"Add Task"} weight="regular"/>
+      {/* </LinearGradient> */}
 
 	</TouchableOpacity>
 </View>
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
 		// backgroundColor: "white",
 		alignSelf: "center",
 			// borderWidth: 5,
-		// backgroundColor: "#252F68",
-		marginTop: 10,
+		backgroundColor: "#252F68",
+		marginVertical: 10,
 		borderRadius: 20,
 		alignItems: "center",
 		justifyContent: "center",

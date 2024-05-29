@@ -20,7 +20,7 @@ const TaskHeader = ({
 }) => {
   return (
 
-	<View>
+	<View style={{marginVertical: 0}}>
 
   
   		<View style={styles.datePicker}>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
 	  },
 	  datePicker: {
 		top: 0,
-		height: 110,
+		// height: 110,
 		width: "100%",
 		backgroundColor: Color.DarkestBlue,
 		flexDirection: "row",
@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 8,
 	  },
 	  currentDateContainer: {
+		marginTop: 70,
 		flexDirection: "row",
 		backgroundColor: "#101326",
 		borderRadius: 8,
