@@ -498,13 +498,11 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
 		  <TouchableOpacity onPress={onSavePress}>
         <View style={styles.saveTaskButton}>
           <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
-          {/* <CheckCircle size={30} weight="bold" color={"black"} style={styles.saveButtonIcon} /> */}
         </View>
 		  </TouchableOpacity>
 
 		  <TouchableOpacity onPress={onCancelPress}>
         <View style={styles.cancelTaskButton}>
-          {/* <Text style={[fontStyles.styledH1, styles.buttonText]}>Cancel</Text> */}
           <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
         </View>
 		  </TouchableOpacity>
@@ -567,7 +565,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.GrayBlue,
     height: 90,
     marginBottom: 95,
-    zIndex: 20,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",

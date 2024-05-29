@@ -3,7 +3,7 @@ import TasksPage from './components/TasksPage/TasksPage';
 // import TasksHeader from './components/TasksHeader';
 import 'react-native-url-polyfill/auto'
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import { supabase } from './lib/supabase'
@@ -12,7 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Color from './assets/themes/Color';
-import { Gear, House, Trash } from 'phosphor-react-native';
+import { Gear, House, Trash, XCircle, Robot, Sparkle } from 'phosphor-react-native';
 
 
 
@@ -165,50 +165,81 @@ export default function App() {
 
   return (
 
-    <NavigationContainer style={{margin: 0}}>
+    // <NavigationContainer style={{margin: 0}}>
 
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         {/* <BackgroundImg /> */}
         {session && session.user ? (
           
-        <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarStyle: {
-            backgroundColor: Color.DarkBlue,
-            borderRadius: 0,
-            borderWidth: 0,
-          },
-          headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => {
-            let my_icon;
+          
+        // <Tab.Navigator
+        // screenOptions={({ route }) => ({
+        //   tabBarStyle: {
+        //     backgroundColor: Color.DarkBlue,
+        //     borderRadius: 0,
+        //     borderWidth: 0,
+        //   },
+        //   headerShown: false,
+        //   tabBarIcon: ({ focused, color, size }) => {
+        //     let my_icon;
 
-            if (route.name === 'Home') {
-              my_icon = focused
-                ? <House size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
-                : <House size={30} weight="regular" color={"white"} style={styles.buttonIcon} />
-            } else if (route.name === 'Settings') {
-              my_icon = focused
-              ? <Gear size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
-              : <Gear size={30} weight="regular" color={"white"} style={styles.buttonIcon} />;
-            }
+        //     if (route.name === 'Home') {
+        //       my_icon = focused
+        //         ? <House size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
+        //         : <House size={30} weight="regular" color={"white"} style={styles.buttonIcon} />
+        //     } else if (route.name === 'Settings') {
+        //       my_icon = focused
+        //       ? <Gear size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
+        //       : <Gear size={30} weight="regular" color={"white"} style={styles.buttonIcon} />;
+        //     }
 
-            // You can return any component that you like here!
-            return my_icon;
-          },
-          tabBarActiveTintColor: Color.LightBlue,
-          tabBarInactiveTintColor: 'gray',
-        })}
+        //     // You can return any component that you like here!
+        //     return my_icon;
+        //   },
+        //   tabBarActiveTintColor: Color.LightBlue,
+        //   tabBarInactiveTintColor: 'gray',
+        // })}
 
-        > 
+        // > 
   
-          <Tab.Screen name="Home" component={MyTasksPage}/>
-          <Tab.Screen name="Settings" component={MySettingsPage}/>
+        //   <Tab.Screen name="Home" component={MyTasksPage}/>
+        //   <Tab.Screen name="Settings" component={MySettingsPage}/>
 
     
-          {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
+        //   {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
     
-        </Tab.Navigator>
+        // </Tab.Navigator>
+        <>
+
+        <TasksPage 
+        signOutUser={signOutUser}
+        session={session}  ref={tasksPageRef} supabase={supabase} />
+          <View style={styles.navbarContainer}>
+            <View style={styles.navbar}>
+            <TouchableOpacity>
+                <View style={styles.settingsButton}>
+                  <Gear size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.homeButton}>
+                  <House size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.AIButton}>
+                  <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+                </View>
+              </TouchableOpacity>        
+              <TouchableOpacity>
+                <View style={styles.cancelTaskButton}>
+                  <Sparkle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+                </View>
+              </TouchableOpacity>   
+            </View>
+          </View>
+          </>
 
           ) :
           (<Auth />)
@@ -216,11 +247,84 @@ export default function App() {
           }
 
       </GestureHandlerRootView>
-    </NavigationContainer>
+    // </NavigationContainer>
 
   );
 }
 
 const styles = StyleSheet.create({
-
+  navbarContainer: {
+    backgroundColor: Color.GrayBlue,
+    height: 90,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  navbar: {
+    borderRadius: 30,
+    backgroundColor: Color.DarkestBlue,
+    height: 70,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    alignSelf: "center",
+    bottom: 0,
+    width: "80%",
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    paddingBottom: 10,
+  },
+  saveTaskButton: {
+    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    width: 100,
+    height: 45,
+    borderRadius: 12,
+    marginRight: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: "row",
+  },
+  cancelTaskButton: {
+    backgroundColor: Color.Blue,
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  homeButton: {
+    backgroundColor: Color.Blue,
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    marginRight: 20,
+    alignItems: 'center',
+  },
+  AIButton: {
+    backgroundColor: Color.Blue,
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    marginRight: 20,
+    alignItems: 'center',
+  },
+  settingsButton: {
+    backgroundColor: Color.Blue,
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    marginRight: 20,
+    alignItems: 'center',
+  },
+  deleteTaskButton: {
+    backgroundColor: "hsl(0, 81%, 50%)",
+    width: 45,
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
