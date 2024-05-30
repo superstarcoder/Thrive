@@ -7,10 +7,10 @@ import HighlightSelect from '../../FormComponents/HighlightSelect';
 import * as Haptics from 'expo-haptics';
 import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
-const RepeatBox = ({dispatch, repeatDays}) => {
+const RepeatBox = ({dispatch, repeatDays, isHabit}) => {
 
   const updateSelectedList = (value, text) => {
-    dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {dayInt: text, selected: value}})
+    dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {dayInt: text, selected: value, isHabit: isHabit}})
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
   }
 

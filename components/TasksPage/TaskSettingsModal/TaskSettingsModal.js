@@ -122,8 +122,12 @@ function reducer(taskSettings, action) {
       newRepeatDays[action.payload.dayInt] = action.payload.selected
 
       //  TODO: IMPLEMENT FUNCTION
+      console.log(action.payload.isHabit)
       if (action.payload.isHabit == true) {
-        var habitHistory = updateHistoryWithRepeatDays(action.payload.repeatDays, action.payload.dueDate)
+        let today = new Date();
+        console.log("updating repeat_days_edited_date")
+        return {...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate())}
+        // var habitHistory = updateHistoryWithRepeatDays(action.payload.repeatDays, action.payload.dueDate)
         // console.log("=============================")
         // console.log("habitHistory: "+JSON.stringify(habitHistory))
         // console.log("=============================")
@@ -265,13 +269,20 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
     
     const habitHistoryEntries = data
 
+
+    // possibility of missing some habits
+    // last edited date -> current date
+
+    // repeatDays last edited date -> current date
+
     // create a list of dates between habit's creation date and today that are all valid dates for the habit
     const now = getDateFromDatetime(new Date())
     var dayAfterNow = new Date(now)
     dayAfterNow.setDate(dayAfterNow.getDate() + 1)
 
     var daysToCheck = [];
-    const start_date = getDateFromDatetime(new Date(habitSettings["created_at"]))
+    // const start_date = getDateFromDatetime(new Date(habitSettings["created_at"]))
+    const start_date = getDateFromDatetime(new Date(habitSettings.repeat_days_edited_date))
     for (var d = start_date; d < dayAfterNow; d.setDate(d.getDate() + 1)) {
       if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true) daysToCheck.push(new Date(d));
     }
@@ -356,6 +367,12 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
       taskSettingsCopy["habitHistory"] = newhabitHistory
     }
 
+    // format date correctly before updating database
+    if (Object.hasOwn(taskSettingsCopy, "repeat_days_edited_date")) {
+    // if (taskSettingsCopy.repeat_days_edited_date !== undefined) {
+      taskSettingsCopy.repeat_days_edited_date = taskSettingsCopy.repeat_days_edited_date.toISOString()
+    }
+
     // insert into db
     const { data, error } = await supabase
     .from('Tasks')
@@ -399,6 +416,15 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
         newhabitHistory.push({...entry, exactDueDate: entry["exactDueDate"].toISOString()})
       }
       taskSettingsCopy["habitHistory"] = newhabitHistory
+    }
+
+    // format date correctly before updating database
+    if (Object.hasOwn(taskSettingsCopy, "repeat_days_edited_date")) {
+    // if (taskSettingsCopy.repeat_days_edited_date !== undefined) {
+      console.log("YO")
+      console.log(typeof taskSettingsCopy.repeat_days_edited_date)
+      console.log(taskSettingsCopy.repeat_days_edited_date)
+      taskSettingsCopy.repeat_days_edited_date = taskSettingsCopy.repeat_days_edited_date.toISOString()
     }
   
     // update into db
@@ -455,7 +481,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
 		  <DescriptionBox description={taskSettings.description} dispatch={dispatch}/>
 		  <StyledH1 style={styles.settingsTitle} text={"Habit Settings"}/>
 		  <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate}/>
-		  <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays}/>
+		  <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit}/>
 		  <StyledH1 style={styles.settingsTitle} text={"Advanced"}/>
 		  <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime}/>
 		</ScrollView>

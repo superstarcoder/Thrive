@@ -80,7 +80,7 @@ const TasksPage = forwardRef(({
     setDatePickerVisibility(false);
   };
 
-  const onAddTask = () => {
+  const onAddTaskButtonPressed = () => {
     taskSettingsRef?.current?.showAddTaskModal()
   }
 
@@ -197,17 +197,19 @@ const TasksPage = forwardRef(({
 
     let newTaskItems = []
     for (const task of data) {
-      task["dueDate"] = new Date(task["dueDate"])
+      task.dueDate = new Date(task.dueDate)
 
       // update habit history dates (convert from string to date)
-      if (task["habitHistory"] != null) {
+      if (task.habitHistory != null) {
         const newhabitHistory = []
         for (const entry of task["habitHistory"]) {
-          newhabitHistory.push({ ...entry, exactDueDate: new Date(entry["exactDueDate"]) })
+          newhabitHistory.push({ ...entry, exactDueDate: new Date(entry.exactDueDate) })
         }
-        task["habitHistory"] = newhabitHistory
+        task.habitHistory = newhabitHistory
         // console.log({"updating created_at" : task["created_at"]})
       }
+
+      task.repeat_days_edited_date = new Date(task.repeat_days_edited_date)
 
       newTaskItems = [...newTaskItems, task]
     }
@@ -244,7 +246,7 @@ const TasksPage = forwardRef(({
 
   return (<View style={styles.container}>
 
-    <TasksHeader onAddTask={onAddTask} goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
+    <TasksHeader onAddTask={onAddTaskButtonPressed} goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
     {
       /* display tasks */
     }
