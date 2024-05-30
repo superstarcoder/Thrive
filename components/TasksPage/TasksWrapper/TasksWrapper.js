@@ -31,7 +31,7 @@ const onEditTask = (taskSettings) => {
   taskSettingsRef?.current?.showEditTaskModal(taskSettings)
 }
 
-function TodaysTasks() {
+function SelectedDayTasks() {
     /**
      * todays tasks includes tasks that are due between the start and end of the selected date
      */
@@ -48,18 +48,19 @@ function TodaysTasks() {
 
     let count = 0
 
-
-
-
-
-
+    let entryFound = false
     // code to count how many tasks/habits to display (that meet the conditions)
     for (const task of taskItems) {
 
       if (task.isHabit && habitHistory[task.id] != undefined) {
         for (const entry of habitHistory[task.id]) {
+          // if (entry.habit_due_date == "2024-05-31" && task.id == 41) {
+          //   console.log("this is the entry: "+JSON.stringify(entry))
+          //   entryFound = true
+          // }
           if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj )) {
-            habitEntryFound = true
+            // console.log("displaying habit: "+JSON.stringify(entry))
+            // habitEntryFound = true
             count += 1
           }
         }
@@ -256,8 +257,8 @@ function TodaysTasks() {
    style={styles.taskWrapperContainer}>
 
   <View style={styles.tasksWrapper}>
+	<SelectedDayTasks />
 	<OverdueTasks />
-	<TodaysTasks />
 	<DueLaterTasks />
   </View>
 	

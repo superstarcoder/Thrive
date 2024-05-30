@@ -386,7 +386,8 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
 
     if (error) console.log(error)
   
-    await syncLocalWithDb()
+      // commented due to realtime changes
+    // await syncLocalWithDb()
   }
   
   const onEditTaskComplete = async (taskSettingsEdited) => {
@@ -435,7 +436,8 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
   
     if (error) console.warn(error)
   
-    await syncLocalWithDb()
+    // commented due to realtime changes
+    // await syncLocalWithDb()
   
     // const oldTask = taskItems.find(x => x.id == taskSettingsEdited.id)
   
@@ -460,7 +462,8 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
       console.warn(error)
     }
   
-    await syncLocalWithDb()
+    // commented due to realtime changes
+    // await syncLocalWithDb()
   }
   
 

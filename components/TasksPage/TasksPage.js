@@ -11,6 +11,7 @@ import TaskSettingsModal from './TaskSettingsModal/TaskSettingsModal';
 import { LogBox, Platform } from 'react-native';
 // import { onlyDatesAreSame } from './utils/DateHelper';
 import TasksWrapper from './TasksWrapper/TasksWrapper';
+import { subscribeToChangesTasksTable, supabaseSyncLocalWithDb } from './TasksPageSupabase';
 // import BackgroundImg from './components/BackgroundImage';
 
 
@@ -83,10 +84,6 @@ const TasksPage = forwardRef(({
   const onAddTaskButtonPressed = () => {
     taskSettingsRef?.current?.showAddTaskModal()
   }
-
-
-
-
   // if the date selected is today
 
   const todaysDate = new Date()
@@ -109,120 +106,8 @@ const TasksPage = forwardRef(({
   }
 
 
-  const getAllTasks = async () => {
-    const { data, error } = await supabase
-    .from('Tasks')
-    .select()
-    .eq('email', session.user.email)
-    .order('created_at', { ascending: true })
-
-    if (error) console.warn(error)
-    return data
-  }
-
-  // updates the habitHistory state with all the habit histories that are associated with ALL the habits that have been loaded into the app 
-  // format of habitHistory state:
-    // dictionary in which:
-    // key = habit's id
-    // value = list of habit history entries associated with that id 
-    // NOTE: habit histories are sorted in descending order
-  
-  const getAllHabitHistories = async (taskItems) => {
-
-    let newHabitHistory = {}
-
-    for (const task of taskItems) {
-      if (task.isHabit) {
-        const { data, error } = await supabase
-        .from('HabitHistory')
-        .select()
-        .eq('id', task.id)
-        .order('created_at', { ascending: false })
-        if (error) console.warn(error)
-        newHabitHistory[task.id] = data
-      }
-    }
-    setHabitHistory(newHabitHistory)
-
-    return newHabitHistory
-
-    // console.log(JSON.stringify(newHabitHistory, undefined, 2))
-
-  }
-  
-
-  const getHabitStats = async (newHabitHistory) => {
-
-    let newHabitStats = {}
-
-    for (const [habitId, habitEntriesArray] of Object.entries(newHabitHistory)) {
-
-      let streak = 0
-      let history = []
-
-      // get latest streak count
-      for (const historyEntry of habitEntriesArray) {
-        if (historyEntry.status == "incomplete") break;
-        else if (historyEntry.status == "complete") streak += 1;
-      }
-
-      // update history array
-      for (const historyEntry of habitEntriesArray) {
-        if (historyEntry.status == "incomplete") history.push(0);
-        else if (historyEntry.status == "complete") history.push(1);
-        else if (historyEntry.status == "exempt") history.push(-1);
-      }
-
-      // update streak count
-      newHabitStats[habitId] = {"streak" : streak, "history" :history}
-    }
-
-    console.log(JSON.stringify(newHabitStats, undefined, 2))
-
-    setHabitStats(newHabitStats)
-    return newHabitStats
-
-  }
-
-
   const syncLocalWithDb = async () => {
-
-    const data = await getAllTasks()
-
-    // code to update taskItems state
-
-    console.log("NOTE: syncing local states with db")
-
-    // console.log("here is my data :(: "+data)
-
-    let newTaskItems = []
-    for (const task of data) {
-      task.dueDate = new Date(task.dueDate)
-
-      // update habit history dates (convert from string to date)
-      if (task.habitHistory != null) {
-        const newhabitHistory = []
-        for (const entry of task["habitHistory"]) {
-          newhabitHistory.push({ ...entry, exactDueDate: new Date(entry.exactDueDate) })
-        }
-        task.habitHistory = newhabitHistory
-        // console.log({"updating created_at" : task["created_at"]})
-      }
-
-      task.repeat_days_edited_date = new Date(task.repeat_days_edited_date)
-
-      newTaskItems = [...newTaskItems, task]
-    }
-
-    setTaskItems(newTaskItems)
-
-
-    // update HabitHistory state
-    var newHabitHistory = await getAllHabitHistories(newTaskItems)
-
-    // update habit stats state
-    getHabitStats(newHabitHistory)
-    
+    await supabaseSyncLocalWithDb(supabase, session, setTaskItems, setHabitStats, setHabitHistory)    
   }
 
   useEffect(() => {
@@ -234,14 +119,11 @@ const TasksPage = forwardRef(({
       await syncLocalWithDb()
     }
     fetchData()
+    subscribeToChangesTasksTable(supabase, syncLocalWithDb)
     // console.log(JSON.stringify(habitHistory[42], undefined, 2))
 
 
   }, []); // Empty dependency array simulates componentDidMount
-
-
-
-
 
 
   return (<View style={styles.container}>
