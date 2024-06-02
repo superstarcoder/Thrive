@@ -8,7 +8,7 @@ import { BlurView } from 'expo-blur';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, complete, onComplete, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
+const Task = ({habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, isSelected, onChange, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
 
   // const [complete, setComplete] = useState(completeDefault)
 
@@ -25,7 +25,7 @@ const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, tex
     importanceText = <StyledH4 text={"high importance"} style={styles.importanceText}/>
   }
   
-  if (complete) {
+  if (isSelected) {
     taskConditionalStyle = {
       backgroundColor: "#28265c",
       opacity: 0.65,
@@ -69,14 +69,44 @@ const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, tex
 
     // console.log(exactDueDate)
 
-    console.log("HABIT HISTORY ENTRY!!: "+habitHistoryEntry)
+    // console.log("HABIT HISTORY ENTRY!!: "+habitHistoryEntry)
 
     // UPDATE UI FOR HABIT
-    const streaks = 2
-    const goal = 4
-    const progressBarMaxWidth = 200
+    console.log({habitStatsEntry})
+    var streak
+    if (habitStatsEntry == undefined) {
+      streak = 0
+    }
+    else {
+      streak = habitStatsEntry.streak
+    }
     
-    const progressBarWidth = (streaks/goal)*progressBarMaxWidth
+
+
+    // from 1 to 50
+    // goal is multiple of 5
+    // from 50 to 100
+    // goal is multiple of 20
+    // from 100+
+    // goal is multiple of 50
+
+    let goal = 10
+    // if (streak >= 0 && streak <= 50) {
+    //   goal = 5 * (Math.floor(streak / 5)) + 5
+    // } else if (streak >= 50 && streak <= 100) {
+    //   goal = 20 * (Math.floor(streak / 20)) + 20
+    // } else {
+    //   goal = 50 * (Math.floor(streak / 50)) + 50
+    // }
+
+    const progressBarMaxWidth = 200
+    const fireIconSize = 35
+
+    
+    let progressBarWidth = (streak/goal)*progressBarMaxWidth
+    if (progressBarWidth < fireIconSize) {
+      progressBarWidth = fireIconSize/2 + 7
+    }
   
     const conditionalStyling = {
       width: progressBarWidth
@@ -85,16 +115,16 @@ const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, tex
     habitBar =
     <View style={styles.progressBar}>
       <View style={[styles.progressBarFilled, conditionalStyling]}>
-        <Fire size={35} weight="fill" color="#750909" style={styles.fireIcon}/>
+        <Fire size={fireIconSize} weight="fill" color="#750909" style={styles.fireIcon}/>
       </View>
     </View>
 
     habitInfoText =
     <View style={styles.habitInfoText}>
-      <StyledH4 text={"2 streaks (goal: 4)"} style={{marginRight: 10,}}/>
+      <StyledH4 text={`${streak} streaks (goal: ${goal})`} style={{marginRight: 10,}}/>
     </View> 
 
-    console.log("repeat days: "+repeatDays)
+    // console.log("repeat days: "+repeatDays)
     const daysOfWeek = ["M", "T", "W", "Th", "F", "S", "Su"]
     var repeatDaysStr = ""
     for (var i = 0; i < daysOfWeek.length; i++) {
@@ -154,7 +184,7 @@ const Task = ({selectedDate, habitHistory, habitInitDate, habitHistoryEntry, tex
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
       <View style={styles.checkBoxSection}>
-        <TaskCheckBox size={45} onChange={onComplete} checked={complete} taskId={taskId}/>
+        <TaskCheckBox size={45} onChange={onChange} checked={isSelected} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry}/>
       </View>
 
     </View>

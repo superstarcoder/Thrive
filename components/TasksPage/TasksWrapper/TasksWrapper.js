@@ -7,23 +7,74 @@ import { supabase } from '../../../lib/supabase'
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory}) => {
+const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats}) => {
 
-const onComplete = async (newComplete, taskId) => {
+const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry) => {
 
-  // local changes
-  const taskItemsCopy = [...taskItems]
-  const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
-  taskItemsCopy[indexToChange]["complete"] = newComplete
-  setTaskItems(taskItemsCopy)
+  if (!isHabit) {
+    // local changes
+    const taskItemsCopy = [...taskItems]
+    const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
+    taskItemsCopy[indexToChange]["complete"] = isSelected
+    setTaskItems(taskItemsCopy)
 
-  // db changes
-  const { error } = await supabase
-  .from('Tasks')
-  .update({complete: newComplete})
-  .eq('id', taskId)
+    // db changes
+    const { error } = await supabase
+    .from('Tasks')
+    .update({complete: isSelected})
+    .eq('id', taskId)
 
-  if (error) console.log(error)
+    if (error) console.log(error)
+  }
+  else {
+
+      // console.log({habitStats})
+      // console.log({"habitHistories": habitHistory[taskId]})
+
+      // console.log({})
+
+      // local changes
+      const habitHistoryCopy = {...habitHistory}
+      var newStatus
+      for (const entry of habitHistoryCopy[taskId]) {
+        // console.log(habitHistoryCopy[taskId])
+        // console.log(entry, habitHistoryEntry.habit_due_date)
+        if (onlyDatesAreSame(entry.habit_due_date, habitHistoryEntry.habit_due_date)) {
+          console.log(entry["status"], isSelected)
+          if (isSelected) {
+            entry["status"] = "complete"
+          } else if (onlyDatesAreSame(entry.habit_due_date, new Date())) {
+            entry["status"] = "pending"
+          } else {
+            entry["status"] = "incomplete"
+          }
+          newStatus = entry["status"]
+          console.log(entry["status"], isSelected)
+        } 
+      }
+      setHabitHistory(habitHistoryCopy)
+
+      // db changes
+      const { error } = await supabase
+      .from('HabitHistory')
+      .update({status: newStatus})
+      .eq('id', taskId)
+      .eq('habit_due_date', habitHistoryEntry.habit_due_date)
+
+      if (error) console.log(error)
+      // const indexToChange = habitHistoryCopy.findIndex(x => x.id === taskId);
+      // taskItemsCopy[indexToChange]["complete"] = newComplete
+      // setTaskItems(taskItemsCopy)
+  
+      // db changes
+      // const { error } = await supabase
+      // .from('Tasks')
+      // .update({complete: newComplete})
+      // .eq('id', taskId)
+  
+      // if (error) console.log(error)
+
+  } 
 
 }
 
@@ -54,13 +105,7 @@ function SelectedDayTasks() {
 
       if (task.isHabit && habitHistory[task.id] != undefined) {
         for (const entry of habitHistory[task.id]) {
-          // if (entry.habit_due_date == "2024-05-31" && task.id == 41) {
-          //   console.log("this is the entry: "+JSON.stringify(entry))
-          //   entryFound = true
-          // }
           if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj )) {
-            // console.log("displaying habit: "+JSON.stringify(entry))
-            // habitEntryFound = true
             count += 1
           }
         }
@@ -86,25 +131,47 @@ function SelectedDayTasks() {
           taskItems.map((task, index) => {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
-            // var found = endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj
             let habitEntryFound = false
+            let isSelected = task.complete
 
             if (task.isHabit && habitHistory[task.id] != undefined) {
               for (const entry of habitHistory[task.id]) {
                 if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj )) {
                   habitEntryFound = true
                   count += 1
+                  habitHistoryEntry = entry
+                  if (entry.status == "complete") {
+                    isSelected = true
+                  } else {
+                    isSelected = false
+                  }
+                  break
                 }
               }
             }
 
 
-
-
             if ((task.isHabit && habitEntryFound) || (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj)) {
               return (
                 <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                  <Task selectedDate={selectedDate} habitHistoryEntry={habitHistoryEntry} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} isHabit={task.isHabit} repeatDays={task.repeatDays} dueDate={task.dueDate} showDueTime={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                  <Task 
+                  habitStatsEntry={habitStats[task.id]}
+                  selectedDate={selectedDate}
+                  habitHistoryEntry={habitHistoryEntry}
+                  habitHistory={task.habitHistory}
+                  habitInitDate={task.habitInitDate}
+                  isHabit={task.isHabit}
+                  repeatDays={task.repeatDays}
+                  dueDate={task.dueDate}
+                  showDueTime={true}
+                  taskId={task.id}
+                  onChange={onCheckBoxPressed}
+                  isSelected={isSelected}
+                  text={task.title}
+                  priority={task.importance}
+                  duration={task.duration}
+                  description={task.description}
+                  points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                 </TouchableOpacity>
               )
             }
@@ -115,6 +182,7 @@ function SelectedDayTasks() {
     )
   }
 
+  // NOTE: this does not render any habits
   function DueLaterTasks() {
     /**
      * Due later tasks include tasks that are incomplete and are due after the end of the selected date
@@ -161,7 +229,7 @@ function SelectedDayTasks() {
           if (endOfDayObj < dueDateObj && task.complete == false && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onChange={onCheckBoxPressed} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
               </TouchableOpacity>
             )
           }
@@ -171,6 +239,7 @@ function SelectedDayTasks() {
   )}
 
 
+  // NOTE: this does not render any habits
   function OverdueTasks() {
     /**
      * Due later tasks include tasks that are:
@@ -218,7 +287,7 @@ function SelectedDayTasks() {
           if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onComplete={onComplete} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onChange={onCheckBoxPressed} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
               </TouchableOpacity>
             )
           }

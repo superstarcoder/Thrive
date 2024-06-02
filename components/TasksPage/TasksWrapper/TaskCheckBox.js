@@ -5,7 +5,7 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import { Square, CheckSquare } from 'phosphor-react-native';
 import * as Haptics from 'expo-haptics';
 
-const TaskCheckBox = ({onChange=null, checked, size=38, taskId}) => {
+const TaskCheckBox = ({onChange=null, checked, size=38, taskId, isHabit, habitHistoryEntry}) => {
 
 
   // const [checked, setChecked] = useState(false)
@@ -14,7 +14,7 @@ const TaskCheckBox = ({onChange=null, checked, size=38, taskId}) => {
     
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     if (onChange != null) {
-      await onChange(!checked, taskId)
+      await onChange(!checked, taskId, isHabit, habitHistoryEntry)
     }
 	  // setChecked(!checked)
   }

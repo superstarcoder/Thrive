@@ -53,7 +53,7 @@ export function subscribeToChangesTasksTable(supabase, syncLocalWithDb) {
       async (payload) => {
         console.log("detected UPDATE changes!!!")
         console.log(payload)
-		await syncLocalWithDb()
+		// await syncLocalWithDb()
       }
     )
 	.on(
@@ -186,7 +186,7 @@ export function subscribeToChangesTasksTable(supabase, syncLocalWithDb) {
       newHabitStats[habitId] = {"streak" : streak, "history" :history}
     }
 
-    console.log(JSON.stringify(newHabitStats, undefined, 2))
+    // console.log(JSON.stringify(newHabitStats, undefined, 2))
 
     setHabitStats(newHabitStats)
     return newHabitStats
@@ -199,6 +199,8 @@ export function subscribeToChangesTasksTable(supabase, syncLocalWithDb) {
     .select()
     .eq('email', session.user.email)
     .order('created_at', { ascending: true })
+
+    // console.log({data})
 
     if (error) console.warn(error)
     return data
