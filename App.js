@@ -12,7 +12,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Color from './assets/themes/Color';
-import { Gear, House, Trash, XCircle, Robot, Sparkle } from 'phosphor-react-native';
+import NavBar from './components/NavBar';
+import { LogBox } from 'react-native';
 
 
 
@@ -74,6 +75,7 @@ export default function App() {
   // const [task, setTask] = useState(null);
   
   const [session, setSession] = useState(null)
+  const [currentPage, setCurrentPage] = useState("home")
   const tasksPageRef = useRef();
   // const tasksPageRef = useCallback(async (node) => {
   //   if (node !== null) {
@@ -123,7 +125,7 @@ export default function App() {
     })
 
     // ignoring logs since it's giving a dumb warning with probably no solution
-    // LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []) // empty dependency array simulates componentDidMount
 
 
@@ -212,33 +214,14 @@ export default function App() {
         // </Tab.Navigator>
         <>
 
-        <TasksPage 
-        signOutUser={signOutUser}
-        session={session}  ref={tasksPageRef} supabase={supabase} />
-          <View style={styles.navbarContainer}>
-            <View style={styles.navbar}>
-            <TouchableOpacity>
-                <View style={styles.settingsButton}>
-                  <Gear size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View style={styles.homeButton}>
-                  <House size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View style={styles.AIButton}>
-                  <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-                </View>
-              </TouchableOpacity>        
-              <TouchableOpacity>
-                <View style={styles.cancelTaskButton}>
-                  <Sparkle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-                </View>
-              </TouchableOpacity>   
-            </View>
-          </View>
+        {currentPage == "home" &&
+          <TasksPage 
+          signOutUser={signOutUser}
+          session={session}  ref={tasksPageRef} supabase={supabase} />
+        }
+
+        <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage} /> 
+          
           </>
 
           ) :
@@ -253,78 +236,4 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  navbarContainer: {
-    backgroundColor: Color.GrayBlue,
-    height: 90,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navbar: {
-    borderRadius: 30,
-    backgroundColor: Color.DarkestBlue,
-    height: 70,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    alignSelf: "center",
-    bottom: 0,
-    width: "80%",
-    shadowColor: "black",
-    shadowOpacity: 0.2,
-    paddingBottom: 10,
-  },
-  saveTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
-    width: 100,
-    height: 45,
-    borderRadius: 12,
-    marginRight: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: "row",
-  },
-  cancelTaskButton: {
-    backgroundColor: Color.Blue,
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  homeButton: {
-    backgroundColor: Color.Blue,
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    marginRight: 20,
-    alignItems: 'center',
-  },
-  AIButton: {
-    backgroundColor: Color.Blue,
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    marginRight: 20,
-    alignItems: 'center',
-  },
-  settingsButton: {
-    backgroundColor: Color.Blue,
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    marginRight: 20,
-    alignItems: 'center',
-  },
-  deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
-    width: 45,
-    height: 45,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
