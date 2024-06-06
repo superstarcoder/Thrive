@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <!-- Blue Box -->
+  <rect width="256" height="256" fill="#8cacff" />
+  
+  <!-- Diagonal Stripes -->
+  <defs>
+    <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(-45)">
+      <line x1="0" y="0" x2="0" y2="40" stroke="black" stroke-width="20" />
+    </pattern>
+  </defs>
+  
+  <rect width="256" height="256" fill="url(#diagonalStripes)" />
+</svg>
+ 

@@ -9,19 +9,23 @@ import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats}) => {
 
-const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry) => {
+const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry, status) => {
+
+  console.log(status)
 
   if (!isHabit) {
     // local changes
     const taskItemsCopy = [...taskItems]
     const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
-    taskItemsCopy[indexToChange]["complete"] = isSelected
+    console.log("old state: "+taskItemsCopy[indexToChange]["status"])
+    taskItemsCopy[indexToChange]["status"] = status
+    console.log("new state: "+status)
     setTaskItems(taskItemsCopy)
 
     // db changes
     const { error } = await supabase
     .from('Tasks')
-    .update({complete: isSelected})
+    .update({status: status})
     .eq('id', taskId)
 
     if (error) console.log(error)
@@ -142,6 +146,7 @@ function SelectedDayTasks() {
                   priority={task.importance}
                   duration={task.duration}
                   description={task.description}
+                  status={task.status}
                   points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                 </TouchableOpacity>
               )
@@ -231,6 +236,7 @@ function SelectedDayTasks() {
                   priority={task.importance}
                   duration={task.duration}
                   description={task.description}
+                  status={task.status}
                   points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                 </TouchableOpacity>
               )
@@ -289,7 +295,22 @@ function SelectedDayTasks() {
           if (endOfDayObj < dueDateObj && task.complete == false && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onChange={onCheckBoxPressed} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                <Task
+                selectedDate={selectedDate}
+                habitHistory={task.habitHistory}
+                habitInitDate={task.habitInitDate}
+                dueDate={task.dueDate}
+                repeatDays={task.repeatDays}
+                showDueDate={true}
+                taskId={task.id}
+                onChange={onCheckBoxPressed}
+                complete={task.complete}
+                text={task.title}
+                priority={task.importance}
+                duration={task.duration}
+                description={task.description}
+                status={task.status}
+                points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
               </TouchableOpacity>
             )
           }
@@ -347,7 +368,23 @@ function SelectedDayTasks() {
           if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
-                <Task isOverdue={true} selectedDate={selectedDate} habitHistory={task.habitHistory} habitInitDate={task.habitInitDate} dueDate={task.dueDate} repeatDays={task.repeatDays} showDueDate={true} taskId={task.id} onChange={onCheckBoxPressed} complete={task.complete} text={task.title} priority={task.importance} duration={task.duration} description={task.description} points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                <Task
+                isOverdue={true}
+                selectedDate={selectedDate}
+                habitHistory={task.habitHistory}
+                habitInitDate={task.habitInitDate}
+                dueDate={task.dueDate}
+                repeatDays={task.repeatDays}
+                showDueDate={true}
+                taskId={task.id}
+                onChange={onCheckBoxPressed}
+                complete={task.complete}
+                text={task.title}
+                priority={task.importance}
+                duration={task.duration}
+                description={task.description}
+                status={task.status}
+                points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
               </TouchableOpacity>
             )
           }

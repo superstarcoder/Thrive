@@ -8,7 +8,7 @@ import { BlurView } from 'expo-blur';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, isSelected, onChange, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
+const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, isSelected, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
 
   // const [complete, setComplete] = useState(completeDefault)
 
@@ -25,7 +25,7 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
     importanceText = <StyledH4 text={"high importance"} style={styles.importanceText}/>
   }
   
-  if (isSelected) {
+  if (status == "complete") {
     taskConditionalStyle = {
       backgroundColor: "#28265c",
       opacity: 0.65,
@@ -194,7 +194,7 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
       <View style={styles.checkBoxSection}>
-        <TaskCheckBox size={45} onChange={onChange} checked={isSelected} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry}/>
+        <TaskCheckBox size={45} onChange={onChange} checked={isSelected} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry} status={status}/>
       </View>
 
     </View>
