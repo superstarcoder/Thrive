@@ -19,6 +19,7 @@ const Gray = '#C8C8C8'
 const Orange = '#FF6B37'
 const DarkOrange = "#FF4646"
 const DarkGray = "#6F6F6F"
+const Red = "#C90000"
 
 const Color = {
 	DarkestBlue, 
@@ -34,6 +35,7 @@ const Color = {
 	Orange,
 	DarkOrange,
 	DarkGray,
+	Red
 }
 
 export default Color;

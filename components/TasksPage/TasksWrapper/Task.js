@@ -8,7 +8,7 @@ import { BlurView } from 'expo-blur';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const Task = ({habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, isSelected, onChange, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
+const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, isSelected, onChange, taskId, dueDate, showDueDate=false, showDueTime=false}) => {
 
   // const [complete, setComplete] = useState(completeDefault)
 
@@ -159,6 +159,16 @@ const Task = ({habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitH
       <BlurView style={styles.blurView} intensity={3} />
       {accent}
       <View style={[styles.taskContent]}>
+
+        {isOverdue &&
+          <View style={styles.warningBox}>
+            <StyledH3 text={"overdue"} style={styles.overdueText}/>            
+            <View style={styles.warningIgnoreButton}>
+              <StyledH3 text={"ignore"} style={[styles.ignoreText, {color: "black"}]}/>            
+            </View>
+          </View>
+        }
+
         <StyledH2 text={text} weight='regular' style={styles.title}/>
 
         {description != "" ? ( <StyledH4 text={description} style={styles.description}/> ) : ( null )}
@@ -291,8 +301,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 5,
     marginBottom: 10,
-    marginTop: 10,
+    // marginTop: 10,
   },
   taskContent: {
     flexDirection: 'column',
@@ -317,6 +328,39 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 8,
   },
+  warningBox: {
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: "#a40000",
+    borderRadius: 8,
+    alignItems: "center",
+    alignSelf: 'flex-start',
+    marginBottom: 5,
+    paddingLeft: 2,
+    // paddingHorizontal: 5,
+    // paddingHorizontal: 12,
+
+    // paddingVertical: 5,
+  },
+  warningIgnoreButton: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#8E8E8E",
+    borderRadius: 8,
+    borderWidth: 2,
+    marginVertical: 1,
+    
+
+
+  },
+  overdueText: {
+    marginHorizontal: 5,
+  },
+  ignoreText: {
+    marginHorizontal: 5,
+
+  }
 });
 
 export default Task;
