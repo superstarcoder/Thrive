@@ -5,11 +5,12 @@ import {StyledH2, fontStyles} from '../../text/StyledText';
 import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
+import TaskMenu from './TaskMenu';
 
 
-const TasksWrapper = ({taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats}) => {
+const TasksWrapper = ({taskMenuRef, taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats}) => {
 
-const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry, status) => {
+const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
 
   console.log(status)
 
@@ -32,28 +33,13 @@ const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry,
   }
   else {
 
-      // console.log({habitStats})
-      // console.log({"habitHistories": habitHistory[taskId]})
-
-      // console.log({})
-
       // local changes
       const habitHistoryCopy = {...habitHistory}
-      var newStatus
       for (const entry of habitHistoryCopy[taskId]) {
-        // console.log(habitHistoryCopy[taskId])
-        // console.log(entry, habitHistoryEntry.habit_due_date)
         if (onlyDatesAreSame(entry.habit_due_date, habitHistoryEntry.habit_due_date)) {
-          console.log(entry["status"], isSelected)
-          if (isSelected) {
-            entry["status"] = "complete"
-          } else if (onlyDatesAreSame(entry.habit_due_date, new Date())) {
-            entry["status"] = "pending"
-          } else {
-            entry["status"] = "incomplete"
-          }
-          newStatus = entry["status"]
-          console.log(entry["status"], isSelected)
+          console.log("old state: "+entry["status"])
+          console.log("new state: "+status)
+          entry["status"] = status
         } 
       }
       setHabitHistory(habitHistoryCopy)
@@ -61,22 +47,11 @@ const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry,
       // db changes
       const { error } = await supabase
       .from('HabitHistory')
-      .update({status: newStatus})
+      .update({status: status})
       .eq('id', taskId)
       .eq('habit_due_date', habitHistoryEntry.habit_due_date)
 
       if (error) console.log(error)
-      // const indexToChange = habitHistoryCopy.findIndex(x => x.id === taskId);
-      // taskItemsCopy[indexToChange]["complete"] = newComplete
-      // setTaskItems(taskItemsCopy)
-  
-      // db changes
-      // const { error } = await supabase
-      // .from('Tasks')
-      // .update({complete: newComplete})
-      // .eq('id', taskId)
-  
-      // if (error) console.log(error)
 
   } 
 
@@ -84,6 +59,11 @@ const onCheckBoxPressed = async (isSelected, taskId, isHabit, habitHistoryEntry,
 
 const onEditTask = (taskSettings) => {
   taskSettingsRef?.current?.showEditTaskModal(taskSettings)
+}
+
+const onTaskClicked = (taskSettings, habitHistoryEntry) => {
+  console.log("task clicked")
+  taskMenuRef?.current?.showTaskMenuModal(taskSettings, habitHistoryEntry, onEditTask, onCheckBoxPressed)
 }
 
 function SelectedDayTasks() {
@@ -124,11 +104,11 @@ function SelectedDayTasks() {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
             let habitEntryFound = false
-            let isSelected = task.complete
+            // let isSelected = task.complete
 
             if (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
               return (
-                <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+                <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, undefined)}}>
                   <Task 
                   habitStatsEntry={habitStats[task.id]}
                   selectedDate={selectedDate}
@@ -141,7 +121,7 @@ function SelectedDayTasks() {
                   showDueTime={true}
                   taskId={task.id}
                   onChange={onCheckBoxPressed}
-                  isSelected={isSelected}
+                  // isSelected={isSelected}
                   text={task.title}
                   priority={task.importance}
                   duration={task.duration}
@@ -197,7 +177,7 @@ function SelectedDayTasks() {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
             let habitEntryFound = false
-            let isSelected = task.complete
+            // let isSelected = task.complete
 
             if (task.isHabit && habitHistory[task.id] != undefined) {
               for (const entry of habitHistory[task.id]) {
@@ -205,11 +185,11 @@ function SelectedDayTasks() {
                   habitEntryFound = true
                   count += 1
                   habitHistoryEntry = entry
-                  if (entry.status == "complete") {
-                    isSelected = true
-                  } else {
-                    isSelected = false
-                  }
+                  // if (entry.status == "complete") {
+                  //   isSelected = true
+                  // } else {
+                  //   isSelected = false
+                  // }
                   break
                 }
               }
@@ -218,7 +198,7 @@ function SelectedDayTasks() {
 
             if (task.isHabit && habitEntryFound) {
               return (
-                <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+                <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, habitHistoryEntry)}}>
                   <Task 
                   habitStatsEntry={habitStats[task.id]}
                   selectedDate={selectedDate}
@@ -231,12 +211,12 @@ function SelectedDayTasks() {
                   showDueTime={true}
                   taskId={task.id}
                   onChange={onCheckBoxPressed}
-                  isSelected={isSelected}
+                  // isSelected={isSelected}
                   text={task.title}
                   priority={task.importance}
                   duration={task.duration}
                   description={task.description}
-                  status={task.status}
+                  status={habitHistoryEntry.status} // habitHistoryEntry.status instead of task.status because task is of type habit!!!
                   points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
                 </TouchableOpacity>
               )
@@ -294,7 +274,7 @@ function SelectedDayTasks() {
           // due after end of day
           if (endOfDayObj < dueDateObj && task.complete == false && task.isHabit == false) {
             return (
-              <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+              <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, undefined)}}>
                 <Task
                 selectedDate={selectedDate}
                 habitHistory={task.habitHistory}
@@ -346,7 +326,7 @@ function SelectedDayTasks() {
     let count = 0
     for (const task of taskItems) {
       var dueDateObj = new Date(task["dueDate"])
-      if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
+      if (startOfDayObj > dueDateObj && task.status == "incomplete" && task.isHabit == false) {
         count += 1 
       }
     }
@@ -365,9 +345,9 @@ function SelectedDayTasks() {
           var dueDateObj = new Date(task["dueDate"])
 
           // due before the start of selected date and incomplete
-          if (startOfDayObj > dueDateObj && task.complete == false && task.isHabit == false) {
+          if (startOfDayObj > dueDateObj && task.status == "incomplete" && task.isHabit == false) {
             return (
-              <TouchableOpacity key={index}  onPress={() => {onEditTask(task)}}>
+              <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, undefined)}}>
                 <Task
                 isOverdue={true}
                 selectedDate={selectedDate}
@@ -414,6 +394,7 @@ function SelectedDayTasks() {
 
 
   return (
+
 	<ScrollView
 	contentContainerStyle={{
 	  flexGrow: 1,
@@ -428,6 +409,7 @@ function SelectedDayTasks() {
   <SelectedDayHabits />
 	<DueLaterTasks />
   </View>
+
 	
   </ScrollView>
   )

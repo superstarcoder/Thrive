@@ -2,14 +2,13 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpaci
 import Color from '../../../assets/themes/Color'
 import { useFonts } from 'expo-font'
 import React, {useState, useRef, useEffect, useCallback} from 'react';
-import { Square, CheckSquare, SquareLogo, SquaresFour, XSquare, List, TextAlignCenter, TextAlignJustify, Placeholder } from 'phosphor-react-native';
+import { Square, CheckSquare, XSquare, Placeholder } from 'phosphor-react-native';
 import * as Haptics from 'expo-haptics';
+import { onlyDatesAreSame } from '../../../utils/DateHelper';
 import { SvgUri, SvgXml } from 'react-native-svg';
 // import exemptIconSvg from "../../../assets/images/exempt_icon.svg"
 
-const TaskCheckBox = ({onChange=null, checked, size=38, taskId, isHabit, habitHistoryEntry, status}) => {
-
-
+const TaskCheckBox = ({onChange=null, size=38, taskId, isHabit, habitHistoryEntry, status}) => {
   // const [checked, setChecked] = useState(false)
 
   const onCheckPress = async () => {
@@ -18,36 +17,63 @@ const TaskCheckBox = ({onChange=null, checked, size=38, taskId, isHabit, habitHi
     if (onChange != null) {
 
       let newStatus
-      if (status == "complete") {
-        newStatus = "incomplete"
+      if (!isHabit) {
+        if (status == "complete") {
+          newStatus = "incomplete"
+        } else { // incomplete OR incomplete_ignored tasks
+          newStatus = "complete"
+        }
       } else {
-        newStatus = "complete"
-
+        if (status == "incomplete" || status == "pending") {
+          newStatus = "complete"
+        } else if (status == "complete"){
+          if (onlyDatesAreSame(habitHistoryEntry.habit_due_date, new Date())) {
+            newStatus = "pending"
+          } else {
+            newStatus = "incomplete"
+          }
+        }
       }
-      await onChange(!checked, taskId, isHabit, habitHistoryEntry, newStatus)
+      await onChange(taskId, isHabit, habitHistoryEntry, newStatus)
     }
 	  // setChecked(!checked)
   }
 
-  let checkIcon;
-  if (checked) {
-	checkIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
-  }
-  else {
-	  checkIcon = <Square size={size} weight="duotone" color={Color.DarkestBlue} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
-  }
+  // let checkIcon;
+  // if (checked) {
+	// checkIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
+  // }
+  // else {
+	//   checkIcon = <Square size={size} weight="duotone" color={Color.DarkestBlue} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+  // }
 
 
   let statusIcon;
-  if (status == "complete") {
-	  statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
-  } else if (status == "incomplete") {
-	  statusIcon = <Square size={size} weight="duotone" color={Color.DarkestBlue} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
-  } else if (status == "exempt") {
-	  statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
-  } else { // incomplete_ignored
-	  statusIcon = <XSquare size={size} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+
+  
+  if (!isHabit) {
+    if (status == "complete") {
+      statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
+    } else if (status == "incomplete") {
+      statusIcon = <Square size={size} weight="duotone" color={Color.DarkestBlue} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+    } else if (status == "exempt") {
+      statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+    } else { // incomplete_ignored
+      statusIcon = <XSquare size={size} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+    }
   }
+  else {
+    if (status == "complete") {
+      statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
+    } else if (status == "pending") {
+      statusIcon = <Square size={size} weight="duotone" color={Color.DarkestBlue} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+    } else if (status == "exempt") {
+      statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+    } else if (status == "incomplete") { // incomplete_ignored
+      statusIcon = <XSquare size={size} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+    }
+  }
+
   
   return (
 	<TouchableOpacity onPress={onCheckPress}>

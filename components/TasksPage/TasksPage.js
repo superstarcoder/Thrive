@@ -12,6 +12,7 @@ import { LogBox, Platform } from 'react-native';
 // import { onlyDatesAreSame } from './utils/DateHelper';
 import TasksWrapper from './TasksWrapper/TasksWrapper';
 import { subscribeToChangesTasksTable, supabaseSyncLocalWithDb } from './TasksPageSupabase';
+import TaskMenu from './TasksWrapper/TaskMenu';
 // import BackgroundImg from './components/BackgroundImage';
 
 
@@ -49,6 +50,7 @@ const TasksPage = forwardRef(({
 
 
   const taskSettingsRef = useRef();
+  const taskMenuRef = useRef();
 
 
   const goToPreviousDay = () => {
@@ -132,7 +134,7 @@ const TasksPage = forwardRef(({
     {
       /* display tasks */
     }
-    <TasksWrapper taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} />
+    <TasksWrapper taskMenuRef={taskMenuRef} taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} />
 
     {
       /* bottom bar/buttons */
@@ -153,6 +155,10 @@ const TasksPage = forwardRef(({
     </KeyboardAvoidingView>
 
     <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} />
+
+    <TaskMenu ref={taskMenuRef} supabase={supabase}/>
+
+
 
   </View>);
 });

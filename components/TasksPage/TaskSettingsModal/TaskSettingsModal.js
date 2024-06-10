@@ -165,6 +165,8 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
     },
     showEditTaskModal (myTaskSettings) {
 
+      console.log("inside showEditTaskModal")
+
       bottomSheetRef?.current?.scrollTo(1)
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: myTaskSettings}})
       durationBoxRef?.current?.setDuration(myTaskSettings.duration)
@@ -177,6 +179,11 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
   const durationBoxRef = useRef(null)
   const importanceBoxRef = useRef(null)
   const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
+
+
+  useEffect(() => {
+    bottomSheetRef?.current?.scrollTo(0)
+  }, [])
 
 	const onSavePress = () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -475,7 +482,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase}, ref
   const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4(), status: "incomplete"})
 
 	return (
-	<BottomSheet ref={bottomSheetRef} test="yo i am a prop" customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
+	<BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
 
 		<ScrollView style={[styles.addTaskModalSettings]}>
 		  <TitleBox title={taskSettings.title} dispatch={dispatch}/>
