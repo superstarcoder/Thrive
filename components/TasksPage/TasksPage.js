@@ -18,7 +18,15 @@ import TaskMenu from './TasksWrapper/TaskMenu';
 
 const TasksPage = forwardRef(({
   signOutUser,
-  session, supabase}, ref) => {
+  session,
+  supabase,
+  taskItems,
+  setTaskItems,
+  habitHistory,
+  setHabitHistory,
+  habitStats,
+  setHabitStats,
+}, ref) => {
 
 
   var [fontsLoaded] = useFonts({
@@ -42,9 +50,7 @@ const TasksPage = forwardRef(({
 
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [taskItems, setTaskItems] = useState([]);
-  const [habitHistory, setHabitHistory] = useState({})
-  const [habitStats, setHabitStats] = useState({})
+  
   // const [taskSettings, dispatch] = useReducer(reducer, {})
   
 
@@ -109,7 +115,7 @@ const TasksPage = forwardRef(({
 
 
   const syncLocalWithDb = async () => {
-    await supabaseSyncLocalWithDb(supabase, session, setTaskItems, setHabitStats, setHabitHistory)    
+    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)    
   }
 
   useEffect(() => {
@@ -121,7 +127,7 @@ const TasksPage = forwardRef(({
       await syncLocalWithDb()
     }
     fetchData()
-    subscribeToChangesTasksTable(supabase, syncLocalWithDb)
+    // subscribeToChangesTasksTable(supabase, syncLocalWithDb)
     // console.log(JSON.stringify(habitHistory[42], undefined, 2))
 
 
@@ -134,7 +140,7 @@ const TasksPage = forwardRef(({
     {
       /* display tasks */
     }
-    <TasksWrapper taskMenuRef={taskMenuRef} taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} />
+    <TasksWrapper session={session} taskMenuRef={taskMenuRef} taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
 
     {
       /* bottom bar/buttons */
@@ -154,9 +160,9 @@ const TasksPage = forwardRef(({
 
     </KeyboardAvoidingView>
 
-    <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} />
+    <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
 
-    <TaskMenu ref={taskMenuRef} supabase={supabase}/>
+    <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems}  habitHistory={habitHistory} setHabitHistory={setHabitHistory}/>
 
 
 

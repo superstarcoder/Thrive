@@ -7,9 +7,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Trash, XCircle, CheckCircle } from 'phosphor-react-native';
 import { fontStyles } from '../../text/StyledText';
 import { Square, CheckSquare, XSquare, Placeholder, PencilSimpleLine } from 'phosphor-react-native';
+import { supabaseDeleteTask } from '../TasksPageSupabase';
 
 
-const TaskMenu = forwardRef(({supabase}, ref) => {
+const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, setHabitHistory}, ref) => {
 
 
   const heightPercent = 0.8 
@@ -25,6 +26,14 @@ const TaskMenu = forwardRef(({supabase}, ref) => {
   const [onCheckBoxPressed, setOnCheckBoxPressed] = useState()
 
   useImperativeHandle(ref, () => ({
+    // showTaskMenuModal(taskSettingsArg, habitHistoryEntryArg, onEditPressedArg, onCheckBoxPressedArg) {
+    //   console.log("wassup!")
+    //   bottomSheetRef?.current?.scrollTo(heightPercent)
+    //   setTaskSettings(taskSettingsArg)
+    //   setHabitHistoryEntry(habitHistoryEntryArg)
+    //   setOnEditPressed(() => onEditPressedArg)
+    //   setOnCheckBoxPressed(() => onCheckBoxPressedArg)
+    // }
     showTaskMenuModal(taskSettingsArg, habitHistoryEntryArg, onEditPressedArg, onCheckBoxPressedArg) {
       console.log("wassup!")
       bottomSheetRef?.current?.scrollTo(heightPercent)
@@ -37,6 +46,11 @@ const TaskMenu = forwardRef(({supabase}, ref) => {
 
   const onCancelPress = () => {
     bottomSheetRef?.current?.scrollTo(0)
+  }
+
+  const onDeletePress = async () => {
+    onCancelPress();
+    await supabaseDeleteTask(taskSettings.id, taskSettings.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory)
   }
 
   const onMarkAsCompletePressed = () => {
@@ -103,7 +117,7 @@ const TaskMenu = forwardRef(({supabase}, ref) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={onDeletePress}>
             <View style={styles.deleteTaskButton}>
               <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
             </View>

@@ -20,11 +20,11 @@ const TaskCheckBox = ({onChange=null, size=38, taskId, isHabit, habitHistoryEntr
       if (!isHabit) {
         if (status == "complete") {
           newStatus = "incomplete"
-        } else { // incomplete OR incomplete_ignored tasks
+        } else if (status == "exempt" || status == "incomplete" || status == "incomplete_ignored") { // exempt OR incomplete OR incomplete_ignored tasks
           newStatus = "complete"
         }
       } else {
-        if (status == "incomplete" || status == "pending") {
+        if (status == "incomplete" || status == "pending" || status == "exempt") {
           newStatus = "complete"
         } else if (status == "complete"){
           if (onlyDatesAreSame(habitHistoryEntry.habit_due_date, new Date())) {

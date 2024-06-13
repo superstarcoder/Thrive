@@ -6,52 +6,56 @@ import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 import TaskMenu from './TaskMenu';
+import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../TasksPageSupabase';
 
 
-const TasksWrapper = ({taskMenuRef, taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats}) => {
+const TasksWrapper = ({session, taskMenuRef, taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats}) => {
 
 const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
 
   console.log(status)
 
   if (!isHabit) {
-    // local changes
-    const taskItemsCopy = [...taskItems]
-    const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
-    console.log("old state: "+taskItemsCopy[indexToChange]["status"])
-    taskItemsCopy[indexToChange]["status"] = status
-    console.log("new state: "+status)
-    setTaskItems(taskItemsCopy)
 
-    // db changes
-    const { error } = await supabase
-    .from('Tasks')
-    .update({status: status})
-    .eq('id', taskId)
+    await supabaseUpdateTaskSettings(session, {"status" : status}, taskId, setTaskItems, taskItems, setHabitStats, habitHistory);
 
-    if (error) console.log(error)
+    // // local changes
+    // const taskItemsCopy = [...taskItems]
+    // const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
+    // console.log("old state: "+taskItemsCopy[indexToChange]["status"])
+    // taskItemsCopy[indexToChange]["status"] = status
+    // console.log("new state: "+status)
+    // setTaskItems(taskItemsCopy)
+
+    // // db changes
+    // const { error } = await supabase
+    // .from('Tasks')
+    // .update({status: status})
+    // .eq('id', taskId)
+
+    // if (error) console.log(error)
   }
   else {
+    await supabaseUpdateHabitHistoryEntry({"status" : status}, taskId, habitHistory, setHabitHistory, habitHistoryEntry.habit_due_date, setHabitStats)
+      // TODO: CALL SUPABSE FUNCTION TO UPDATE HABIT HISTORY ENTRY
 
-      // local changes
-      const habitHistoryCopy = {...habitHistory}
-      for (const entry of habitHistoryCopy[taskId]) {
-        if (onlyDatesAreSame(entry.habit_due_date, habitHistoryEntry.habit_due_date)) {
-          console.log("old state: "+entry["status"])
-          console.log("new state: "+status)
-          entry["status"] = status
-        } 
-      }
-      setHabitHistory(habitHistoryCopy)
+      // // local changes
+      // const habitHistoryCopy = {...habitHistory}
+      // for (const entry of habitHistoryCopy[taskId]) {
+      //   if (onlyDatesAreSame(entry.habit_due_date, habitHistoryEntry.habit_due_date)) {
+      //     entry["status"] = status
+      //   } 
+      // }
+      // setHabitHistory(habitHistoryCopy)
 
-      // db changes
-      const { error } = await supabase
-      .from('HabitHistory')
-      .update({status: status})
-      .eq('id', taskId)
-      .eq('habit_due_date', habitHistoryEntry.habit_due_date)
+      // // db changes
+      // const { error } = await supabase
+      // .from('HabitHistory')
+      // .update({status: status})
+      // .eq('id', taskId)
+      // .eq('habit_due_date', habitHistoryEntry.habit_due_date)
 
-      if (error) console.log(error)
+      // if (error) console.warn(error)
 
   } 
 

@@ -72,7 +72,7 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
     // console.log("HABIT HISTORY ENTRY!!: "+habitHistoryEntry)
 
     // UPDATE UI FOR HABIT
-    console.log({habitStatsEntry})
+    // console.log({habitStatsEntry})
     var streak
     if (habitStatsEntry == undefined) {
       streak = 0

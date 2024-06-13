@@ -73,9 +73,12 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   // const [task, setTask] = useState(null);
-  
+
   const [session, setSession] = useState(null)
   const [currentPage, setCurrentPage] = useState("home")
+  const [taskItems, setTaskItems] = useState([]);
+  const [habitHistory, setHabitHistory] = useState({})
+  const [habitStats, setHabitStats] = useState({})
   const tasksPageRef = useRef();
   // const tasksPageRef = useCallback(async (node) => {
   //   if (node !== null) {
@@ -151,16 +154,16 @@ export default function App() {
   var MyTasksPage = () => {
     return (
       <>
-        <TasksPage 
-        signOutUser={signOutUser}
-        session={session}  ref={tasksPageRef} supabase={supabase} />
+        <TasksPage
+          signOutUser={signOutUser}
+          session={session} ref={tasksPageRef} supabase={supabase} />
       </>
     );
   }
 
   var MySettingsPage = () => {
     return (
-      <View style={{backgroundColor: Color.DarkestBlue, width: "100%", height: "100%"}}>
+      <View style={{ backgroundColor: Color.DarkestBlue, width: "100%", height: "100%" }}>
       </View>
     );
   }
@@ -170,11 +173,11 @@ export default function App() {
     // <NavigationContainer style={{margin: 0}}>
 
 
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        {/* <BackgroundImg /> */}
-        {session && session.user ? (
-          
-          
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* <BackgroundImg /> */}
+      {session && session.user ? (
+
+
         // <Tab.Navigator
         // screenOptions={({ route }) => ({
         //   tabBarStyle: {
@@ -204,32 +207,41 @@ export default function App() {
         // })}
 
         // > 
-  
+
         //   <Tab.Screen name="Home" component={MyTasksPage}/>
         //   <Tab.Screen name="Settings" component={MySettingsPage}/>
 
-    
+
         //   {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
-    
+
         // </Tab.Navigator>
         <>
 
-        {currentPage == "home" &&
-          <TasksPage 
-          signOutUser={signOutUser}
-          session={session}  ref={tasksPageRef} supabase={supabase} />
-        }
-
-        <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage} /> 
-          
-          </>
-
-          ) :
-          (<Auth />)
-          
+          {currentPage == "home" &&
+            <TasksPage
+              signOutUser={signOutUser}
+              session={session}
+              ref={tasksPageRef}
+              supabase={supabase}
+              taskItems={taskItems}
+              setTaskItems={setTaskItems}
+              habitHistory={habitHistory}
+              setHabitHistory={setHabitHistory}
+              habitStats={habitStats}
+              setHabitStats={setHabitStats}
+              />
           }
 
-      </GestureHandlerRootView>
+          <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+
+        </>
+
+      ) :
+        (<Auth />)
+
+      }
+
+    </GestureHandlerRootView>
     // </NavigationContainer>
 
   );
