@@ -10,6 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 my_notes/
+config.js
 
 # macOS
 .DS_Store

@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "com.supabase",
     "name": "Thrive",
     "slug": "Thrive",
     "version": "1.0.0",

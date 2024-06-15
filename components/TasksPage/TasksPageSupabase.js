@@ -251,7 +251,7 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
 
 // local AND supabase changes
 export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats) => {
-  console.log({setHabitStats})
+  // console.log({setHabitStats})
 
   // find the index of the task in the taskItems array state and create a copy
 
@@ -303,6 +303,7 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   const { data, error } = await supabase
     .from('Tasks')
     .insert(newTaskSettingsCopy).select().single()
+  console.log(newTaskSettingsCopy)
 
   if (error) console.warn(error)
 
@@ -311,7 +312,6 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   newTaskSetting["id"] = data.id
   taskItemsCopy.push(newTaskSetting)
   setTaskItems(taskItemsCopy)
-
 
   if (newTaskSetting.isHabit == true) {
     await supabaseFixHistoryAllHabits(taskItemsCopy, habitHistory, setHabitHistory, habitStats, setHabitStats)
