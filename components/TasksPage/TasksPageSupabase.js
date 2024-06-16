@@ -535,13 +535,9 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
     habitEntriesArray.sort((a, b) => new Date(b.habit_due_date) - new Date(a.habit_due_date));
 
-
-    if (habitId == 162) {
-      console.log({habitEntriesArray})
-    }
-
     let streak = 0
-    let history = []
+    let history = {}
+    let datesDue = []
 
     // get latest streak count
     for (const historyEntry of habitEntriesArray) {
@@ -551,14 +547,19 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
     // update history array
     for (const historyEntry of habitEntriesArray) {
-      if (historyEntry.status == "incomplete") history.push(0);
-      else if (historyEntry.status == "complete") history.push(1);
-      else if (historyEntry.status == "exempt") history.push(-1);
+      history[historyEntry.habit_due_date] = historyEntry.status
+      // if (historyEntry.status == "incomplete") history.push(0);
+      // else if (historyEntry.status == "complete") history.push(1);
+      // else if (historyEntry.status == "exempt") history.push(-1);
+      // else console.warn("history status is NOT the required format. This may cause problems")
+      // datesDue.push(historyEntry.habit_due_date)
     }
 
     // update streak count
-    newHabitStats[habitId] = { "streak": streak, "history": history }
+    newHabitStats[habitId] = { "streak": streak, "history": history}
   }
+
+  console.log(JSON.stringify(newHabitStats, null, 2))
 
   // console.log(JSON.stringify(newHabitStats, undefined, 2))
 

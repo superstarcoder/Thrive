@@ -184,7 +184,7 @@ export default function App() {
           }
             {currentPage == "stats" &&
             <>
-              <StatsPage />
+              <StatsPage habitStats={habitStats} taskItems={taskItems} />
             </>
           }
           {currentPage == "enter_new_password_form" &&
