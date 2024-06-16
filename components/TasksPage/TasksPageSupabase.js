@@ -479,7 +479,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
       newEntries.push({
         "habit_due_date": habit_due_date,
         "status": status,
-        "is_streak": false, // not sure if an is_streak column is even needed!
+        // "is_streak": false, // not needed anymore!
         "id": habitId,
       })
     }

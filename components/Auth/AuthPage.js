@@ -3,12 +3,12 @@ import React, { useState } from 'react'
 import { Alert, StyleSheet, View, TextInput, Text } from 'react-native'
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as Linking from "expo-linking";
-import { supabase } from '../../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { Button, Input } from 'react-native-elements'
 import { makeRedirectUri } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import Color from "../../../assets/themes/Color";
-import { StyledH1, StyledH3, StyledH4, fontStyles } from "../../text/StyledText";
+import Color from "../../assets/themes/Color";
+import { StyledH1, StyledH3, StyledH4, fontStyles } from "../text/StyledText";
 import { useFonts } from 'expo-font'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DiscordLogo, GithubLogo } from "phosphor-react-native";
@@ -64,8 +64,8 @@ export default function Auth({ setCurrentPage }) {
 
   // load fonts
   var [fontsLoaded] = useFonts({
-    "MPlusRegular": require("../../../assets/fonts/mplusRegular.ttf"),
-    "MPlusMedium": require("../../../assets/fonts/mplusMedium.ttf")
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
   })
   if (!fontsLoaded) {
     return null

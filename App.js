@@ -7,7 +7,7 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import { supabase } from './lib/supabase'
-import Auth from './components/TasksPage/Auth/AuthPage';
+import Auth from './components/Auth/AuthPage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +15,8 @@ import Color from './assets/themes/Color';
 import NavBar from './components/NavBar';
 import { LogBox } from 'react-native';
 // import PasswordResetForm from './components/TasksPage/Auth/PasswordResetForm';
-import EnterNewPasswordForm from './components/TasksPage/Auth/EnterNewPasswordForm';
+import EnterNewPasswordForm from './components/Auth/EnterNewPasswordForm';
+import StatsPage from './components/StatsPage/StatsPage';
 
 
 
@@ -77,7 +78,7 @@ export default function App() {
   // const [task, setTask] = useState(null);
 
   const [session, setSession] = useState(null)
-  const [currentPage, setCurrentPage] = useState("")
+  const [currentPage, setCurrentPage] = useState("home")
   const [taskItems, setTaskItems] = useState([]);
   const [habitHistory, setHabitHistory] = useState({})
   const [habitStats, setHabitStats] = useState({})
@@ -179,11 +180,20 @@ export default function App() {
                 habitStats={habitStats}
                 setHabitStats={setHabitStats}
               />
-              {myNavBar}
+            </>
+          }
+            {currentPage == "stats" &&
+            <>
+              <StatsPage />
             </>
           }
           {currentPage == "enter_new_password_form" &&
             <EnterNewPasswordForm setCurrentPage={setCurrentPage} />
+          }
+          {currentPage != "enter_new_password_form" &&
+            <>
+            {myNavBar}
+            </>
           }
         </>
 

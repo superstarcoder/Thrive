@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View, TextInput, Text } from 'react-native'
 import { makeRedirectUri } from "expo-auth-session";
-import Color from "../../../assets/themes/Color";
-import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from "../../text/StyledText";
+import Color from "../../assets/themes/Color";
+import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from "../text/StyledText";
 import { useFonts } from 'expo-font'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DiscordLogo, GithubLogo } from "phosphor-react-native";
 import { FacebookSocialButton, GoogleSocialButton, } from "react-native-social-buttons";
-import { supabase } from '../../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { redirectToEnterNewPasswordForm } from './EnterNewPasswordForm';
 
 
 const PasswordResetForm = ({ setAuthPageScreen, setCurrentPage }) => {
   // load fonts
   var [fontsLoaded] = useFonts({
-    "MPlusRegular": require("../../../assets/fonts/mplusRegular.ttf"),
-    "MPlusMedium": require("../../../assets/fonts/mplusMedium.ttf")
+    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
+    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
   })
 
   if (!fontsLoaded) {
