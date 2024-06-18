@@ -4,11 +4,11 @@ import Color from '../../assets/themes/Color'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { StyledH1, StyledH2 } from '../text/StyledText';
 
-const StreaksCalendar = ({ habitStats, markedDates }) => {
+const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 	console.log(JSON.stringify(habitStats,))
 	return (
 		<View style={styles.container}>
-			<StyledH2 text={"7.5+ hours of sleep"} style={styles.sectionHeading} />
+			<StyledH2 text={title} style={styles.sectionHeading} />
 			<Calendar
 				// Customize the appearance of the calendar
 				style={styles.myCalendar}
@@ -22,7 +22,8 @@ const StreaksCalendar = ({ habitStats, markedDates }) => {
 
 				theme={{
 					calendarBackground: '#222',
-					dayTextColor: '#fff',
+					textDayFontWeight: '500',
+					// dayTextColor: '#fff',
 					textDisabledColor: '#444',
 					monthTextColor: '#fff'
 				}}

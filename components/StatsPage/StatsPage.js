@@ -5,6 +5,7 @@ import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { StyledH1, StyledH2 } from '../text/StyledText';
 import StreaksCalendar from './StreaksCalendar';
 import { v4 as uuidv4 } from 'uuid';
+import { toYMDFormat } from '../../utils/DateHelper';
 
 const StatsPage = ({ habitStats, taskItems }) => {
 
@@ -41,36 +42,44 @@ const StatsPage = ({ habitStats, taskItems }) => {
 		let prevStatus = null
 		let prevDueDate = null
 		let historyLength = Object.keys(myStat.history).length
+
+		if (historyLength == 0) {
+			continue;
+		}
+
 		for (let i = 0; i < historyLength; i++) {
 			let dueDateRaw = allHistories[historyLength - i - 1]
 			let status = myStat.history[dueDateRaw]
 			// console.log({ dueDate, status })
 
-			let dueDate = dueDateRaw
+			// let dueDate = dueDateRaw
 			// let dueDate = new Date(dueDateRaw)
 			// dueDate = dueDate.toLocaleDateString()
+			let dueDate = toYMDFormat(dueDateRaw)
+			console.log(dueDate)
 
 			if (status == "incomplete") {
-				markedDates[dueDate] = { selected: true, color: 'red' }
+				markedDates[dueDate] = { selected: true, color: Color.RedAccent, textColor: "black" }
 			}
 			else if (status == "exempt" || status == "pending") {
-				markedDates[dueDate] = { selected: true, color: 'blue' }
+				markedDates[dueDate] = { selected: true, color: Color.BlueAccent, textColor: "black" }
 
 			} else if (status == "complete") {
-				markedDates[dueDate] = { selected: true, color: 'green' }
+				markedDates[dueDate] = { selected: true, color: Color.GreenAccent, textColor: "black" }
 			} else {
-				console.warn("uhoh")
-				console.warn({status})
+				console.warn("uncrecognized status: "+status)
 			}
 
 			// console.log({markedDates})
 
-			console.log({ prevStatus, status })
+			// console.log({ prevStatus, status })
 			if (prevStatus == null) {
 				markedDates[dueDate]["startingDay"] = true
-			} else if (i == Object.keys(myStat.history).length - 1) {
+			}
+			if (i == Object.keys(myStat.history).length - 1) {
 				markedDates[dueDate]["endingDay"] = true
-			} else if (prevStatus != status) {
+			}
+			if (prevStatus != null & prevStatus != status) {
 				// prev date is ending the period
 				// console.log({prevDueDate})
 				markedDates[prevDueDate]["endingDay"] = true
@@ -91,12 +100,12 @@ const StatsPage = ({ habitStats, taskItems }) => {
 
 	// console.log(JSON.stringify(allMarkedDates, null, 2))
 
-	const markedDatesTemp = {
-		'2024-06-06': { textColor: 'green' },
-		'2024-06-07': { startingDay: true, color: 'green' },
-		'2012-06-08': { selected: true, endingDay: true, color: 'green', textColor: 'gray' },
-		'2012-06-09': { disabled: true, startingDay: true, color: 'green', endingDay: true }
-	}
+	// const markedDatesTemp = {
+	// 	'2024-06-06': { textColor: 'green' },
+	// 	'2024-06-07': { startingDay: true, color: 'green' },
+	// 	'2012-06-08': { selected: true, endingDay: true, color: 'green', textColor: 'gray' },
+	// 	'2012-06-09': { disabled: true, startingDay: true, color: 'green', endingDay: true }
+	// }
 
 
 	const allCalendars = []
@@ -104,7 +113,7 @@ const StatsPage = ({ habitStats, taskItems }) => {
 
 	for (const [date, properties] of Object.entries(allMarkedDates)) {
 		allCalendars.push(
-			<StreaksCalendar markedDates={properties.markedDates} />
+			<StreaksCalendar markedDates={properties.markedDates} id={uuidv4()} title={properties.title} />
 		);
 	}
 	return (
