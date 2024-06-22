@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import React from 'react'
 import { StyledH1, StyledH2, StyledH3 } from '../text/StyledText';
 import Color from '../../assets/themes/Color';
-import { getAllTasksForMonth } from '../TasksPage/TasksPageSupabase';
+import { getTasksForMonthString } from '../TasksPage/TasksPageSupabase';
 import Markdown from 'react-native-markdown-display';
 
 // const preprocessMarkdown = (markdownContent) => {
@@ -63,7 +63,7 @@ const AIPage = ({ taskItems }) => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.scrollViewContainer}>
           <StyledH1 text={"Ask Daisy"} style={styles.sectionHeading} />
-          <TouchableOpacity style={styles.askAIButton} onPress={() => getAllTasksForMonth(myMonth, myYear, taskItems)}>
+          <TouchableOpacity style={styles.askAIButton} onPress={() => getTasksForMonthString(myMonth, myYear, taskItems)}>
             <StyledH3 text={"Click me to analyze 📊📈!"} style={styles.buttonTitle} />
           </TouchableOpacity>
           {/* <StyledH3 text={myText} style={styles.sectionHeading} /> */}

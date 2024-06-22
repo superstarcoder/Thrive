@@ -300,7 +300,7 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
 
   // update supabase
 
-  console.info({"id": newTaskSettingsCopy.id})
+  console.info({ "id": newTaskSettingsCopy.id })
 
   const { data, error } = await supabase
     .from('Tasks')
@@ -565,7 +565,7 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
     }
 
     // update streak count
-    newHabitStats[habitId] = { "streak": streak, "history": history}
+    newHabitStats[habitId] = { "streak": streak, "history": history }
   }
 
   // console.log(JSON.stringify(newHabitStats, null, 2))
@@ -578,7 +578,8 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
 }
 
 
-export const getAllTasksForMonth = (month, year, taskItems) => {
+// outputs a string in csv format with important info needed for the LLM
+export const getTasksForMonthString = (month, year, taskItems) => {
   let selectedTasks = taskItems.filter(item => {
     // Parse dueDate to extract month and year
     let dueDate = new Date(item.dueDate);
@@ -588,19 +589,19 @@ export const getAllTasksForMonth = (month, year, taskItems) => {
     // Check if month is February (2) and year is 2024
     return dueMonth === month && dueYear === year && item.isHabit == false;
   })
-  .map(item => {
-    return {
-      dueDate: toYMDFormat(item.dueDate),
-      name: item.name,
-      duration: item.duration,
-      importance: item.importance,
-      status: item.status
-    };
-  });  
-  
-  ;
+    .map(item => {
+      return [
+        toYMDFormat(item.dueDate),
+        item.title,
+        item.duration,
+        item.importance,
+        item.status
+      ];
+    });
 
-  console.log(JSON.stringify(selectedTasks, null, 2))
+    let result = selectedTasks.map(subList => `"`+subList.join('","')+`"`).join('\n');
+    result = "dueDate, title, duration, importance, status\n" + result
+  // console.log(result)
 
 }
 

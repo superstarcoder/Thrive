@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 my_notes/
 config.js
+.env
 
 # macOS
 .DS_Store
