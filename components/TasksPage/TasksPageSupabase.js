@@ -1,6 +1,6 @@
 
 import { supabase } from "../../lib/supabase"
-import { onlyDatesAreSame, getDateFromDatetime } from "../../utils/DateHelper"
+import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat } from "../../utils/DateHelper"
 
 // export function subscribeToChangesTasksTable(syncLocalWithDb) {
 //   const channel = supabase
@@ -204,7 +204,7 @@ export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitH
 
 
   if (updateStats) {
-    console.log("updating: "+taskId)
+    // console.log("updating: "+taskId)
     updateHabitStats(setHabitStats, habitHistoryCopy)
   }
 
@@ -229,7 +229,7 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
     }
   }
 
-  console.log("inserted entry: " + entriesToAdd)
+  // console.log("inserted entry: " + entriesToAdd)
 
   // update database
   for (let i = 0; i < entriesToAdd.length; i += batchSize) {
@@ -300,10 +300,12 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
 
   // update supabase
 
+  console.info({"id": newTaskSettingsCopy.id})
+
   const { data, error } = await supabase
     .from('Tasks')
     .insert(newTaskSettingsCopy).select().single()
-  console.log(newTaskSettingsCopy)
+  // console.log(newTaskSettingsCopy)
 
   if (error) console.warn(error)
 
@@ -566,7 +568,7 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
     newHabitStats[habitId] = { "streak": streak, "history": history}
   }
 
-  console.log(JSON.stringify(newHabitStats, null, 2))
+  // console.log(JSON.stringify(newHabitStats, null, 2))
 
   // console.log(JSON.stringify(newHabitStats, undefined, 2))
 
@@ -575,6 +577,32 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
 }
 
+
+export const getAllTasksForMonth = (month, year, taskItems) => {
+  let selectedTasks = taskItems.filter(item => {
+    // Parse dueDate to extract month and year
+    let dueDate = new Date(item.dueDate);
+    let dueMonth = dueDate.getMonth() + 1; // getMonth() returns 0-indexed month
+    let dueYear = dueDate.getFullYear();
+
+    // Check if month is February (2) and year is 2024
+    return dueMonth === month && dueYear === year && item.isHabit == false;
+  })
+  .map(item => {
+    return {
+      dueDate: toYMDFormat(item.dueDate),
+      name: item.name,
+      duration: item.duration,
+      importance: item.importance,
+      status: item.status
+    };
+  });  
+  
+  ;
+
+  console.log(JSON.stringify(selectedTasks, null, 2))
+
+}
 
 
 

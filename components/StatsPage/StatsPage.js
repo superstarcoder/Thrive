@@ -10,30 +10,6 @@ import { toYMDFormat } from '../../utils/DateHelper';
 const StatsPage = ({ habitStats, taskItems }) => {
 
 	var allMarkedDates = {}
-	// for (const [habitId, myStat] of Object.entries(habitStats)) {
-	// 	let markedDates = {}
-	// 	const allHistories = Object.keys(myStat.history);
-	// 	for (let i = 0; i < Object.keys(myStat.history).length; i++) {
-	// 		let dueDate = allHistories[i]
-	// 		let status = myStat.history[dueDate]
-	// 		console.log({dueDate, status})
-
-	// 		let editedDueDate = new Date(dueDate)
-	// 		editedDueDate = editedDueDate.toLocaleDateString()
-
-	// 		if (status == "incomplete") {
-	// 			markedDates[dueDate] = { selected: true, selectedColor: 'red' }
-	// 		}
-	// 		else if (status == "exempt") {
-	// 			markedDates[dueDate] = { selected: true, selectedColor: 'blue' }
-
-	// 		} else if (status == "complete") {
-	// 			markedDates[dueDate] = { selected: true, selectedColor: 'green' }
-	// 		}
-	// 	}
-	// 	allMarkedDates.push(markedDates)
-	// }
-
 
 	for (const [habitId, myStat] of Object.entries(habitStats)) {
 		let markedDates = {}
@@ -50,13 +26,8 @@ const StatsPage = ({ habitStats, taskItems }) => {
 		for (let i = 0; i < historyLength; i++) {
 			let dueDateRaw = allHistories[historyLength - i - 1]
 			let status = myStat.history[dueDateRaw]
-			// console.log({ dueDate, status })
-
-			// let dueDate = dueDateRaw
-			// let dueDate = new Date(dueDateRaw)
-			// dueDate = dueDate.toLocaleDateString()
 			let dueDate = toYMDFormat(dueDateRaw)
-			console.log(dueDate)
+			// console.log(dueDate)
 
 			if (status == "incomplete") {
 				markedDates[dueDate] = { selected: true, color: Color.RedAccent, textColor: "black" }
@@ -96,24 +67,12 @@ const StatsPage = ({ habitStats, taskItems }) => {
 		allMarkedDates[habitId] = { markedDates: markedDates, title: currentTask.title, id: uuidv4()}
 	}
 
-
-
-	// console.log(JSON.stringify(allMarkedDates, null, 2))
-
-	// const markedDatesTemp = {
-	// 	'2024-06-06': { textColor: 'green' },
-	// 	'2024-06-07': { startingDay: true, color: 'green' },
-	// 	'2012-06-08': { selected: true, endingDay: true, color: 'green', textColor: 'gray' },
-	// 	'2012-06-09': { disabled: true, startingDay: true, color: 'green', endingDay: true }
-	// }
-
-
 	const allCalendars = []
 
 
 	for (const [date, properties] of Object.entries(allMarkedDates)) {
 		allCalendars.push(
-			<StreaksCalendar markedDates={properties.markedDates} id={uuidv4()} title={properties.title} />
+			<StreaksCalendar markedDates={properties.markedDates} key={uuidv4()} title={properties.title} />
 		);
 	}
 	return (
@@ -142,7 +101,6 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		flexGrow: 1,
-
 	},
 	scrollViewContainer: {
 		display: "flex",

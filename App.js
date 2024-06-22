@@ -17,6 +17,7 @@ import { LogBox } from 'react-native';
 // import PasswordResetForm from './components/TasksPage/Auth/PasswordResetForm';
 import EnterNewPasswordForm from './components/Auth/EnterNewPasswordForm';
 import StatsPage from './components/StatsPage/StatsPage';
+import AIPage from './components/AIPage/AIPage';
 
 
 
@@ -182,9 +183,14 @@ export default function App() {
               />
             </>
           }
-            {currentPage == "stats" &&
+          {currentPage == "stats" &&
             <>
               <StatsPage habitStats={habitStats} taskItems={taskItems} />
+            </>
+          }
+          {currentPage == "AI" &&
+            <>
+              <AIPage taskItems={taskItems} />
             </>
           }
           {currentPage == "enter_new_password_form" &&
@@ -192,7 +198,7 @@ export default function App() {
           }
           {currentPage != "enter_new_password_form" &&
             <>
-            {myNavBar}
+              {myNavBar}
             </>
           }
         </>
