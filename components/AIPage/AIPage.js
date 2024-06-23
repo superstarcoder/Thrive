@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
@@ -28,7 +28,10 @@ Please output a RAW markdown file with analysis of my task data for the month of
 
 1) What You Did Well: this section should talk about what goals I have, what significant things I achieved, how many hours of work I put in for each kind of task, days/weeks where I was very productive etc. Please talk about all the good things I have done, and be specific to my tasks. Don't be too general.
 
-2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns. For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Talk about strategies I could use to manage my time better and get a lot of things done. Give insight that is specific to my tasks. Don't be too general.
+2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns AND strategies to improve. For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Talk about strategies I could use to manage my time better and get a lot of things done. Give insight that is specific to my tasks. Don't be too general.
+
+3) Strategies for Growth: this section should be the biggest section of all. Focus on talking about exactly what kind of strategies I can use in order to solve the problems that were mentioned in the previous section. Send links if needed, if you think those would be helpful to the user.
+
 
 Please provide this information in a neat, pretty, and concise format, with around 4-6 bullet points for each number. And this is very very important: write everything in a RAW Markdown file format. Add emojis too! At the end of the file, add a motivating/encouraging message such as "Keep up the good work and focus on these areas for continued improvement! 💪"
 
@@ -53,6 +56,11 @@ use this format:
 #### Areas of Improvement [emoji]:
 - **[heading]**: [insert text here]
 - [insert more list items]
+
+#### Strategies for Growth [emoji]:
+- **[heading]**: [insert text here]
+- [insert more list items]
+    
     
 in addition, no matter what, DO NOT indent ANYTHING in the RAW markdown file.
 DO NOT indent ANYTHING in the RAW markdown file with spaces either. If you do, it will completely mess up the output and all of it will be useless.
@@ -82,6 +90,8 @@ const AIPage = ({ taskItems }) => {
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
   const askAIButtonPressed = async (myMonth, myYear, taskItems) => {
+    setIsLoading(true)
+
     let taskData = getTasksForMonthString(myMonth, myYear, taskItems)
 
 
@@ -93,13 +103,15 @@ const AIPage = ({ taskItems }) => {
       model: "gpt-3.5-turbo",
     });
 
-    console.log(completion.choices[0])
+    // console.log(completion.choices[0])
+    setIsLoading(false)
     setAnalysisText(completion.choices[0].message.content)
   }
 
   // Keep up the good work and focus on these areas for continued improvement! 💪
 
   const [analsysisText, setAnalysisText] = useState(``)
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <View style={styles.container}>
@@ -109,6 +121,9 @@ const AIPage = ({ taskItems }) => {
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
             <StyledH3 text={"Click me to analyze 📊📈!"} style={styles.buttonTitle} />
           </TouchableOpacity>
+          {isLoading &&
+              <ActivityIndicator size="large" />
+          }
           {/* <StyledH3 text={myText} style={styles.sectionHeading} /> */}
           <Markdown style={markdownStyles}>
             {analsysisText}

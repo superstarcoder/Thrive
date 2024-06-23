@@ -328,12 +328,12 @@ export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItem
   setTaskItems(taskItemsCopy)
 
   let newHabitHistory
-  let updateHabitStats = false
+  let shouldUpdateHabitStats = false
   if (isHabit && (taskId in habitHistory)) {
     newHabitHistory = { ...habitHistory }
     delete newHabitHistory.taskId
     setHabitHistory(newHabitHistory)
-    updateHabitStats = true
+    shouldUpdateHabitStats = true
   }
 
   // update database
@@ -346,7 +346,7 @@ export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItem
     console.warn(error)
   }
 
-  if (updateHabitStats) {
+  if (shouldUpdateHabitStats) {
     updateHabitStats(setHabitHistory, newHabitHistory)
   }
 }
