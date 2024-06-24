@@ -57,11 +57,11 @@
     "react-native-webview": "13.8.6",
     "typescript": "~5.3.3",
     "uuid": "^9.0.0",
-    "semver": "7.5.2"
+    "semver": "^7.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
-    "markdown-it": ">=12.3.2",
+    "markdown-it": "^12.3.2",
     "sass": "^1.63.6"
   },
   "private": true
