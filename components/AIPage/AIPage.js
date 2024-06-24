@@ -20,18 +20,17 @@ const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
-const myMonth = 6 // NOT zero indexed
-const myYear = 2024
+
+const APISecondsTimeout = 60
+const myMonth = (new Date()).getMonth() + 1 // NOT zero indexed
+const myYear = (new Date()).getFullYear()
 const monthName = monthNames[myMonth - 1];
 const basePrompt = `
 Please output a RAW markdown file with analysis of my task data for the month of ${monthName}. It would be great if you could provide:
 
 1) What You Did Well: this section should talk about what goals I have, what significant things I achieved, how many hours of work I put in for each kind of task, days/weeks where I was very productive etc. Please talk about all the good things I have done, and be specific to my tasks. Don't be too general.
 
-2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns AND strategies to improve. For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Talk about strategies I could use to manage my time better and get a lot of things done. Give insight that is specific to my tasks. Don't be too general.
-
-3) Strategies for Growth: this section should be the biggest section of all. Focus on talking about exactly what kind of strategies I can use in order to solve the problems that were mentioned in the previous section. Send links if needed, if you think those would be helpful to the user.
-
+2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns. For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Give insight that is specific to my tasks. Don't be too general.
 
 Please provide this information in a neat, pretty, and concise format, with around 4-6 bullet points for each number. And this is very very important: write everything in a RAW Markdown file format. Add emojis too! At the end of the file, add a motivating/encouraging message such as "Keep up the good work and focus on these areas for continued improvement! 💪"
 
@@ -56,11 +55,6 @@ use this format:
 #### Areas of Improvement [emoji]:
 - **[heading]**: [insert text here]
 - [insert more list items]
-
-#### Strategies for Growth [emoji]:
-- **[heading]**: [insert text here]
-- [insert more list items]
-    
     
 in addition, no matter what, DO NOT indent ANYTHING in the RAW markdown file.
 DO NOT indent ANYTHING in the RAW markdown file with spaces either. If you do, it will completely mess up the output and all of it will be useless.
@@ -89,7 +83,19 @@ const AIPage = ({ taskItems }) => {
 
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-  const askAIButtonPressed = async (myMonth, myYear, taskItems) => {
+  const askAIButtonPressed = async (myMonth, myYear, taskItems) => {    
+
+    if (lastClickedTime != null) {
+      let now = new Date()
+      let time1 = now.getTime()
+      let time2 = lastClickedTime.getTime()
+      let timePassed = Math.abs(time2 - time1) / 1000
+      if (timePassed < APISecondsTimeout) {
+        setErrorMessage(`Please try again in ${(APISecondsTimeout - timePassed).toFixed()} seconds!`)
+        return
+      }
+    }
+    setErrorMessage(null)
     setIsLoading(true)
 
     let taskData = getTasksForMonthString(myMonth, myYear, taskItems)
@@ -106,12 +112,15 @@ const AIPage = ({ taskItems }) => {
     // console.log(completion.choices[0])
     setIsLoading(false)
     setAnalysisText(completion.choices[0].message.content)
+    setLastClickedTime(new Date())
   }
 
   // Keep up the good work and focus on these areas for continued improvement! 💪
 
   const [analsysisText, setAnalysisText] = useState(``)
   const [isLoading, setIsLoading] = useState(false)
+  const [lastClickedTime, setLastClickedTime] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   return (
     <View style={styles.container}>
@@ -120,6 +129,9 @@ const AIPage = ({ taskItems }) => {
           <StyledH1 text={"Ask Daisy"} style={styles.sectionHeading} />
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
             <StyledH3 text={"Click me to analyze 📊📈!"} style={styles.buttonTitle} />
+            {errorMessage &&
+              <StyledH3 text={errorMessage}/>
+            }
           </TouchableOpacity>
           {isLoading &&
               <ActivityIndicator size="large" />
@@ -183,6 +195,9 @@ const markdownStyles = StyleSheet.create({
 
 
 const styles = StyleSheet.create({
+  errorText: {
+    color: Color.RedAccent
+  },
   body: {
     color: "white"
   },
