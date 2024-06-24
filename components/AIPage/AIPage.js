@@ -128,7 +128,7 @@ const AIPage = ({ taskItems }) => {
         <View style={styles.scrollViewContainer}>
           <StyledH1 text={"Ask Daisy"} style={styles.sectionHeading} />
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
-            <StyledH3 text={"Click me to analyze 📊📈!"} style={styles.buttonTitle} />
+            <StyledH3 text={`Click me to analyze ${monthName} 📊📈!`} style={styles.buttonTitle} />
             {errorMessage &&
               <StyledH3 text={errorMessage}/>
             }
