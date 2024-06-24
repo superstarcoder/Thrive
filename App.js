@@ -108,6 +108,12 @@ export default function App() {
       setSession(session)
       console.info("changing login info")
       console.info(event)
+      
+      if (event == "SIGNED_IN") {
+        setCurrentPage("home")
+      }
+
+
       if ((event == "SIGNED_IN" || event == "INITIAL_SESSION") && session) {
         console.log("fetching data")
         await fetchData()
@@ -132,11 +138,12 @@ export default function App() {
 
   const signOutUser = async () => {
     if (session.user && session) {
-      console.log("hi")
+      console.log("signing out the user")
       const { error } = await supabase.auth.signOut()
       if (error) {
         throw error
       }
+      console.log("sign out was successful")
     }
   }
 

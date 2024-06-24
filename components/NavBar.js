@@ -5,14 +5,14 @@ import NavBarButtons from './NavBarButtons';
 
 const NavBar = ({currentPage, setCurrentPage, signOutUser}) => {
 
-	const onNavBarButtonPress = (pageName) => {
+	const onNavBarButtonPress = async (pageName) => {
 		if (currentPage != pageName) {
 			console.log("in: "+currentPage)
 			console.log("going to page: "+pageName)
 			setCurrentPage(pageName)
 		}
 		if (pageName == "settings") {
-			signOutUser()
+			await signOutUser()
 		}
 	}
 
