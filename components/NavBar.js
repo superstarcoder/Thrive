@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Color from '../assets/themes/Color';
 import NavBarButtons from './NavBarButtons';
 
-const NavBar = ({currentPage, setCurrentPage, signOutUser}) => {
+const NavBar = ({currentPage, setCurrentPage}) => {
 
 	const onNavBarButtonPress = async (pageName) => {
 		if (currentPage != pageName) {
@@ -11,9 +11,9 @@ const NavBar = ({currentPage, setCurrentPage, signOutUser}) => {
 			console.log("going to page: "+pageName)
 			setCurrentPage(pageName)
 		}
-		if (pageName == "settings") {
-			await signOutUser()
-		}
+		// if (pageName == "settings") {
+		// 	await signOutUser()
+		// }
 	}
 
   return (

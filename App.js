@@ -18,7 +18,7 @@ import { LogBox } from 'react-native';
 import EnterNewPasswordForm from './components/Auth/EnterNewPasswordForm';
 import StatsPage from './components/StatsPage/StatsPage';
 import AIPage from './components/AIPage/AIPage';
-
+import SettingsPage from './components/SettingsPage/SettingsPage';
 
 
 // TODO: figure out how database gets updated onEditTaskComplete or onSaveTask
@@ -108,7 +108,7 @@ export default function App() {
       setSession(session)
       console.info("changing login info")
       console.info(event)
-      
+
       if (event == "SIGNED_IN") {
         setCurrentPage("home")
       }
@@ -164,7 +164,7 @@ export default function App() {
     );
   }
 
-  var myNavBar = <NavBar signOutUser={signOutUser} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+  var myNavBar = <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
   return (
 
@@ -189,6 +189,12 @@ export default function App() {
                 setHabitStats={setHabitStats}
               />
             </>
+          }
+          {currentPage == "settings" &&
+            <>
+              <SettingsPage signOutUser={signOutUser}/>
+            </>
+
           }
           {currentPage == "stats" &&
             <>

@@ -90,7 +90,7 @@ export default function Auth({ setCurrentPage }) {
     else {
       setCurrentPage("home")
     }
-    console.log({ email, password })
+    // console.log({ email, password })
     setLoading(false)
   }
 
