@@ -1,4 +1,8 @@
-Thrive is an AI-powered productivity app designed to help users organize their lives, build positive habits, and enhance their overall well-being. 
+Thrive is an AI-powered productivity app designed to help users organize their lives, build positive habits, and enhance their overall well-being.
+
+Built completely using React Native and Supabase.
+
+Beta access coming soon, be on the lookout 👀
 
 | ![Image 1](https://media.discordapp.net/attachments/573324187943305223/1255059032239116358/IMG_7828.png?ex=667bc04f&is=667a6ecf&hm=4d52338aaceee1ee47b885425d326cb62275052ed3ff2ac4a6dac7228c88abf8&=&format=webp&quality=lossless) | ![Image 2](https://media.discordapp.net/attachments/573324187943305223/1255059042221690880/IMG_7829.png?ex=667bc051&is=667a6ed1&hm=43fd4997f68f793cbf98228de72bfb7197a204da7ed60e992d86313624d2c0bb&=&format=webp&quality=lossless) | ![Image 3](https://media.discordapp.net/attachments/573324187943305223/1255059048093585530/IMG_7830.png?ex=667bc052&is=667a6ed2&hm=f2dac0c9e0333e6e4bf6a4e1658dd43ed58065ee8d2527a0aae3a09ecb1824cb&=&format=webp&quality=lossless) |
 |--------------------------------|--------------------------------|--------------------------------|
