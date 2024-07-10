@@ -185,7 +185,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
     bottomSheetRef?.current?.scrollTo(0)
   }, [])
 
-	const onSavePress = () => {
+	const onSavePress = async () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 		bottomSheetRef?.current?.scrollTo(0)
 
@@ -194,14 +194,14 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
-      onSaveTask(settingsCopy)
+      await onSaveTask(settingsCopy)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
       settingsCopy = {...taskSettings}
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
-      onEditTaskComplete(settingsCopy)
+      await onEditTaskComplete(settingsCopy)
     }
 
 
@@ -211,10 +211,10 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
     bottomSheetRef?.current?.scrollTo(0)
     // console.log("hiii")
   }
-  const onDeletePress = () => {
+  const onDeletePress = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
-    onDelete(taskSettings)
+    await onDelete(taskSettings)
   }
 
 

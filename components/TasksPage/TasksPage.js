@@ -39,6 +39,13 @@ const TasksPage = forwardRef(({
     return null
   }
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+	//     await syncLocalWithDb()
+  //   }
+  //   fetchData()
+  // }, [])
+
 
 
   useImperativeHandle(ref, () => ({
@@ -120,15 +127,16 @@ const TasksPage = forwardRef(({
 
   useEffect(() => {
 
-
-    console.info("component has been mounted. attempting to fetch data")
-    // Code to execute after component mounts
-    const fetchData = async () => {
-      await syncLocalWithDb()
-    }
-    fetchData()
-    // subscribeToChangesTasksTable(supabase, syncLocalWithDb)
-    // console.log(JSON.stringify(habitHistory[42], undefined, 2))
+    // commented so that syncing can work in app.js instead of on taskspage.js
+    // console.info("component has been mounted. attempting to fetch data")
+    // // Code to execute after component mounts
+    // const fetchData = async () => {
+    //   await syncLocalWithDb()
+    // }
+    // fetchData()
+    // console.info("successfuly fetched data")
+    // // subscribeToChangesTasksTable(supabase, syncLocalWithDb)
+    // // console.log(JSON.stringify(habitHistory[42], undefined, 2))
 
 
   }, []); // Empty dependency array simulates componentDidMount

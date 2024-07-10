@@ -19,6 +19,7 @@ import EnterNewPasswordForm from './components/Auth/EnterNewPasswordForm';
 import StatsPage from './components/StatsPage/StatsPage';
 import AIPage from './components/AIPage/AIPage';
 import SettingsPage from './components/SettingsPage/SettingsPage';
+import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits } from './components/TasksPage/TasksPageSupabase';
 
 
 // TODO: figure out how database gets updated onEditTaskComplete or onSaveTask
@@ -83,56 +84,54 @@ export default function App() {
   const [taskItems, setTaskItems] = useState([]);
   const [habitHistory, setHabitHistory] = useState({})
   const [habitStats, setHabitStats] = useState({})
+  // const [dataIsFetched, setDataIsFetched] = useState(true)
   const tasksPageRef = useRef();
-
-  const fetchData = async () => {
-    if (tasksPageRef != null) {
-      await tasksPageRef?.current?.syncLocalWithDb()
-      console.info("fetched data successfully.")
-    } else {
-      console.info("did not fetch data since tasks page has not loaded yet")
-    }
-  }
-
-
   // authorize user into session
   useEffect(() => {
 
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.info("logging in now")
       setSession(session)
+      if (session && session.user) {
+        console.log("user logged in!")
+        console.log("fetching data for " + session.user.email)
+        const newData = await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
+        // this only needs to be run on new days! will fix later to increase efficiency
+
+        await supabaseFixHistoryAllHabits(newData.newTaskItems, newData.newHabitHistory, setHabitHistory, newData.newHabitStats, setHabitStats)
+        // await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
+      }
     })
 
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
-      console.info("changing login info")
-      console.info(event)
+      console.info("onAuthStateChange: "+event)
 
       if (event == "SIGNED_IN") {
         setCurrentPage("home")
       }
 
-
-      if ((event == "SIGNED_IN" || event == "INITIAL_SESSION") && session) {
-        console.log("fetching data")
-        await fetchData()
-      } else {
-        console.info("inside authstatechange: unable to fetch data since user is not logged in for some reason!")
-      }
-      if (event == "PASSWORD_RECOVERY") {
-        console.log("inside PASSWORD_RECOVERY")
-        // const newPassword = prompt("What would you like your new password to be?");
-        // const { data, error } = await supabase.auth
-        //   .updateUser({ password: newPassword })
-        // if (data) alert("Password updated successfully!")
-        // if (error) alert("There was an error updating your password.")
-      }
-
+      // if ((event == "SIGNED_IN" || event == "INITIAL_SESSION") && session && session.user) {
+      // } else {
+      //   console.info("inside authstatechange: unable to fetch data since user is not logged in for some reason!")
+      // }
+      // if (event == "PASSWORD_RECOVERY") {
+      //   console.log("inside PASSWORD_RECOVERY")
+      //   // const newPassword = prompt("What would you like your new password to be?");
+      //   // const { data, error } = await supabase.auth
+      //   //   .updateUser({ password: newPassword })
+      //   // if (data) alert("Password updated successfully!")
+      //   // if (error) alert("There was an error updating your password.")
+      // }
     })
 
     // ignoring logs since it's giving a dumb warning with probably no solution
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+      console.log("unsubscribed successfuly")
+    };
   }, []) // empty dependency array simulates componentDidMount
 
 
@@ -169,7 +168,7 @@ export default function App() {
   return (
 
     // <NavigationContainer style={{margin: 0}}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.gestureHandler}>
       {/* <BackgroundImg /> */}
       {session && session.user ? (
         <>
@@ -192,7 +191,7 @@ export default function App() {
           }
           {currentPage == "settings" &&
             <>
-              <SettingsPage signOutUser={signOutUser}/>
+              <SettingsPage signOutUser={signOutUser} />
             </>
 
           }
@@ -229,4 +228,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  gestureHandler: {
+    flex: 1,
+  }
 });

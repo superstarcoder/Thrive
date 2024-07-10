@@ -42,6 +42,7 @@ const SignInForm = ({signInWithEmail, signUpWithEmail, signInWithGithub, resetPa
         placeholder="Email"
         autoCapitalize={'none'}
         style={[styles.myInputBox, fontStyles.styledH3]}
+        placeholderTextColor={"#5d5d77"}
       />
       <View>
 
@@ -52,6 +53,7 @@ const SignInForm = ({signInWithEmail, signUpWithEmail, signInWithGithub, resetPa
           placeholder="Password"
           style={[styles.myInputBox, fontStyles.styledH3]}
           autoCapitalize={'none'}
+          placeholderTextColor={"#5d5d77"}
         />
         <TouchableOpacity onPress={resetPassword}>
           <StyledH4 text={"Forgot password?"} style={styles.forgotPasswordText} />

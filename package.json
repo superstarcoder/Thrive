@@ -8,9 +8,6 @@
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
-  "overrides": {
-    "xml2js": "^0.5.0"
-  },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.1",
     "@react-native-async-storage/async-storage": "1.23.1",
@@ -20,10 +17,10 @@
     "@react-navigation/native": "^6.1.17",
     "@supabase/supabase-js": "^2.43.6",
     "expo": "^51.0.8",
-    "expo-app-loading": "^2.1.1",
     "expo-auth-session": "~5.5.2",
     "expo-blur": "~13.0.2",
     "expo-crypto": "~13.0.2",
+    "expo-dev-client": "~4.0.18",
     "expo-font": "~12.0.5",
     "expo-haptics": "~13.0.1",
     "expo-linear-gradient": "~13.0.2",
@@ -36,7 +33,7 @@
     "punycode": "^2.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.74.1",
+    "react-native": "0.74.2",
     "react-native-calendars": "^1.1305.0",
     "react-native-checkbox-reanimated": "^0.1.1",
     "react-native-dotenv": "^3.4.11",
@@ -55,9 +52,9 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.8.6",
+    "semver": "^7.5.2",
     "typescript": "~5.3.3",
-    "uuid": "^9.0.0",
-    "semver": "^7.5.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

@@ -305,6 +305,9 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   const { data, error } = await supabase
     .from('Tasks')
     .insert(newTaskSettingsCopy).select().single()
+  console.log("HELLLOOOO")
+  
+    console.log({data})
   // console.log(newTaskSettingsCopy)
 
   if (error) console.warn(error)
@@ -315,9 +318,10 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   taskItemsCopy.push(newTaskSetting)
   setTaskItems(taskItemsCopy)
 
-  if (newTaskSetting.isHabit == true) {
-    await supabaseFixHistoryAllHabits(taskItemsCopy, habitHistory, setHabitHistory, habitStats, setHabitStats)
-  }
+  // uncomment for debugging
+  // if (newTaskSetting.isHabit == true) {
+  //   await supabaseFixHistoryAllHabits(taskItemsCopy, habitHistory, setHabitHistory, habitStats, setHabitStats)
+  // }
 }
 
 export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory) => {
@@ -387,7 +391,9 @@ export const supabaseSyncLocalWithDb = async (session, setTaskItems, setHabitSta
   var newHabitHistory = await getAllHabitHistories(setHabitHistory, newTaskItems)
 
   // update habit stats state
-  updateHabitStats(setHabitStats, newHabitHistory)
+  var newHabitStats = updateHabitStats(setHabitStats, newHabitHistory)
+
+  return {newTaskItems, newHabitHistory, newHabitStats}
 }
 
 
@@ -433,7 +439,8 @@ const findEntryWithDate = (habitHistoryEntries, myDate) => {
 
 
 // call this function when: habit is added and when page loads
-const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats) => {
+export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats) => {
+  
   // const { data, error } = await supabase
   // .from('Tasks')
   // .select()
