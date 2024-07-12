@@ -90,22 +90,31 @@ export default function App() {
   useEffect(() => {
 
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session)
-      if (session && session.user) {
-        console.log("user logged in!")
-        console.log("fetching data for " + session.user.email)
-        const newData = await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
-        // this only needs to be run on new days! will fix later to increase efficiency
-
-        await supabaseFixHistoryAllHabits(newData.newTaskItems, newData.newHabitHistory, setHabitHistory, newData.newHabitStats, setHabitStats)
-        // await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
-      }
-    })
+    const updateSession = async () => {
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
+        setSession(session)
+        console.log("noticed a change in session")
+        console.log(session)
+        console.log(session?.user)
+        if (session && session.user) {
+          console.log("user logged in!")
+          console.log("fetching data for " + session.user.email)
+          const newData = await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
+          console.log("synced")
+          // this only needs to be run on new days! will fix later to increase efficiency
+  
+          await supabaseFixHistoryAllHabits(newData.newTaskItems, newData.newHabitHistory, setHabitHistory, newData.newHabitStats, setHabitStats)
+          console.log("fixed habit histories")
+          // await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
+          console.log("synced")
+        }
+      })
+    }
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
       console.info("onAuthStateChange: "+event)
+      await updateSession()
 
       if (event == "SIGNED_IN") {
         setCurrentPage("home")
@@ -141,6 +150,12 @@ export default function App() {
       const { error } = await supabase.auth.signOut()
       if (error) {
         throw error
+      }
+      else {
+        // clear all local state data
+        setTaskItems([])
+        setHabitHistory([])
+        setHabitStats({})
       }
       console.log("sign out was successful")
     }

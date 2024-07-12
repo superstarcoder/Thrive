@@ -16,7 +16,7 @@ import { FacebookSocialButton, GoogleSocialButton, } from "react-native-social-b
 import { redirectToPasswordResetForm } from "./PasswordResetForm";
 
 
-const SignInForm = ({signInWithEmail, signUpWithEmail, signInWithGithub, resetPassword}) => {
+const SignInForm = ({ signInWithEmail, signUpWithEmail, signInWithGithub, resetPassword }) => {
 
   // load fonts
   var [fontsLoaded] = useFonts({
@@ -31,6 +31,15 @@ const SignInForm = ({signInWithEmail, signUpWithEmail, signInWithGithub, resetPa
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const openLink = async (url) => {
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Unable to open this url: ${url}`);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -76,13 +85,7 @@ const SignInForm = ({signInWithEmail, signUpWithEmail, signInWithGithub, resetPa
         {/* <StyledH4 text={"By continuing, you agree to Thrive's Terms of Service and Privacy Policy"} style={styles.agreementText}/> */}
         <Text style={[fontStyles.styledH4, styles.agreementText]} textBreakStrategy="simple">
           By continuing, you agree to Thrive's{' '}
-          <Text style={{ color: "#5c6b9f" }}>
-            Terms of Service{' '}
-          </Text>
-
-          and{' '}
-
-          <Text style={{ color: "#5c6b9f" }}>
+          <Text style={[fontStyles.styledH4, { color: "#5c6b9f" }]} onPress={() => openLink("https://www.privacypolicies.com/live/dfc59ac9-3a53-4de5-a1df-bdbebaedce57")}>
             Privacy Policy
           </Text>
         </Text>
@@ -96,14 +99,14 @@ const SignInForm = ({signInWithEmail, signUpWithEmail, signInWithGithub, resetPa
         <GithubLogo size={30} weight="duotone" color={"white"} />
         <StyledH3 text={"Sign in with Github"} />
       </TouchableOpacity>
-
+      {/* 
       <TouchableOpacity style={styles.signInWithDiscordButton}>
         <DiscordLogo size={30} weight="duotone" color={"white"} />
         <StyledH3 text={"Sign in with Discord"} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
 
-      <GoogleSocialButton onPress={() => { }} buttonViewStyle={styles.signInWithGoogle} logoStyle={{}} textStyle={styles.googleButtonText} />
+      {/* <GoogleSocialButton onPress={() => { }} buttonViewStyle={styles.signInWithGoogle} logoStyle={{}} textStyle={styles.googleButtonText} /> */}
     </View>
   )
 }
@@ -112,6 +115,11 @@ export default SignInForm
 
 
 const styles = StyleSheet.create({
+  privacyLink: {
+    // display: "flex",
+    // alignItems: "flex-end",
+    // flexDirection: "column"
+  },
   container: {
     backgroundColor: Color.DarkestBlue,
     display: "flex",

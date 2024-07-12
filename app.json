@@ -1,7 +1,7 @@
 {
   "expo": {
     "scheme": "com.supabase",
-    "name": "Thrive",
+    "name": "Thrive Productivity App",
     "slug": "Thrive",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,14 +16,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "buildNumber": "1",
+      "bundleIdentifier": "com.superstarcoder.ThriveApp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.superstarcoder.Thrive"
+      "package": "com.superstarcoder.ThriveApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
