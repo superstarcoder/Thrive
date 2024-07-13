@@ -7,7 +7,7 @@ import { StyledH1, StyledH2, StyledH3 } from '../text/StyledText';
 import Color from '../../assets/themes/Color';
 import { getTasksForMonthString } from '../TasksPage/TasksPageSupabase';
 import Markdown from 'react-native-markdown-display';
-import { OPENAI_API_KEY } from '@env';
+// import { OPENAI_API_KEY } from '@env';
 import OpenAI from "openai";
 
 
@@ -81,7 +81,7 @@ const AIPage = ({ taskItems }) => {
     console.log("component mounted")
   }, [])
 
-  const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const askAIButtonPressed = async (myMonth, myYear, taskItems) => {    
 
