@@ -127,18 +127,6 @@ const TasksPage = forwardRef(({
 
   useEffect(() => {
 
-    // commented so that syncing can work in app.js instead of on taskspage.js
-    // console.info("component has been mounted. attempting to fetch data")
-    // // Code to execute after component mounts
-    // const fetchData = async () => {
-    //   await syncLocalWithDb()
-    // }
-    // fetchData()
-    // console.info("successfuly fetched data")
-    // // subscribeToChangesTasksTable(supabase, syncLocalWithDb)
-    // // console.log(JSON.stringify(habitHistory[42], undefined, 2))
-
-
   }, []); // Empty dependency array simulates componentDidMount
 
 
@@ -154,17 +142,6 @@ const TasksPage = forwardRef(({
       /* bottom bar/buttons */
     }
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.writeTaskWrapper}>
-
-      {/* <TouchableOpacity>
-        <View style={styles.addWrapper}>
-          <Text style={styles.addText}>+</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={signOutUser}>
-        <View style={styles.addWrapper}>
-        </View>
-      </TouchableOpacity> */}
 
     </KeyboardAvoidingView>
 

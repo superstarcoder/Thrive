@@ -12,10 +12,7 @@ import { supabaseDeleteTask } from '../TasksPageSupabase';
 
 const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, setHabitHistory}, ref) => {
 
-
   const heightPercent = 0.8 
-
-
   useEffect(() => {
     bottomSheetRef?.current?.scrollTo(0)
   }, [])
@@ -26,16 +23,7 @@ const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, s
   const [onCheckBoxPressed, setOnCheckBoxPressed] = useState()
 
   useImperativeHandle(ref, () => ({
-    // showTaskMenuModal(taskSettingsArg, habitHistoryEntryArg, onEditPressedArg, onCheckBoxPressedArg) {
-    //   console.log("wassup!")
-    //   bottomSheetRef?.current?.scrollTo(heightPercent)
-    //   setTaskSettings(taskSettingsArg)
-    //   setHabitHistoryEntry(habitHistoryEntryArg)
-    //   setOnEditPressed(() => onEditPressedArg)
-    //   setOnCheckBoxPressed(() => onCheckBoxPressedArg)
-    // }
     showTaskMenuModal(taskSettingsArg, habitHistoryEntryArg, onEditPressedArg, onCheckBoxPressedArg) {
-      console.log("wassup!")
       bottomSheetRef?.current?.scrollTo(heightPercent)
       setTaskSettings(taskSettingsArg)
       setHabitHistoryEntry(habitHistoryEntryArg)

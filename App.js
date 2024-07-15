@@ -119,19 +119,6 @@ export default function App() {
       if (event == "SIGNED_IN") {
         setCurrentPage("home")
       }
-
-      // if ((event == "SIGNED_IN" || event == "INITIAL_SESSION") && session && session.user) {
-      // } else {
-      //   console.info("inside authstatechange: unable to fetch data since user is not logged in for some reason!")
-      // }
-      // if (event == "PASSWORD_RECOVERY") {
-      //   console.log("inside PASSWORD_RECOVERY")
-      //   // const newPassword = prompt("What would you like your new password to be?");
-      //   // const { data, error } = await supabase.auth
-      //   //   .updateUser({ password: newPassword })
-      //   // if (data) alert("Password updated successfully!")
-      //   // if (error) alert("There was an error updating your password.")
-      // }
     })
 
     // ignoring logs since it's giving a dumb warning with probably no solution

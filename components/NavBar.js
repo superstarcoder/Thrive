@@ -7,13 +7,8 @@ const NavBar = ({currentPage, setCurrentPage}) => {
 
 	const onNavBarButtonPress = async (pageName) => {
 		if (currentPage != pageName) {
-			console.log("in: "+currentPage)
-			console.log("going to page: "+pageName)
 			setCurrentPage(pageName)
 		}
-		// if (pageName == "settings") {
-		// 	await signOutUser()
-		// }
 	}
 
   return (

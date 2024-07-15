@@ -5,7 +5,7 @@ import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { StyledH1, StyledH2 } from '../text/StyledText';
 
 const StreaksCalendar = ({ habitStats, markedDates, title }) => {
-	console.log(JSON.stringify(habitStats,))
+	// console.log(JSON.stringify(habitStats,))
 	return (
 		<View style={styles.container}>
 			<StyledH2 text={title} style={styles.sectionHeading} />

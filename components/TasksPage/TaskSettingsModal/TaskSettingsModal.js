@@ -123,20 +123,16 @@ function reducer(taskSettings, action) {
       newRepeatDays[action.payload.dayInt] = action.payload.selected
 
       //  TODO: IMPLEMENT FUNCTION
-      console.log(action.payload.isHabit)
+      // console.log(action.payload.isHabit)
       if (action.payload.isHabit == true) {
         let today = new Date();
-        console.log("updating repeat_days_edited_date")
+        // console.log("updating repeat_days_edited_date")
         return {...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate())}
-        // var habitHistory = updateHistoryWithRepeatDays(action.payload.repeatDays, action.payload.dueDate)
-        // console.log("=============================")
-        // console.log("habitHistory: "+JSON.stringify(habitHistory))
-        // console.log("=============================")
       }
 
       return {...taskSettings, repeatDays: newRepeatDays}
     case "update_due_date_time":
-      console.log(action.payload.dueDate)
+      // console.log(action.payload.dueDate)
       return {...taskSettings, dueDate: action.payload.dueDate}
     case "update_all":
       // console.log("updated duration: "+action.payload.newTaskSettings.duration)
@@ -217,25 +213,6 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
     await onDelete(taskSettings)
   }
 
-
-
-
-  // basic logic
-
-  // habit added on 1/1/24 and is valid for wednesday and thursday. assume 1/1/24 is a monday
-  // assume today is wednesday
-
-  // updateHistoryForSingleHabit(habitSettings):
-
-  // from supabase, get habit histories for a particular habit
-
-  // loop between habit creation date and today's date:
-  //     if day is valid:  
-  //         if entry does not exist already for this date:
-  //             add entry ("pending" if it is today's date and "incomplete" if it is old date)
-  //         if entry does exist for this date & is "pending" & selected date is today & habit_due_date != today:
-  //             change from "pending" to "incomplete"
-
   const onSaveTask = async (newTaskSettings) => {
     await supabaseInsertTask(session, newTaskSettings, setTaskItems, taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats)
   }
@@ -247,10 +224,6 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
   const onDelete = async (taskSettingsToDelete) => {
     await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory)
   }
-  
-
-
-
 
   let initRepeatDays =  Array(7).fill(false)
 

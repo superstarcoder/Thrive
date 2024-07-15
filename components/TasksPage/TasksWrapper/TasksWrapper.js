@@ -13,50 +13,15 @@ const TasksWrapper = ({session, taskMenuRef, taskSettingsRef, selectedDate, task
 
 const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
 
-  console.log(status)
+  // console.log(status)
 
   if (!isHabit) {
 
     await supabaseUpdateTaskSettings(session, {"status" : status}, taskId, setTaskItems, taskItems, setHabitStats, habitHistory);
-
-    // // local changes
-    // const taskItemsCopy = [...taskItems]
-    // const indexToChange = taskItemsCopy.findIndex(x => x.id === taskId);
-    // console.log("old state: "+taskItemsCopy[indexToChange]["status"])
-    // taskItemsCopy[indexToChange]["status"] = status
-    // console.log("new state: "+status)
-    // setTaskItems(taskItemsCopy)
-
-    // // db changes
-    // const { error } = await supabase
-    // .from('Tasks')
-    // .update({status: status})
-    // .eq('id', taskId)
-
-    // if (error) console.log(error)
   }
   else {
     await supabaseUpdateHabitHistoryEntry({"status" : status}, taskId, habitHistory, setHabitHistory, habitHistoryEntry.habit_due_date, setHabitStats)
       // TODO: CALL SUPABSE FUNCTION TO UPDATE HABIT HISTORY ENTRY
-
-      // // local changes
-      // const habitHistoryCopy = {...habitHistory}
-      // for (const entry of habitHistoryCopy[taskId]) {
-      //   if (onlyDatesAreSame(entry.habit_due_date, habitHistoryEntry.habit_due_date)) {
-      //     entry["status"] = status
-      //   } 
-      // }
-      // setHabitHistory(habitHistoryCopy)
-
-      // // db changes
-      // const { error } = await supabase
-      // .from('HabitHistory')
-      // .update({status: status})
-      // .eq('id', taskId)
-      // .eq('habit_due_date', habitHistoryEntry.habit_due_date)
-
-      // if (error) console.warn(error)
-
   } 
 
 }
@@ -66,7 +31,7 @@ const onEditTask = (taskSettings) => {
 }
 
 const onTaskClicked = (taskSettings, habitHistoryEntry) => {
-  console.log("task clicked")
+  // console.log("task clicked")
   taskMenuRef?.current?.showTaskMenuModal(taskSettings, habitHistoryEntry, onEditTask, onCheckBoxPressed)
 }
 
@@ -155,7 +120,6 @@ function SelectedDayTasks() {
     let entryFound = false
     // code to count how many tasks/habits to display (that meet the conditions)
     for (const task of taskItems) {
-
       if (task.isHabit && habitHistory[task.id] != undefined) {
         for (const entry of habitHistory[task.id]) {
           if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj )) {

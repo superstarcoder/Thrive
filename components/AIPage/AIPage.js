@@ -10,12 +10,6 @@ import Markdown from 'react-native-markdown-display';
 // import { OPENAI_API_KEY } from '@env';
 import OpenAI from "openai";
 
-
-// const preprocessMarkdown = (markdownContent) => {
-//   // Replace single newline characters (\n) with double newlines (\n\n)
-//   return markdownContent.replace(/\n/g, '\n\n');
-// };
-
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -78,7 +72,7 @@ const AIPage = ({ taskItems }) => {
   }
 
   useEffect(() => {
-    console.log("component mounted")
+    // console.log("component mounted")
   }, [])
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -102,14 +96,12 @@ const AIPage = ({ taskItems }) => {
 
 
     let completePrompt = basePrompt + taskData + promptFooter
-    console.log("calling the api!! :)")
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: completePrompt }],
       model: "gpt-3.5-turbo",
     });
 
-    // console.log(completion.choices[0])
     setIsLoading(false)
     setAnalysisText(completion.choices[0].message.content)
     setLastClickedTime(new Date())

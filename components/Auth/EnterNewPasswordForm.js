@@ -25,9 +25,8 @@ const EnterNewPasswordForm = ({ setCurrentPage }) => {
   const [password, setPassword] = useState('')
 
   const resetPassword = async () => {
-	console.log("time to reset password!")
+	// console.log("Attempting to reset password")
 	const { data, error } = await supabase.auth.updateUser({ password: password })
-	console.log({password})
 
 	if (error) {
 		Alert.alert(error.message)

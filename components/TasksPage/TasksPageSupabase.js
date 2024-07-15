@@ -2,97 +2,6 @@
 import { supabase } from "../../lib/supabase"
 import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat } from "../../utils/DateHelper"
 
-// export function subscribeToChangesTasksTable(syncLocalWithDb) {
-//   const channel = supabase
-//   .channel('Tasks')
-//   .on(
-//     'postgres_changes',
-//     {
-//       event: 'UPDATE',
-//       schema: 'public',
-//     },
-//     async (payload) => {
-//       console.log("detected UPDATE changes!!!")
-//       console.log(payload)
-// 	await syncLocalWithDb()
-//     }
-//   )
-// .on(
-// 	'postgres_changes',
-// 	{
-// 	  event: 'DELETE',
-// 	  schema: 'public',
-// 	},
-// 	async (payload) => {
-// 	  console.log("detected DELETE changes!!!")
-// 	  console.log(payload)
-// 	  await syncLocalWithDb()
-// 	}
-//   )
-//   .on(
-// 	'postgres_changes',
-// 	{
-// 	  event: 'INSERT',
-// 	  schema: 'public',
-// 	},
-// 	async (payload) => {
-// 	  console.log("detected INSERT changes!!!")
-// 	  console.log(payload)
-// 	  await syncLocalWithDb()
-// 	}
-//   )
-
-//   .subscribe()
-
-
-// const habitHistoryChannel = supabase
-//   .channel('HabitHistory')
-//   .on(
-//     'postgres_changes',
-//     {
-//       event: 'UPDATE',
-//       schema: 'public',
-//     },
-//     async (payload) => {
-//       console.log("detected UPDATE changes!!!")
-//       console.log(payload)
-// 	// await syncLocalWithDb()
-//     }
-//   )
-// .on(
-// 	'postgres_changes',
-// 	{
-// 	  event: 'DELETE',
-// 	  schema: 'public',
-// 	},
-// 	async (payload) => {
-// 	  console.log("detected DELETE changes!!!")
-// 	  console.log(payload)
-// 	  await syncLocalWithDb()
-// 	}
-//   )
-//   .on(
-// 	'postgres_changes',
-// 	{
-// 	  event: 'INSERT',
-// 	  schema: 'public',
-// 	},
-// 	async (payload) => {
-// 	  console.log("detected INSERT changes!!!")
-// 	  console.log(payload)
-// 	  await syncLocalWithDb()
-// 	}
-//   )
-
-//   .subscribe()
-// }
-
-// supabase functions to implement:
-// update task settings: DONE
-// update habit history entry DONE
-// delete task DONE
-
-
 // local AND supabase changes
 export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, setTaskItems, taskItems, setHabitStats, habitHistory) => {
 
@@ -305,9 +214,9 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   const { data, error } = await supabase
     .from('Tasks')
     .insert(newTaskSettingsCopy).select().single()
-  console.log("HELLLOOOO")
+  // console.log("HELLLOOOO")
   
-    console.log({data})
+    // console.log({data})
   // console.log(newTaskSettingsCopy)
 
   if (error) console.warn(error)
@@ -361,7 +270,7 @@ export const supabaseSyncLocalWithDb = async (session, setTaskItems, setHabitSta
 
   // code to update taskItems state
 
-  console.log("NOTE: syncing local states with db")
+  console.log("Syncing local states with db")
 
   // console.log("here is my data :(: "+data)
 
@@ -392,6 +301,8 @@ export const supabaseSyncLocalWithDb = async (session, setTaskItems, setHabitSta
 
   // update habit stats state
   var newHabitStats = updateHabitStats(setHabitStats, newHabitHistory)
+
+  console.log("syncing complete!")
 
   return {newTaskItems, newHabitHistory, newHabitStats}
 }
@@ -456,8 +367,15 @@ export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHa
 }
 
 
+  // basic logic of fixing habit histories:
+  // loop between habit creation date and today's date:
+  //     if day is valid:  
+  //         if entry does not exist already for this date:
+  //             add entry ("pending" if it is today's date and "incomplete" if it is old date)
+  //         if entry does exist for this date & is "pending" & selected date is today & habit_due_date != today:
+  //             change from "pending" to "incomplete"
 export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, habitHistory, setHabitHistory, setHabitStats) => {
-  console.log("===============================")
+  // console.log("===============================")
   // possibility of missing some habits
   // repeatDays last edited date -> current date
 
@@ -473,7 +391,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
   for (var d = start_date; d < dayAfterNow; d.setDate(d.getDate() + 1)) {
     if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true) datesToCheck.push(new Date(d));
   }
-  console.log({ daysToCheck: datesToCheck, "id": habitSettings["id"] })
+  // console.log({ daysToCheck: datesToCheck, "id": habitSettings["id"] })
 
   for (var i = 0; i < datesToCheck.length; i += 1) {
     const selectedDate = datesToCheck[i]
@@ -541,7 +459,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
 const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
 
-  console.log("hi")
+  // console.log("hi")
 
   // console.log(newHabitHistory)
 
