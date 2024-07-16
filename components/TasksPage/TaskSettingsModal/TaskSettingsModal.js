@@ -19,7 +19,6 @@ import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../../text/Sty
 import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, onlyDatesAreSame } from '../../../utils/DateHelper';
 import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } from '../TasksPageSupabase';
-// import { supabase } from '../../../lib/supabase'
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -57,17 +56,12 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
       dayIndex = i
     }
     else {
-      // console.log("no repeatDays was selected!")
       return null
     }
   }
 
-  // this isn't working properly. FIX. TODO
-  // console.log({daysAfterToday})
-
   const dueDate = new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate()+daysAfterToday, dueTime.getHours(), dueTime.getMinutes(), dueTime.getSeconds())
 
-  // console.log(dueDate.toLocaleString())
   return dueDate
 
 }
@@ -122,7 +116,6 @@ function reducer(taskSettings, action) {
       const newRepeatDays = taskSettings.repeatDays
       newRepeatDays[action.payload.dayInt] = action.payload.selected
 
-      //  TODO: IMPLEMENT FUNCTION
       // console.log(action.payload.isHabit)
       if (action.payload.isHabit == true) {
         let today = new Date();

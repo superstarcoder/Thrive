@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Color from '../../assets/themes/Color'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
@@ -6,10 +6,13 @@ import { StyledH1, StyledH2 } from '../text/StyledText';
 import StreaksCalendar from './StreaksCalendar';
 import { v4 as uuidv4 } from 'uuid';
 import { toYMDFormat } from '../../utils/DateHelper';
+import { updateHabitStats } from '../TasksPage/TasksPageSupabase';
 
-const StatsPage = ({ habitStats, taskItems }) => {
+const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
 
 	// console.log(JSON.stringify(habitStats, null, 4))
+
+
 
 	var allMarkedDates = {}
 
@@ -66,7 +69,7 @@ const StatsPage = ({ habitStats, taskItems }) => {
 		// habitId
 		const currentTask = taskItems.find(x => x.id == habitId)
 		if (currentTask == undefined) {
-			console.warn("Task that is linked to habit stat was not found")
+			console.log("Unresolvable issue: task that is linked to habit stat was not found")
 		} else {
 			allMarkedDates[habitId] = { markedDates: markedDates, title: currentTask.title, id: uuidv4()}
 		}
@@ -81,6 +84,12 @@ const StatsPage = ({ habitStats, taskItems }) => {
 			<StreaksCalendar markedDates={properties.markedDates} key={uuidv4()} title={properties.title} />
 		);
 	}
+
+  useEffect(() => {
+    // update habit stats when page is loaded
+    updateHabitStats(setHabitStats, habitHistory)
+  }, [])
+  
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>

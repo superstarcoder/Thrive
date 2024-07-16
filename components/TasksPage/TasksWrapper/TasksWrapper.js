@@ -21,7 +21,6 @@ const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => 
   }
   else {
     await supabaseUpdateHabitHistoryEntry({"status" : status}, taskId, habitHistory, setHabitHistory, habitHistoryEntry.habit_due_date, setHabitStats)
-      // TODO: CALL SUPABSE FUNCTION TO UPDATE HABIT HISTORY ENTRY
   } 
 
 }

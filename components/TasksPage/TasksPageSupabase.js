@@ -77,15 +77,15 @@ export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, se
 }
 
 // local AND supabase changes
-// NOTE: DID NOT ADD LOGIC TO CONVER TO ISO_STRING YET
-export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitHistory, setHabitHistory, habit_due_date, setHabitStats, updateStats = true) => {
+// NOTE (outdated?): DID NOT ADD LOGIC TO CONVER TO ISO_STRING YET
+export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitHistory, setHabitHistory, habit_due_date, setHabitStats) => {
   // local changes
   //find the entry that matches the id AND habit_due_date
   // then, update entry based on updateDict
   const habitHistoryCopy = { ...habitHistory }
   for (const entry of habitHistoryCopy[taskId]) {
     if (onlyDatesAreSame(entry.habit_due_date, habit_due_date)) {
-      // TODO: add logic to update entry based on updateDict
+      // logic to update entry based on updateDict
 
       for (let [taskProperty, propertyNewValue] of Object.entries(updateDict)) {
         if (!entry.hasOwnProperty(taskProperty)) {
@@ -112,17 +112,12 @@ export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitH
   if (error) console.warn(error)
 
 
-  if (updateStats) {
-    // console.log("updating: "+taskId)
-    updateHabitStats(setHabitStats, habitHistoryCopy)
-  }
-
-
+  updateHabitStats(setHabitStats, habitHistoryCopy)
   //  console.log(habitHistory)
 }
 
 
-export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, habitHistory, setHabitHistory, setHabitStats, updateStats = true, batchSize = 50) => {
+export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, habitHistory, setHabitHistory, setHabitStats, batchSize = 50) => {
 
   const habitHistoryCopy = { ...habitHistory }
 
@@ -152,9 +147,9 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
   }
 
 
-  if (updateStats) {
-    updateHabitStats(setHabitStats, habitHistory)
-  }
+  // if (updateStats) {
+  //   updateHabitStats(setHabitStats, habitHistory)
+  // }
 }
 
 
@@ -227,10 +222,10 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   taskItemsCopy.push(newTaskSetting)
   setTaskItems(taskItemsCopy)
 
-  // uncomment for debugging
-  // if (newTaskSetting.isHabit == true) {
-  //   await supabaseFixHistoryAllHabits(taskItemsCopy, habitHistory, setHabitHistory, habitStats, setHabitStats)
-  // }
+  // if a habit is being added: update habit history entries, so that new habit gets displayed
+  if (newTaskSetting.isHabit == true) {
+    await supabaseFixHistoryAllHabits(taskItemsCopy, habitHistory, setHabitHistory, habitStats, setHabitStats)
+  }
 }
 
 export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats) => {
@@ -259,6 +254,7 @@ export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItem
     console.warn(error)
   }
 
+  // commented since habit stats is now updated when StatsPage is opened, so there is no need to update t
   if (shouldUpdateHabitStats) {
     updateHabitStats(setHabitStats, newHabitHistory)
   }
@@ -360,10 +356,13 @@ export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHa
 
   for (var habitSettings of taskItems) {
     if (habitSettings.isHabit == true) {
-      await supabaseFixHistoryForSingleHabit(habitSettings, habitSettings.id, habitHistory, setHabitHistory, setHabitStats)
+      // update stats is set to false since we would rather update stats after ALL the habit histories have been made up to date
+      await supabaseFixHistoryForSingleHabit(habitSettings, habitSettings.id, habitHistory, setHabitHistory, setHabitStats, false)
     }
   }
-  // }
+
+  // this may cause a problem if habitHistory is not updated before this line is run
+  // updateHabitStats(setHabitStats, habitHistory)
 }
 
 
@@ -439,7 +438,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
       }
     }
 
-    updateHabitStats(setHabitStats, habitHistory)
+    // updateHabitStats(setHabitStats, habitHistory)
   }
 }
 
@@ -456,7 +455,8 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
 
 
 // no
-const updateHabitStats = (setHabitStats, newHabitHistory) => {
+export const updateHabitStats = (setHabitStats, newHabitHistory) => {
+  // console.log("updating habit stats!")
 
 
   // console.log("hi")
@@ -494,9 +494,6 @@ const updateHabitStats = (setHabitStats, newHabitHistory) => {
   }
 
   // console.log(JSON.stringify(newHabitStats, null, 2))
-
-  // console.log(JSON.stringify(newHabitStats, undefined, 2))
-
   setHabitStats(newHabitStats)
   return newHabitStats
 
@@ -545,4 +542,3 @@ export const getAllTasks = async (session) => {
   if (error) console.warn(error)
   return data
 }
-

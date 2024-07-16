@@ -22,8 +22,6 @@ import SettingsPage from './components/SettingsPage/SettingsPage';
 import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits } from './components/TasksPage/TasksPageSupabase';
 
 
-// TODO: figure out how database gets updated onEditTaskComplete or onSaveTask
-// TODO: update local states (tasks) on page load!!
 
 // email: danny@gmail.com
 // password: danny danny
@@ -196,7 +194,7 @@ export default function App() {
           }
           {currentPage == "stats" &&
             <>
-              <StatsPage habitStats={habitStats} taskItems={taskItems} />
+              <StatsPage habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats} />
             </>
           }
           {currentPage == "AI" &&
