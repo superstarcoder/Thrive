@@ -163,9 +163,11 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
         {isOverdue &&
           <View style={styles.warningBox}>
             <StyledH3 text={"overdue"} style={styles.overdueText}/>            
-            <View style={styles.warningIgnoreButton}>
-              <StyledH3 text={"ignore"} style={[styles.ignoreText, {color: "black"}]}/>            
-            </View>
+            <TouchableOpacity onPress={() => {onChange(taskId, isHabit, habitHistoryEntry, "incomplete_ignored")}}>
+              <View style={styles.warningIgnoreButton}>
+                <StyledH3 text={"ignore"} style={[styles.ignoreText, {color: "black"}]}/>            
+              </View>
+            </TouchableOpacity>
           </View>
         }
 

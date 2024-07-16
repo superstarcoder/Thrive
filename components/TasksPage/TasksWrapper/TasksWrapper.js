@@ -12,17 +12,12 @@ import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../
 const TasksWrapper = ({session, taskMenuRef, taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats}) => {
 
 const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
-
-  // console.log(status)
-
   if (!isHabit) {
-
     await supabaseUpdateTaskSettings(session, {"status" : status}, taskId, setTaskItems, taskItems, setHabitStats, habitHistory);
   }
   else {
     await supabaseUpdateHabitHistoryEntry({"status" : status}, taskId, habitHistory, setHabitHistory, habitHistoryEntry.habit_due_date, setHabitStats)
   } 
-
 }
 
 const onEditTask = (taskSettings) => {
