@@ -9,6 +9,8 @@ import { toYMDFormat } from '../../utils/DateHelper';
 
 const StatsPage = ({ habitStats, taskItems }) => {
 
+	// console.log(JSON.stringify(habitStats, null, 4))
+
 	var allMarkedDates = {}
 
 	for (const [habitId, myStat] of Object.entries(habitStats)) {
@@ -63,8 +65,12 @@ const StatsPage = ({ habitStats, taskItems }) => {
 
 		// habitId
 		const currentTask = taskItems.find(x => x.id == habitId)
+		if (currentTask == undefined) {
+			console.warn("Task that is linked to habit stat was not found")
+		} else {
+			allMarkedDates[habitId] = { markedDates: markedDates, title: currentTask.title, id: uuidv4()}
+		}
 
-		allMarkedDates[habitId] = { markedDates: markedDates, title: currentTask.title, id: uuidv4()}
 	}
 
 	const allCalendars = []
