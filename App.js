@@ -94,15 +94,12 @@ export default function App() {
       supabase.auth.getSession().then(async ({ data: { session } }) => {
         setSession(session)
         console.log("noticed a change in session")
-        console.log(session)
-        console.log(session?.user)
         if (session && session.user) {
           console.log("user logged in!")
           console.log("fetching data for " + session.user.email)
           const newData = await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
           console.log("synced")
           // this only needs to be run on new days! will fix later to increase efficiency
-  
           await supabaseFixHistoryAllHabits(newData.newTaskItems, newData.newHabitHistory, setHabitHistory, newData.newHabitStats, setHabitStats)
           console.log("fixed habit histories")
           // await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)

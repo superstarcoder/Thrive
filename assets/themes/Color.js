@@ -12,7 +12,7 @@ const LightBlue = '#94A5FF' // points addition text
 const Blue = '#6A80F7' // warning sign symbol
 const RedAccent = '#F76969' // high priority task accent
 const BlueAccent = '#64ABFF' // medium priority task accent
-const GreenAccent = '#52BF58' // low priority task accent
+const GreenAccent = '#3AA840' // low priority task accent
 const GrayBlue = '#252B55'
 const Gray = '#C8C8C8'
 

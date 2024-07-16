@@ -161,9 +161,10 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
       setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
     },
     showEditTaskModal (myTaskSettings) {
-
-
       bottomSheetRef?.current?.scrollTo(1)
+      scrollViewRef?.current?.scrollTo({
+        y: 0,
+      })
       dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: myTaskSettings}})
       durationBoxRef?.current?.setDuration(myTaskSettings.duration)
       importanceBoxRef?.current?.setImportance(myTaskSettings.importance)
@@ -228,11 +229,12 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
   let initRepeatDays =  Array(7).fill(false)
 
   const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4(), status: "incomplete"})
+  const scrollViewRef = useRef()
 
 	return (
 	<BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
 
-		<ScrollView style={[styles.addTaskModalSettings]}>
+		<ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
 		  <TitleBox title={taskSettings.title} dispatch={dispatch}/>
 		  <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef}/>
 		  <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef}/>
