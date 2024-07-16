@@ -118,6 +118,7 @@ function SelectedDayTasks() {
     let count = 0
 
     let entryFound = false
+
     // code to count how many tasks/habits to display (that meet the conditions)
     for (const task of taskItems) {
       if (task.isHabit && habitHistory[task.id] != undefined) {
@@ -127,7 +128,6 @@ function SelectedDayTasks() {
           }
         }
       }
-      // }
     }
     // return if there's no habits to display
     if (count == 0) {

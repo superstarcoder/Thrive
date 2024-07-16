@@ -147,7 +147,7 @@ const TasksPage = forwardRef(({
 
     <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
 
-    <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems}  habitHistory={habitHistory} setHabitHistory={setHabitHistory}/>
+    <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems}  habitHistory={habitHistory} setHabitHistory={setHabitHistory} setHabitStats={setHabitStats}/>
 
 
 

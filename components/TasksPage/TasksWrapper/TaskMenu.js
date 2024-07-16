@@ -10,7 +10,7 @@ import { Square, CheckSquare, XSquare, Placeholder, PencilSimpleLine } from 'pho
 import { supabaseDeleteTask } from '../TasksPageSupabase';
 
 
-const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, setHabitHistory}, ref) => {
+const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, setHabitStats}, ref) => {
 
   const heightPercent = 0.8 
   useEffect(() => {
@@ -38,7 +38,7 @@ const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, s
 
   const onDeletePress = async () => {
     onCancelPress();
-    await supabaseDeleteTask(taskSettings.id, taskSettings.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory)
+    await supabaseDeleteTask(taskSettings.id, taskSettings.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats)
   }
 
   const onMarkAsCompletePressed = () => {

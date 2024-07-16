@@ -222,7 +222,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
   }
   
   const onDelete = async (taskSettingsToDelete) => {
-    await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory)
+    await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats)
   }
 
   let initRepeatDays =  Array(7).fill(false)

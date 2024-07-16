@@ -233,7 +233,7 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
   // }
 }
 
-export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory) => {
+export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats) => {
 
   // update local states
   let taskItemsCopy = [...taskItems]
@@ -260,7 +260,7 @@ export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItem
   }
 
   if (shouldUpdateHabitStats) {
-    updateHabitStats(setHabitHistory, newHabitHistory)
+    updateHabitStats(setHabitStats, newHabitHistory)
   }
 }
 
@@ -336,7 +336,7 @@ const getAllHabitHistories = async (setHabitHistory, taskItems) => {
 const findEntryWithDate = (habitHistoryEntries, myDate) => {
   if (habitHistoryEntries == undefined) return -1
 
-  console.log({ habitHistoryEntries })
+  // console.log({ habitHistoryEntries })
   for (let entry of habitHistoryEntries) {
     // found a match, return entry
     if (onlyDatesAreSame(new Date(entry["habit_due_date"]), myDate)) {
