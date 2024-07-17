@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Color from '../../assets/themes/Color'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { StyledH1, StyledH2 } from '../text/StyledText';
+import { StyledH1, StyledH2, StyledH3 } from '../text/StyledText';
 import StreaksCalendar from './StreaksCalendar';
 import { v4 as uuidv4 } from 'uuid';
 import { toYMDFormat } from '../../utils/DateHelper';
@@ -43,7 +43,7 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
 			} else if (status == "complete") {
 				markedDates[dueDate] = { selected: true, color: Color.GreenAccent, textColor: "black" }
 			} else {
-				console.warn("uncrecognized status: "+status)
+				console.warn("uncrecognized status: " + status)
 			}
 
 			// console.log({markedDates})
@@ -71,7 +71,7 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
 		if (currentTask == undefined) {
 			console.log("Unresolvable issue: task that is linked to habit stat was not found")
 		} else {
-			allMarkedDates[habitId] = { markedDates: markedDates, title: currentTask.title, id: uuidv4()}
+			allMarkedDates[habitId] = { markedDates: markedDates, title: currentTask.title, id: uuidv4() }
 		}
 
 	}
@@ -85,16 +85,27 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
 		);
 	}
 
-  useEffect(() => {
-    // update habit stats when page is loaded
-    updateHabitStats(setHabitStats, habitHistory)
-  }, [])
-  
+	useEffect(() => {
+		// update habit stats when page is loaded
+		updateHabitStats(setHabitStats, habitHistory)
+	}, [])
+
+	console.log(allCalendars)
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 				<View style={styles.scrollViewContainer}>
 					<StyledH1 text={"Habits This Past Month"} style={styles.sectionHeading} />
+					{allCalendars.length == 0 &&
+						<>
+							<View style={styles.infoBox}>
+								<StyledH3 text={"No habit data to display"} style={styles.infoText} />
+							</View>
+
+						</>
+					}
+
+
 					{/* <StreaksCalendar markedDates={allMarkedDates[231].markedDates} />
 					<StreaksCalendar markedDates={markedDatesTemp} /> */}
 					{allCalendars}
@@ -109,6 +120,18 @@ export default StatsPage
 
 
 const styles = StyleSheet.create({
+	infoBox: {
+		display: "flex",
+		backgroundColor: Color.GrayBlue,
+		alignSelf: "center",
+		paddingHorizontal: 10,
+		paddingVertical: 10,
+		borderRadius: 20,
+	},
+	infoText: {
+		alignSelf: "center",
+		color: Color.BlueAccent
+	},
 	scrollView: {
 		display: "flex",
 		paddingTop: 100,
