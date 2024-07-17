@@ -1,5 +1,5 @@
 import React, {useState, useRef, useCallback,  forwardRef, useImperativeHandle, useEffect, useReducer } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button, Alert } from 'react-native';
 import { useFonts } from 'expo-font'
 import TitleBox from './TitleBox';
 import DurationBox from './DurationBox'
@@ -175,11 +175,39 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
     bottomSheetRef?.current?.scrollTo(0)
   }, [])
 
+
+  const isSevenFalses = (list) => {
+    return list.length === 7 && list.every(value => value === false);
+  };
+
+  // returns false if there was no error & true if there was
+  const validateFields = () => {
+    
+    console.log(taskSettings.isHabit)
+    console.log(taskSettings.repeatDays)
+
+    if (taskSettings.title == "") {
+      Alert.alert("Title cannot be left blank")
+      return true
+    }
+
+
+    if (taskSettings.isHabit && isSevenFalses(taskSettings.repeatDays)){
+      Alert.alert("A repeat day must be selected for habits!")
+      return true
+    }
+  }
+
 	const onSavePress = async () => {
+
+    let error = validateFields()
+    if (error) return
+
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 		bottomSheetRef?.current?.scrollTo(0)
 
     if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
+
       settingsCopy = {...taskSettings}
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
