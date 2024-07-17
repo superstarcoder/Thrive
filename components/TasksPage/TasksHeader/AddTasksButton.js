@@ -6,8 +6,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Color from '../../../assets/themes/Color'
 import { LinearGradient } from 'expo-linear-gradient';
 
-
-
 const AddTasksButton = ({onPress}) => {
   return (
   <View>
@@ -22,7 +20,7 @@ const AddTasksButton = ({onPress}) => {
         colors={['#3848a0', '#252F68', '#030a2a']}
         > */}
 			
-		<StyledH2 text={"Add Task"} weight="regular"/>
+		<StyledH2 text={"Add Task / Habit"} weight="regular"/>
       {/* </LinearGradient> */}
 
 	</TouchableOpacity>
