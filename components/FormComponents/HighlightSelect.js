@@ -36,11 +36,11 @@ export default HighlightSelect
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 4,
+    // marginRight: 4,
   },
   highlighted: {
-    height: 25,
-    width: 38,
+    // height: 25,
+    minWidth: 40,
     borderRadius: 30,
     paddingVertical: 1,
     paddingHorizontal: 4,
@@ -48,8 +48,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   unHighlighted: {
-    height: 25,
-    width: 38,
+    // height: 25,
+    minWidth: 40,
+    // width: 38,
     paddingVertical: 1,
     paddingHorizontal: 4,
   },

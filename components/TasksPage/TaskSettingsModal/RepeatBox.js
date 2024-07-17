@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
   inputBox: {
     backgroundColor: Color.DarkestBlue,
     borderRadius: 12,
-    paddingHorizontal: 27,
+    paddingLeft: 27,
+    paddingRight: 10,
     paddingVertical: 20,
     flexDirection: "column",
     marginBottom: 22,
@@ -52,7 +53,9 @@ const styles = StyleSheet.create({
     color: Color.Gray
   },
   multiSelect: {
-	flexDirection: "row"
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 1,
   },
   inputTitle: {
 	marginBottom: 8,

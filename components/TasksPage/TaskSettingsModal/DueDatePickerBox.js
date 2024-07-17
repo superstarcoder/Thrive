@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity, Button } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { PencilSimple } from 'phosphor-react-native';
+import { Calendar, CalendarCheck, PencilSimple } from 'phosphor-react-native';
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import * as Haptics from 'expo-haptics'
 // import CheckBox from '../FormComponents/CheckBox';
@@ -12,6 +12,8 @@ import Color from '../../../assets/themes/Color'
 const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 
 	const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+	const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+	const [isDateTimePickerVisible, setDateTimePickerVisibility] = useState(false);
   // const [selectedDateTime, setSelectedDateTime] = useState(new Date())
   
   // useEffect(() => {
@@ -27,10 +29,45 @@ const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 		setDatePickerVisibility(false);
 	};
 
-	const handleConfirm = (date) => {
+
+  const showTimePicker = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+		setTimePickerVisibility(true);
+	};
+
+	const hideTimePicker = () => {
+		setTimePickerVisibility(false);
+	};
+
+  const showDateTimePicker = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+		setDateTimePickerVisibility(true);
+	};
+
+	const hideDateTimePicker = () => {
+		setDateTimePickerVisibility(false);
+	};
+
+	const handleDateTimeConfirm = (new_datetime) => {
+    console.log(new_datetime)
+		hideDateTimePicker(); // must be first
+    // setSelectedDateTime(new Date(date))
+    dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(new_datetime)}})
+	};
+
+  const handleTimeConfirm = (new_time) => {
+    console.log({"new": new_time.toLocaleString(), "old": dateTime.toLocaleString()})
+		hideTimePicker(); // must be first
+    // setSelectedDateTime(new Date(date))
+    dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(new_time)}})
+	};
+
+
+  const handleDateConfirm = (new_date) => {
+    console.log({"new": new_date.toLocaleString(), "old": dateTime.toLocaleString()})
 		hideDatePicker(); // must be first
     // setSelectedDateTime(new Date(date))
-    dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(date)}})
+    dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(new_date)}})
 	};
 
   return (
@@ -45,28 +82,44 @@ const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={showDatePicker}>
+        <TouchableOpacity onPress={showTimePicker}>
           <View style={styles.currentTimeContainer}>
             <StyledH3 text={dateTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={showDatePicker}>
+        <TouchableOpacity onPress={showDateTimePicker}>
           <View style={styles.changeDateButton}>
-            <PencilSimple size={25} weight="bold" color={"black"} style={styles.buttonIcon} />
+            <CalendarCheck size={25} weight="regular" color={"black"} style={styles.buttonIcon} />
           </View>
         </TouchableOpacity>
 
       </View>
-
       <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="datetime"
-        display='inline'
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        date={dateTime}
+      isVisible={isDateTimePickerVisible}
+      mode="datetime"
+      display='inline'
+      onConfirm={handleDateTimeConfirm}
+      onCancel={hideDateTimePicker}
+      date={dateTime}
       />
+
+    <DateTimePickerModal
+      isVisible={isTimePickerVisible}
+      mode="time"
+      onConfirm={handleTimeConfirm}
+      onCancel={hideTimePicker}
+      date={dateTime}
+    />
+
+    <DateTimePickerModal
+      isVisible={isDatePickerVisible}
+      mode="date"
+      onConfirm={handleDateConfirm}
+      onCancel={hideDatePicker}
+      date={dateTime}
+    />
+
     </View>
   )
 }
@@ -88,7 +141,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   currentDateContainer: {
-    backgroundColor: "hsl(0, 0%, 24%)",
+    backgroundColor: Color.DarkBlue,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -96,7 +149,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   currentTimeContainer: {
-    backgroundColor: "hsl(0, 0%, 24%)",
+    backgroundColor: Color.DarkBlue,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
