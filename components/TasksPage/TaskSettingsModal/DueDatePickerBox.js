@@ -49,14 +49,14 @@ const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 	};
 
 	const handleDateTimeConfirm = (new_datetime) => {
-    console.log(new_datetime)
+    // console.log(new_datetime)
 		hideDateTimePicker(); // must be first
     // setSelectedDateTime(new Date(date))
     dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(new_datetime)}})
 	};
 
   const handleTimeConfirm = (new_time) => {
-    console.log({"new": new_time.toLocaleString(), "old": dateTime.toLocaleString()})
+    // console.log({"new": new_time.toLocaleString(), "old": dateTime.toLocaleString()})
 		hideTimePicker(); // must be first
     // setSelectedDateTime(new Date(date))
     dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(new_time)}})
@@ -64,7 +64,7 @@ const DueDatePickerBox = ({dispatch, dateTime, includeOnlyTime=false}) => {
 
 
   const handleDateConfirm = (new_date) => {
-    console.log({"new": new_date.toLocaleString(), "old": dateTime.toLocaleString()})
+    // console.log({"new": new_date.toLocaleString(), "old": dateTime.toLocaleString()})
 		hideDatePicker(); // must be first
     // setSelectedDateTime(new Date(date))
     dispatch({type: ACTIONS.UPDATE_DUE_DATE_TIME, payload: {dueDate: new Date(new_date)}})

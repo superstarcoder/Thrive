@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback,  forwardRef, useImperativeHandle, useEffect, useReducer } from 'react';
+import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle, useEffect, useReducer } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button, Alert } from 'react-native';
 import { useFonts } from 'expo-font'
 import TitleBox from './TitleBox';
@@ -8,14 +8,14 @@ import DescriptionBox from './DescriptionBox';
 import UseHabitBox from './UseHabitBox';
 import RepeatBox from './RepeatBox';
 import DueDatePickerBox from './DueDatePickerBox';
-import { Trash, XCircle, CheckCircle} from 'phosphor-react-native';
+import { Trash, XCircle, CheckCircle } from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
 // import { ACTIONS, TASK_SETTINGS_MODES } from '../../utils/MyGlobalVars';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import BottomSheet from '../../FormComponents/BottomSheet';
 import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles} from '../../text/StyledText';
+import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, onlyDatesAreSame } from '../../../utils/DateHelper';
 import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } from '../TasksPageSupabase';
@@ -23,16 +23,16 @@ import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } fr
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
   // const todaysDate = new Date()
-  var dayIndex = initialDate.getDay()-1
+  var dayIndex = initialDate.getDay() - 1
   var daysAfterToday = 0
-  if (dayIndex == -1) dayIndex = 6 
+  if (dayIndex == -1) dayIndex = 6
 
   // console.log("dayIndex: "+dayIndex)
   // console.log("repeatDays[dayIndex]: "+dayIndex)
 
   // find the next day where repeatDays[dayIndex] == true
-  if ( repeatDays[dayIndex] == false ) {
-    var i = dayIndex+1
+  if (repeatDays[dayIndex] == false) {
+    var i = dayIndex + 1
     if (i == 7) i = 0
     daysAfterToday = 1
     var dayFound = false
@@ -60,7 +60,7 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
     }
   }
 
-  const dueDate = new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate()+daysAfterToday, dueTime.getHours(), dueTime.getMinutes(), dueTime.getSeconds())
+  const dueDate = new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate() + daysAfterToday, dueTime.getHours(), dueTime.getMinutes(), dueTime.getSeconds())
 
   return dueDate
 
@@ -74,24 +74,24 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
 const initHabitHistory = (repeatDays, dueTime) => {
   var dueDate = findHabitNextDueDate(new Date(), repeatDays, dueTime)
   if (dueDate == null) return []
-  return [{exactDueDate: dueDate, status: "pending",}]
+  return [{ exactDueDate: dueDate, status: "pending", }]
 }
 
 function reducer(taskSettings, action) {
   switch (action.type) {
     case "update_title":
       // console.log(action.payload.title)
-      return {...taskSettings, title: action.payload.title}
+      return { ...taskSettings, title: action.payload.title }
     case "update_duration":
       // console.log("update_duration: "+action.payload.duration)
       // console.log("update_duration payload: "+JSON.stringify(action.payload))
-      return {...taskSettings, duration: action.payload.duration}
+      return { ...taskSettings, duration: action.payload.duration }
     case "update_importance":
       // console.log(action.payload.importance)
-      return {...taskSettings, importance: action.payload.importance}
+      return { ...taskSettings, importance: action.payload.importance }
     case "update_description":
       // console.log(action.payload.description)
-      return {...taskSettings, description: action.payload.description}
+      return { ...taskSettings, description: action.payload.description }
     case "update_isHabit":
       // console.log(action.payload.isHabit)
       if (action.payload.isHabit == true) {
@@ -100,7 +100,7 @@ function reducer(taskSettings, action) {
         // console.log("habitHistory: "+JSON.stringify(habitHistory))
         // console.log("=============================")
       }
-      return {...taskSettings, isHabit: action.payload.isHabit, habitHistory: habitHistory, habitInitDate : new Date()}
+      return { ...taskSettings, isHabit: action.payload.isHabit, habitHistory: habitHistory, habitInitDate: new Date() }
     // case "update_repeatDays":
     //   // console.log(action.payload.repeatDays)
     //   if (action.payload.isHabit == true) {
@@ -109,7 +109,7 @@ function reducer(taskSettings, action) {
     //     console.log("habitHistory: "+JSON.stringify(habitHistory))
     //     console.log("=============================")
     //   }
-      
+
     //   return {...taskSettings, repeatDays: action.payload.repeatDays}
     case "single_update_repeatDays":
       // console.log(action.payload.dayInt, action.payload.selected)
@@ -120,13 +120,13 @@ function reducer(taskSettings, action) {
       if (action.payload.isHabit == true) {
         let today = new Date();
         // console.log("updating repeat_days_edited_date")
-        return {...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate())}
+        return { ...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate()) }
       }
 
-      return {...taskSettings, repeatDays: newRepeatDays}
+      return { ...taskSettings, repeatDays: newRepeatDays }
     case "update_due_date_time":
       // console.log(action.payload.dueDate)
-      return {...taskSettings, dueDate: action.payload.dueDate}
+      return { ...taskSettings, dueDate: action.payload.dueDate }
     case "update_all":
       // console.log("updated duration: "+action.payload.newTaskSettings.duration)
       return action.payload.newTaskSettings
@@ -135,37 +135,53 @@ function reducer(taskSettings, action) {
   }
 }
 
-const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats}, ref) => {
+const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats }, ref) => {
 
   useImperativeHandle(ref, () => ({
 
-    showAddTaskModal () {
+    showAddTaskModal(selectedDate=new Date()) {
       const today = new Date();
-      var endOfDayObj = new Date(today.getFullYear()
-      ,today.getMonth()
-      ,today.getDate()
-      ,23,59,59);
+      var endOfDayObj = new Date(selectedDate.getFullYear()
+        , selectedDate.getMonth()
+        , selectedDate.getDate()
+        , 23, 59, 59);
 
       bottomSheetRef?.current?.scrollTo(1)
-      const initSettings = {created_at: new Date(), title: "", habitHistory: null, habitInitDate: null, duration: 0.5, importance: 5, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: endOfDayObj, includeOnlyTime: false, status: "incomplete", repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate())}
-      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: initSettings}})
+
+      const initSettings = {
+        created_at: new Date(),
+        title: "",
+        habitHistory: null,
+        habitInitDate: null,
+        duration: 0.5,
+        importance: 5,
+        description: "",
+        isHabit: false,
+        repeatDays: initRepeatDays,
+        dueDate: endOfDayObj,
+        includeOnlyTime: false,
+        status: "incomplete",
+        repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      }
+
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: initSettings } })
       durationBoxRef?.current?.setDuration(initSettings.duration)
       importanceBoxRef?.current?.setImportance(initSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
     },
-    showEditTaskModal (myTaskSettings) {
+    showEditTaskModal(myTaskSettings) {
       bottomSheetRef?.current?.scrollTo(1)
       scrollViewRef?.current?.scrollTo({
         y: 0,
       })
-      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: myTaskSettings}})
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: myTaskSettings } })
       durationBoxRef?.current?.setDuration(myTaskSettings.duration)
       importanceBoxRef?.current?.setImportance(myTaskSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.EDIT_TASK)
     }
   }));
 
-	const bottomSheetRef = useRef(null)
+  const bottomSheetRef = useRef(null)
   const durationBoxRef = useRef(null)
   const importanceBoxRef = useRef(null)
   const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
@@ -182,7 +198,7 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
 
   // returns false if there was no error & true if there was
   const validateFields = () => {
-    
+
     console.log(taskSettings.isHabit)
     console.log(taskSettings.repeatDays)
 
@@ -192,38 +208,38 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
     }
 
 
-    if (taskSettings.isHabit && isSevenFalses(taskSettings.repeatDays)){
+    if (taskSettings.isHabit && isSevenFalses(taskSettings.repeatDays)) {
       Alert.alert("A repeat day must be selected for habits!")
       return true
     }
   }
 
-	const onSavePress = async () => {
+  const onSavePress = async () => {
 
     let error = validateFields()
     if (error) return
 
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-		bottomSheetRef?.current?.scrollTo(0)
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    bottomSheetRef?.current?.scrollTo(0)
 
     if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
 
-      settingsCopy = {...taskSettings}
+      settingsCopy = { ...taskSettings }
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
       await onSaveTask(settingsCopy)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
-      settingsCopy = {...taskSettings}
+      settingsCopy = { ...taskSettings }
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-      dispatch({type: ACTIONS.UPDATE_ALL, payload: {newTaskSettings: settingsCopy}})
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
       await onEditTaskComplete(settingsCopy)
     }
 
 
-	  }
+  }
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
@@ -238,59 +254,59 @@ const TaskSettingsModal = forwardRef (({session, syncLocalWithDb, supabase, task
   const onSaveTask = async (newTaskSettings) => {
     await supabaseInsertTask(session, newTaskSettings, setTaskItems, taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats)
   }
-  
+
   const onEditTaskComplete = async (taskSettingsEdited) => {
     await supabaseUpdateTaskSettings(session, taskSettingsEdited, taskSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory);
   }
-  
+
   const onDelete = async (taskSettingsToDelete) => {
     await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats)
   }
 
-  let initRepeatDays =  Array(7).fill(false)
+  let initRepeatDays = Array(7).fill(false)
 
-  const [taskSettings, dispatch] = useReducer(reducer, {title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4(), status: "incomplete"})
+  const [taskSettings, dispatch] = useReducer(reducer, { title: "", duration: 0, importance: 0, description: "", isHabit: false, repeatDays: initRepeatDays, dueDate: new Date(), includeOnlyTime: false, id: uuidv4(), status: "incomplete" })
   const scrollViewRef = useRef()
 
-	return (
-	<BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
+  return (
+    <BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
 
-		<ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
-		  <TitleBox title={taskSettings.title} dispatch={dispatch}/>
-		  <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef}/>
-		  <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef}/>
-		  <DescriptionBox description={taskSettings.description} dispatch={dispatch}/>
-		  <StyledH1 style={styles.settingsTitle} text={"Habit Settings"}/>
-		  <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate}/>
-		  <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit}/>
-		  <StyledH1 style={styles.settingsTitle} text={"Advanced"}/>
-		  <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime}/>
-		</ScrollView>
+      <ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
+        <TitleBox title={taskSettings.title} dispatch={dispatch} />
+        <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
+        <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
+        <DescriptionBox description={taskSettings.description} dispatch={dispatch} />
+        <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
+        <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} />
+        <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit} />
+        <StyledH1 style={styles.settingsTitle} text={"Advanced"} />
+        <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
+      </ScrollView>
 
-	  <View style={styles.addTaskModalButtons}>
-		  <TouchableOpacity onPress={onSavePress}>
-        <View style={styles.saveTaskButton}>
-          <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
-        </View>
-		  </TouchableOpacity>
-
-		  <TouchableOpacity onPress={onCancelPress}>
-        <View style={styles.cancelTaskButton}>
-          <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-        </View>
-		  </TouchableOpacity>
-
-      {settingsMode != TASK_SETTINGS_MODES.ADD_TASK && 
-        <TouchableOpacity onPress={onDeletePress}>
-          <View style={styles.deleteTaskButton}>
-            <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+      <View style={styles.addTaskModalButtons}>
+        <TouchableOpacity onPress={onSavePress}>
+          <View style={styles.saveTaskButton}>
+            <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
           </View>
         </TouchableOpacity>
-      }
-		
-		</View>
-	</BottomSheet>
-	);
+
+        <TouchableOpacity onPress={onCancelPress}>
+          <View style={styles.cancelTaskButton}>
+            <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+          </View>
+        </TouchableOpacity>
+
+        {settingsMode != TASK_SETTINGS_MODES.ADD_TASK &&
+          <TouchableOpacity onPress={onDeletePress}>
+            <View style={styles.deleteTaskButton}>
+              <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+            </View>
+          </TouchableOpacity>
+        }
+
+      </View>
+    </BottomSheet>
+  );
 });
 
 export default TaskSettingsModal
@@ -356,7 +372,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   addTaskModal: {
-		backgroundColor: Color.GrayBlue,
+    backgroundColor: Color.GrayBlue,
     // paddingHorizontal: 30,
   },
 

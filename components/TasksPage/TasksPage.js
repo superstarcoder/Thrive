@@ -97,7 +97,7 @@ const TasksPage = forwardRef(({
   };
 
   const onAddTaskButtonPressed = () => {
-    taskSettingsRef?.current?.showAddTaskModal()
+    taskSettingsRef?.current?.showAddTaskModal(selectedDate)
   }
   // if the date selected is today
 
