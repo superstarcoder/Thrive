@@ -40,6 +40,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-get-random-values": "~1.11.0",
+    "react-native-gifted-charts": "^1.4.16",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-markdown-display": "^7.0.2",
     "react-native-modal-datetime-picker": "^17.0.0",
