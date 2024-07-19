@@ -24,7 +24,7 @@ Please output a RAW markdown file with analysis of my task data for the month of
 
 1) What You Did Well: this section should talk about what goals I have, what significant things I achieved, how many hours of work I put in for each kind of task, days/weeks where I was very productive etc. Please talk about all the good things I have done, and be specific to my tasks. Don't be too general.
 
-2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns. For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Give insight that is specific to my tasks. Don't be too general.
+2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns and specific techniques I can use to improve my productivity (eg: pomodoro, time blocking, etc). For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Give insight that is specific to my tasks. Don't be too general.
 
 Please provide this information in a neat, pretty, and concise format, with around 4-6 bullet points for each number. And this is very very important: write everything in a RAW Markdown file format. Add emojis too! At the end of the file, add a motivating/encouraging message such as "Keep up the good work and focus on these areas for continued improvement! 💪"
 
@@ -96,6 +96,7 @@ const AIPage = ({ taskItems }) => {
 
 
     let completePrompt = basePrompt + taskData + promptFooter
+    console.log(completePrompt)
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: completePrompt }],
@@ -120,11 +121,15 @@ const AIPage = ({ taskItems }) => {
         <View style={styles.scrollViewContainer}>
           <StyledH1 text={"Ask Daisy"} style={styles.sectionHeading} />
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
-            <StyledH3 text={`Click me to analyze ${monthName} 📊📈!`} style={styles.buttonTitle} />
+            <StyledH3 text={`Click me to analyze ${monthName}! 📊📈`} style={styles.buttonTitle} />
             {errorMessage &&
               <StyledH3 text={errorMessage}/>
             }
           </TouchableOpacity>
+
+          <View style={styles.infoBox}>
+              <StyledH3 text={"Daisy is an AI bot designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks & habits you add, the better Daisy becomes at offering tailored advice!"} style={styles.infoText} />
+          </View>
           {isLoading &&
               <ActivityIndicator size="large" />
           }
@@ -142,51 +147,21 @@ const AIPage = ({ taskItems }) => {
 export default AIPage
 
 
-
-const markdownStyles = StyleSheet.create({
-  body: {
-    color: Color.Gray,
-    fontFamily: "MPlusRegular",
-    fontSize: 18,
-  },
-  heading2: {
-    fontSize: 40,
-    color: '#FFFFFF',
-  },
-  heading3: {
-    fontSize: 25,
-    // marginBottom: 20,
-    color: '#FFFFFF',
-    fontFamily: "MPlusMedium",
-    // backgroundColor: "black"
-  },
-  heading4: {
-    fontSize: 22,
-    marginBottom: 5,
-    marginTop: 25,
-    color: Color.LightBlue,
-    fontFamily: "MPlusMedium",
-  },
-  heading5: {
-    fontSize: 13,
-    color: '#FFFFFF',
-  },
-  heading6: {
-    fontSize: 11,
-    color: '#FFFFFF',
-  },
-  strong: {
-    fontFamily: "MPlusMedium",
-    fontSize: 19,
-    color: Color.Blue
-  },
-  list_item: {
-    marginVertical: 7.5,
-  }
-});
-
-
 const styles = StyleSheet.create({
+  infoBox: {
+    display: "flex",
+    backgroundColor: Color.GrayBlue,
+    alignSelf: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginHorizontal: 15,
+  },
+  infoText: {
+    alignSelf: "center",
+    color: Color.BlueAccent,
+    fontSize: 13,
+  },
   errorText: {
     color: Color.RedAccent
   },
@@ -231,4 +206,47 @@ const styles = StyleSheet.create({
   },
 
 })
+
+const markdownStyles = StyleSheet.create({
+
+  body: {
+    color: Color.Gray,
+    fontFamily: "MPlusRegular",
+    fontSize: 18,
+  },
+  heading2: {
+    fontSize: 40,
+    color: '#FFFFFF',
+  },
+  heading3: {
+    fontSize: 25,
+    // marginBottom: 20,
+    color: '#FFFFFF',
+    fontFamily: "MPlusMedium",
+    // backgroundColor: "black"
+  },
+  heading4: {
+    fontSize: 22,
+    marginBottom: 5,
+    marginTop: 25,
+    color: Color.LightBlue,
+    fontFamily: "MPlusMedium",
+  },
+  heading5: {
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
+  heading6: {
+    fontSize: 11,
+    color: '#FFFFFF',
+  },
+  strong: {
+    fontFamily: "MPlusMedium",
+    fontSize: 19,
+    color: Color.Blue
+  },
+  list_item: {
+    marginVertical: 7.5,
+  }
+});
 

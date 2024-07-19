@@ -499,7 +499,6 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
 }
 
-
 // outputs a string in csv format with important info needed for the LLM
 export const getTasksForMonthString = (month, year, taskItems) => {
   let selectedTasks = taskItems.filter(item => {
@@ -523,7 +522,7 @@ export const getTasksForMonthString = (month, year, taskItems) => {
 
     let result = selectedTasks.map(subList => `"`+subList.join('","')+`"`).join('\n');
     result = "dueDate, title, duration, importance, status\n" + result
-  // console.log(result)
+    return result
 
 }
 
