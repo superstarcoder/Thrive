@@ -139,11 +139,19 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
   for (let i = 0; i < entriesToAdd.length; i += batchSize) {
     const batch = entriesToAdd.slice(i, i + batchSize)
 
+    console.log("attempting to insert the following: ")
+    console.log(JSON.stringify(batch, null, 4))
     const { error } = await supabase
       .from('HabitHistory')
       .insert(batch)
 
-    if (error) console.warn(error)
+    if (error) {
+      console.log("unable to insert habit")
+      console.warn(error)
+    } else {
+      console.log("completed successfully!!")
+    }
+
   }
 
 
@@ -354,10 +362,13 @@ export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHa
   // .eq('isHabit', true)
   // .order('created_at', { ascending: true })
 
+  console.log("Starting fix...")
   for (var habitSettings of taskItems) {
     if (habitSettings.isHabit == true) {
       // update stats is set to false since we would rather update stats after ALL the habit histories have been made up to date
+      console.log("fixing habit id: "+habitSettings.id)
       await supabaseFixHistoryForSingleHabit(habitSettings, habitSettings.id, habitHistory, setHabitHistory, setHabitStats, false)
+      console.log("fixed!")
     }
   }
 
@@ -430,9 +441,11 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
   if (newEntries || updateEntries) {
 
     if (newEntries) {
+      console.log("inserting new habit history entry")
       await supabaseInsertHabitHistoryEntries(newEntries, habitId, habitHistory, setHabitHistory, setHabitStats, false)
     }
     if (updateEntries) {
+      console.log("updating existing habit history entry")
       for (const entry of updateEntries) {
         await supabaseUpdateHabitHistoryEntry(entry, habitId, habitHistory, setHabitHistory, entry.habit_due_date, setHabitStats, setHabitStats)
       }

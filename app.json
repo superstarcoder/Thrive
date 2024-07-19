@@ -3,7 +3,7 @@
     "scheme": "com.supabase",
     "name": "Thrive Productivity App",
     "slug": "Thrive",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -17,7 +17,7 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "buildNumber": "2",
+      "buildNumber": "3",
       "bundleIdentifier": "com.superstarcoder.ThriveApp"
     },
     "android": {
