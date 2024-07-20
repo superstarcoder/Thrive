@@ -442,7 +442,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
 
     if (newEntries) {
       console.log("inserting new habit history entry")
-      await supabaseInsertHabitHistoryEntries(newEntries, habitId, habitHistory, setHabitHistory, setHabitStats, false)
+      await supabaseInsertHabitHistoryEntries(newEntries, habitId, habitHistory, setHabitHistory, setHabitStats)
     }
     if (updateEntries) {
       console.log("updating existing habit history entry")

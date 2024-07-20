@@ -95,6 +95,7 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
   }, [])
 
   useEffect(() => {
+    console.log("updating calendar")
     // update habit stats when page is loaded
     updateHabitStats(setHabitStats, habitHistory)
     generateCalendars()
