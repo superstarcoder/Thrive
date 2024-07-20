@@ -61,7 +61,7 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
             if (task == undefined) continue
 
             if (Object.keys(dateToHours).includes(formatDate(task.dueDate))) {
-                console.log(task.status)
+                // console.log(task.status)
                 if (task.status == "complete") {
                     dateToHours[formatDate(task.dueDate)]["complete_hours"] += task.duration
                 } else if (task.status == "incomplete_ignored") {
@@ -103,7 +103,7 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
 
 
 
-        console.log(dateToHours)
+        // console.log(dateToHours)
 
         const newHoursData = []
         for (const [dateText, hours_data] of Object.entries(dateToHours)) {
@@ -117,7 +117,7 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
             newHoursData.push(my_bar)
         }
         setHoursData(newHoursData)
-        console.log(JSON.stringify(newHoursData, null, 2))
+        // console.log(JSON.stringify(newHoursData, null, 2))
     }
 
     useEffect(() => {

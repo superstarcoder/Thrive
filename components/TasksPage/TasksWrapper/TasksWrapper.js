@@ -26,6 +26,7 @@ const onEditTask = (taskSettings) => {
 
 const onTaskClicked = (taskSettings, habitHistoryEntry) => {
   // console.log("task clicked")
+  console.log(taskSettings.id)
   taskMenuRef?.current?.showTaskMenuModal(taskSettings, habitHistoryEntry, onEditTask, onCheckBoxPressed)
 }
 

@@ -120,7 +120,7 @@ function reducer(taskSettings, action) {
       if (action.payload.isHabit == true) {
         let today = new Date();
         // console.log("updating repeat_days_edited_date")
-        return { ...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate()) }
+        return { ...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date() }
       }
 
       return { ...taskSettings, repeatDays: newRepeatDays }
@@ -161,7 +161,8 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
         dueDate: endOfDayObj,
         includeOnlyTime: false,
         status: "incomplete",
-        repeat_days_edited_date: new Date(today.getFullYear(), today.getMonth(), today.getDate())
+        repeat_days_edited_date: new Date()
+        
       }
 
       dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: initSettings } })

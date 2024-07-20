@@ -146,7 +146,7 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
       .insert(batch)
 
     if (error) {
-      console.log("unable to insert habit")
+      console.log("unable to insert habit. HabitId: "+habitId)
       console.warn(error)
     } else {
       console.log("completed successfully!!")
@@ -356,12 +356,6 @@ const findEntryWithDate = (habitHistoryEntries, myDate) => {
 // call this function when: habit is added and when page loads
 export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats) => {
   
-  // const { data, error } = await supabase
-  // .from('Tasks')
-  // .select()
-  // .eq('isHabit', true)
-  // .order('created_at', { ascending: true })
-
   console.log("Starting fix...")
   for (var habitSettings of taskItems) {
     if (habitSettings.isHabit == true) {
@@ -401,7 +395,13 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
   for (var d = start_date; d < dayAfterNow; d.setDate(d.getDate() + 1)) {
     if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true) datesToCheck.push(new Date(d));
   }
-  // console.log({ daysToCheck: datesToCheck, "id": habitSettings["id"] })
+  // if (habitId == 587) {
+  //   for (const day of datesToCheck) {
+  //     console.log((new Date(start_date)).toLocaleDateString())
+  //     // console.log(day.toLocaleDateString())
+  //   }
+  //   console.log({ daysToCheck: datesToCheck, "id": habitSettings["id"] })
+  // }
 
   for (var i = 0; i < datesToCheck.length; i += 1) {
     const selectedDate = datesToCheck[i]
@@ -495,11 +495,6 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
     // update history array
     for (const historyEntry of habitEntriesArray) {
       history[historyEntry.habit_due_date] = historyEntry.status
-      // if (historyEntry.status == "incomplete") history.push(0);
-      // else if (historyEntry.status == "complete") history.push(1);
-      // else if (historyEntry.status == "exempt") history.push(-1);
-      // else console.warn("history status is NOT the required format. This may cause problems")
-      // datesDue.push(historyEntry.habit_due_date)
     }
 
     // update streak count

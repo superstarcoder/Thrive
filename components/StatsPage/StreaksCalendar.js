@@ -17,7 +17,7 @@ const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 				
 				// Callback that gets called when the user selects a day
 				onDayPress={day => {
-					console.log('selected day', day);
+					// console.log('selected day', day);
 				}}
 
 				theme={{
