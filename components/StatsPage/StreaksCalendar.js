@@ -21,10 +21,11 @@ const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 				}}
 
 				theme={{
-					calendarBackground: '#222',
+					calendarBackground: Color.GrayBlue,
 					textDayFontWeight: '500',
 					// dayTextColor: '#fff',
-					textDisabledColor: '#444',
+					dayTextColor: "#666666",
+					textDisabledColor: '#707371',
 					monthTextColor: '#fff'
 				}}
 				// Mark specific dates as marked
@@ -58,13 +59,12 @@ const styles = StyleSheet.create({
 
 	myCalendar: {
 		display: "flex",
-		borderWidth: 1,
 		borderColor: 'gray',
-		borderRadius: 5,
+		borderRadius: 10,
 		// margin: 12,
-		elevation: 5,
-		borderWidth: 4,
-		borderColor: 'rgba(100, 100, 100, 0.2)'
+		// elevation: 5,
+		borderWidth: 0,
+		// borderColor: 'rgba(100, 100, 100, 0.2)'
 	}
 
 });
