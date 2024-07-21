@@ -9,6 +9,7 @@ import { BarChart } from 'react-native-gifted-charts';
 const HoursGraph = ({ taskItems, habitHistory }) => {
 
     const [hoursData, setHoursData] = useState()
+    const [maxHoursGraph, setMaxHoursGraph] = useState(5)
 
     // Function to format date as month/day/year
     function formatDate(date) {
@@ -106,7 +107,11 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
         // console.log(dateToHours)
 
         const newHoursData = []
+
+        let maxHours = 5
         for (const [dateText, hours_data] of Object.entries(dateToHours)) {
+
+            let hours = 0
 
             my_bar = { stacks: [], label: dateText.slice(0, -5) }
 
@@ -114,9 +119,19 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
             my_bar.stacks.push({ value: hours_data["exempt_todo_hours"], color: Color.BlueAccent })
             my_bar.stacks.push({ value: hours_data["incomplete_ignored_hours"], color: Color.RedAccent })
 
+            hours = hours_data["complete_hours"] + hours_data["exempt_todo_hours"] + hours_data["incomplete_ignored_hours"]
+            if (hours > maxHours) {
+                maxHours = hours
+            }
             newHoursData.push(my_bar)
         }
         setHoursData(newHoursData)
+
+        // set max hours
+        // set hours to the next multiple of 5
+        console.log(maxHours)
+        maxHours = maxHours + (5 - (maxHours % 5))
+        setMaxHoursGraph(maxHours)
         // console.log(JSON.stringify(newHoursData, null, 2))
     }
 
@@ -175,6 +190,7 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
                         yAxisColor={Color.Blue}
                         xAxisLabelTextStyle={{ color: "white", fontSize: 10 }}
                         yAxisTextStyle={{ color: "white", fontSize: 10 }}
+                        maxValue={maxHoursGraph}
                     // labelTextStyle={{color: 'gray'}}
                     />
                 </View>

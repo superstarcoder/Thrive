@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Color from '../../assets/themes/Color'
-import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { StyledH1, StyledH2, StyledH3 } from '../text/StyledText';
 import StreaksCalendar from './StreaksCalendar';
 import { v4 as uuidv4 } from 'uuid';
 import { toYMDFormat } from '../../utils/DateHelper';
 import { updateHabitStats } from '../TasksPage/TasksPageSupabase';
-import { BarChart } from "react-native-gifted-charts";
-import HoursGraph from './HoursGraph';
 
-const HabitCalendars = ({habitStats, taskItems, habitHistory, setHabitStats}) => {
+
+const AllStreaksCalendars = ({habitStats, taskItems, habitHistory, setHabitStats}) => {
 
 	const [allCalendars, setAllCalendars] = useState([])
 	const generateCalendars = () => {
@@ -119,7 +117,7 @@ const HabitCalendars = ({habitStats, taskItems, habitHistory, setHabitStats}) =>
   )
 }
 
-export default HabitCalendars
+export default AllStreaksCalendars
 
 const styles = StyleSheet.create({
   habitsCalendarView: {

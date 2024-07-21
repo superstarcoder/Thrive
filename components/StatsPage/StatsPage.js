@@ -9,7 +9,7 @@ import { toYMDFormat } from '../../utils/DateHelper';
 import { updateHabitStats } from '../TasksPage/TasksPageSupabase';
 import { BarChart } from "react-native-gifted-charts";
 import HoursGraph from './HoursGraph';
-import HabitCalendars from './HabitCalendars';
+import AllStreaksCalendars from './AllStreaksCalendars';
 
 
 const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
@@ -23,7 +23,7 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
             <View>
               <HoursGraph taskItems={taskItems} habitHistory={habitHistory} />
             </View>
-            <HabitCalendars  habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats}  />
+            <AllStreaksCalendars  habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats}  />
           </View>
 
 
