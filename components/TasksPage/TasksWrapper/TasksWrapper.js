@@ -4,12 +4,12 @@ import Task from './Task';
 import {StyledH2, fontStyles} from '../../text/StyledText';
 import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
-import { onlyDatesAreSame } from '../../../utils/DateHelper';
+import { getEndOfDay, onlyDatesAreSame } from '../../../utils/DateHelper';
 import TaskMenu from './TaskMenu';
 import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../TasksPageSupabase';
 
 
-const TasksWrapper = ({session, taskMenuRef, taskSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats}) => {
+const TasksWrapper = ({session, taskMenuRef, taskSettingsRef, habitSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats}) => {
 
 const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
   if (!isHabit) {
@@ -21,7 +21,11 @@ const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => 
 }
 
 const onEditTask = (taskSettings) => {
-  taskSettingsRef?.current?.showEditTaskModal(taskSettings)
+  if (taskSettings.isHabit) {
+    habitSettingsRef?.current?.showEditHabitModal(taskSettings)
+  } else {
+    taskSettingsRef?.current?.showEditTaskModal(taskSettings)
+  }
 }
 
 const onTaskClicked = (taskSettings, habitHistoryEntry) => {
@@ -200,14 +204,15 @@ function SelectedDayTasks() {
 
     // if selected date is not today, return nothing
     var todaysDate = new Date()
+    // console.log(selectedDate.toDateString()+"; "+todaysDate.toDateString())
     if (selectedDate.toDateString() != todaysDate.toDateString()) {
       return <View></View>
     }
+    // else {
+    //   console.log("yay")
+    // }
 
-    var endOfDayObj = new Date(selectedDate.getFullYear()
-    ,selectedDate.getMonth()
-    ,selectedDate.getDate()
-    ,23,59,59);
+    var endOfDayObj = getEndOfDay(selectedDate)
 
 
 
@@ -216,7 +221,7 @@ function SelectedDayTasks() {
     let count = 0
     for (const task of taskItems) {
       var dueDateObj = new Date(task["dueDate"])
-      if (endOfDayObj < dueDateObj && task.complete == false) {
+      if (endOfDayObj < dueDateObj && task.isHabit == false) {
         count += 1 
       }
     }
@@ -232,10 +237,10 @@ function SelectedDayTasks() {
         {
           taskItems.map((task, index) => {
 
-          var dueDateObj = new Date(task["dueDate"])
+          var dueDateObj = new Date(task.dueDate)
 
           // due after end of day
-          if (endOfDayObj < dueDateObj && task.complete == false && task.isHabit == false) {
+          if (endOfDayObj < dueDateObj && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, undefined)}}>
                 <Task
@@ -247,7 +252,7 @@ function SelectedDayTasks() {
                 showDueDate={true}
                 taskId={task.id}
                 onChange={onCheckBoxPressed}
-                complete={task.complete}
+                // complete={task.complete}
                 text={task.title}
                 priority={task.importance}
                 duration={task.duration}
@@ -321,7 +326,7 @@ function SelectedDayTasks() {
                 showDueDate={true}
                 taskId={task.id}
                 onChange={onCheckBoxPressed}
-                complete={task.complete}
+                // complete={task.complete}
                 text={task.title}
                 priority={task.importance}
                 duration={task.duration}

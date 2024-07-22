@@ -108,7 +108,7 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
 
         const newHoursData = []
 
-        let maxHours = 5
+        let maxHours = 0
         for (const [dateText, hours_data] of Object.entries(dateToHours)) {
 
             let hours = 0

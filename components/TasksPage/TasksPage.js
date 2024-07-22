@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
 import * as Haptics from "expo-haptics"
 import TaskSettingsModal from './TaskSettingsModal/TaskSettingsModal';
+import HabitSettingsModal from './TaskSettingsModal/HabitSettingsModal';
 import { LogBox, Platform } from 'react-native';
 // import { onlyDatesAreSame } from './utils/DateHelper';
 import TasksWrapper from './TasksWrapper/TasksWrapper';
@@ -63,6 +64,7 @@ const TasksPage = forwardRef(({
 
 
   const taskSettingsRef = useRef();
+  const habitSettingsRef = useRef();
   const taskMenuRef = useRef();
 
 
@@ -99,6 +101,10 @@ const TasksPage = forwardRef(({
   const onAddTaskButtonPressed = () => {
     taskSettingsRef?.current?.showAddTaskModal(selectedDate)
   }
+
+  const onAddHabitButtonPressed = () => {
+    habitSettingsRef?.current?.showAddHabitModal(selectedDate)
+  }
   // if the date selected is today
 
   const todaysDate = new Date()
@@ -132,11 +138,11 @@ const TasksPage = forwardRef(({
 
   return (<View style={styles.container}>
 
-    <TasksHeader onAddTask={onAddTaskButtonPressed} goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
+    <TasksHeader onAddTask={onAddTaskButtonPressed} onAddHabit={onAddHabitButtonPressed} goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
     {
       /* display tasks */
     }
-    <TasksWrapper session={session} taskMenuRef={taskMenuRef} taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
+    <TasksWrapper session={session} taskMenuRef={taskMenuRef} habitSettingsRef={habitSettingsRef}  taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
 
     {
       /* bottom bar/buttons */
@@ -146,6 +152,7 @@ const TasksPage = forwardRef(({
     </KeyboardAvoidingView>
 
     <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
+    <HabitSettingsModal session={session} ref={habitSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
 
     <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems}  habitHistory={habitHistory} setHabitHistory={setHabitHistory} setHabitStats={setHabitStats}/>
 

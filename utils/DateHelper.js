@@ -41,3 +41,11 @@ export function toYMDFormat(utcDateTime) {
 	const formattedDate = `${localYear}-${localMonth}-${localDay}`;
 	return formattedDate
 }
+
+// edits the time of datetime to 11:59
+export function getEndOfDay(datetime) {
+	return new Date(datetime.getFullYear()
+	, datetime.getMonth()
+	, datetime.getDate()
+	, 23, 59, 59);
+}

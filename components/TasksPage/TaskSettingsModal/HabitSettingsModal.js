@@ -8,7 +8,7 @@ import DescriptionBox from './DescriptionBox';
 import UseHabitBox from './UseHabitBox';
 import RepeatBox from './RepeatBox';
 import DueDatePickerBox from './DueDatePickerBox';
-import { Trash, XCircle, CheckCircle, CheckFat } from 'phosphor-react-native';
+import { Trash, XCircle, CheckCircle, Plant } from 'phosphor-react-native';
 import * as Haptics from "expo-haptics"
 // import { ACTIONS, TASK_SETTINGS_MODES } from '../../utils/MyGlobalVars';
 import 'react-native-get-random-values';
@@ -17,7 +17,7 @@ import BottomSheet from '../../FormComponents/BottomSheet';
 import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import Color from '../../../assets/themes/Color'
-import { getDateFromDatetime, getEndOfDay, onlyDatesAreSame } from '../../../utils/DateHelper';
+import { getDateFromDatetime, onlyDatesAreSame, getEndOfDay } from '../../../utils/DateHelper';
 import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } from '../TasksPageSupabase';
 
 // finds the next due date after "initialDate" based on repeatDays
@@ -26,6 +26,9 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
   var dayIndex = initialDate.getDay() - 1
   var daysAfterToday = 0
   if (dayIndex == -1) dayIndex = 6
+
+  // console.log("dayIndex: "+dayIndex)
+  // console.log("repeatDays[dayIndex]: "+dayIndex)
 
   // find the next day where repeatDays[dayIndex] == true
   if (repeatDays[dayIndex] == false) {
@@ -46,6 +49,7 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
       }
 
       if (i == 7) i = 0
+      // console.log({i, dayIndex})
     }
 
     if (dayFound) {
@@ -61,6 +65,11 @@ const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
   return dueDate
 
 }
+
+
+
+
+
 
 const initHabitHistory = (repeatDays, dueTime) => {
   var dueDate = findHabitNextDueDate(new Date(), repeatDays, dueTime)
@@ -83,9 +92,11 @@ function reducer(taskSettings, action) {
         var habitHistory = initHabitHistory(action.payload.repeatDays, action.payload.dueDate)
       }
       return { ...taskSettings, isHabit: action.payload.isHabit, habitHistory: habitHistory, habitInitDate: new Date() }
+
     case "single_update_repeatDays":
       const newRepeatDays = taskSettings.repeatDays
       newRepeatDays[action.payload.dayInt] = action.payload.selected
+
       if (action.payload.isHabit == true) {
         let today = new Date();
         return { ...taskSettings, repeatDays: newRepeatDays, repeat_days_edited_date: new Date() }
@@ -101,7 +112,7 @@ function reducer(taskSettings, action) {
   }
 }
 
-const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats }, ref) => {
+const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats }, ref) => {
 
 
   const getInitSettings = (selectedDate = new Date()) => {
@@ -114,7 +125,7 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
       duration: 0.5,
       importance: 5,
       description: "",
-      isHabit: false,
+      isHabit: true,
       repeatDays: initRepeatDays,
       dueDate: endOfDayObj,
       includeOnlyTime: true,
@@ -125,8 +136,7 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
 
   useImperativeHandle(ref, () => ({
 
-    showAddTaskModal(selectedDate = new Date()) {
-      const today = new Date();
+    showAddHabitModal(selectedDate = new Date()) {
       bottomSheetRef?.current?.scrollTo(1)
 
       const initSettings = getInitSettings(selectedDate)
@@ -136,14 +146,14 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
       importanceBoxRef?.current?.setImportance(initSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
     },
-    showEditTaskModal(myTaskSettings) {
+    showEditHabitModal(myHabitSettings) {
       bottomSheetRef?.current?.scrollTo(1)
       scrollViewRef?.current?.scrollTo({
         y: 0,
       })
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: myTaskSettings } })
-      durationBoxRef?.current?.setDuration(myTaskSettings.duration)
-      importanceBoxRef?.current?.setImportance(myTaskSettings.importance)
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: myHabitSettings } })
+      durationBoxRef?.current?.setDuration(myHabitSettings.duration)
+      importanceBoxRef?.current?.setImportance(myHabitSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.EDIT_TASK)
     }
   }));
@@ -166,16 +176,13 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
   // returns false if there was no error & true if there was
   const validateFields = () => {
 
-    console.log(taskSettings.isHabit)
-    console.log(taskSettings.repeatDays)
-
-    if (taskSettings.title == "") {
+    if (habitSettings.title == "") {
       Alert.alert("Title cannot be left blank")
       return true
     }
 
 
-    if (taskSettings.isHabit && isSevenFalses(taskSettings.repeatDays)) {
+    if (habitSettings.isHabit && isSevenFalses(habitSettings.repeatDays)) {
       Alert.alert("A repeat day must be selected for habits!")
       return true
     }
@@ -191,14 +198,14 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
 
     if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
 
-      settingsCopy = { ...taskSettings }
+      settingsCopy = { ...habitSettings }
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
       dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
       await onSaveTask(settingsCopy)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
-      settingsCopy = { ...taskSettings }
+      settingsCopy = { ...habitSettings }
       settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
       settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
       dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
@@ -215,7 +222,7 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
   const onDeletePress = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
-    await onDelete(taskSettings)
+    await onDelete(habitSettings)
   }
 
   const onSaveTask = async (newTaskSettings) => {
@@ -230,28 +237,26 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
     await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats)
   }
 
-  let initRepeatDays = Array(7).fill(false)
+  let initRepeatDays = Array(7).fill(true)
 
-  const [taskSettings, dispatch] = useReducer(reducer, getInitSettings())
+  const [habitSettings, dispatch] = useReducer(reducer, getInitSettings())
   const scrollViewRef = useRef()
 
   return (
     <BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
-        <View style={styles.headingBox}>
-        <StyledH2 style={styles.infoText} text={"Task Settings"} />
-        <CheckFat size={25} weight={"fill"} color={"green"} style={styles.buttonIcon} />
-      </View>
 
+      <View style={styles.headingBox}>
+        <StyledH2 style={styles.infoText} text={"Habit Settings"} />
+        <Plant size={25} weight={"fill"} color={"green"} style={styles.buttonIcon} />
+      </View>
       <ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
-        <TitleBox title={taskSettings.title} dispatch={dispatch} />
-        <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
-        <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
-        <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
-        <DescriptionBox description={taskSettings.description} dispatch={dispatch} />
-        {/* <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
-        <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} />
-        <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit} /> */}
-        {/* <StyledH1 style={styles.settingsTitle} text={"Advanced"} /> */}
+        <TitleBox title={habitSettings.title} dispatch={dispatch} />
+        <DurationBox duration={habitSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
+        <ImportanceBox importance={habitSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
+        {/* <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} /> */}
+        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} />
+        <DueDatePickerBox dispatch={dispatch} dateTime={habitSettings.dueDate} isHabit={habitSettings.isHabit} />
+        <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
       </ScrollView>
 
       <View style={styles.addTaskModalButtons}>
@@ -280,10 +285,9 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
   );
 });
 
-export default TaskSettingsModal
+export default HabitSettingsModal
 
 const styles = StyleSheet.create({
-
   headingBox: {
     display: "flex",
     backgroundColor: Color.DarkestBlue,
@@ -301,16 +305,11 @@ const styles = StyleSheet.create({
     color: "white",
     alignSelf: "center",
   },
-
   buttonText: {
     color: "#000"
   },
   saveButtonIcon: {
     marginLeft: 5,
-  },
-  settingsTitle: {
-    alignSelf: "center",
-    marginBottom: 25,
   },
   saveTaskButton: {
     backgroundColor: "hsla(114, 100%, 36%, 1)",

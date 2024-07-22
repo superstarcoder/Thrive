@@ -77,7 +77,7 @@ const AIPage = ({ taskItems }) => {
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  const askAIButtonPressed = async (myMonth, myYear, taskItems) => {    
+  const askAIButtonPressed = async (myMonth, myYear, taskItems) => {
 
     if (lastClickedTime != null) {
       let now = new Date()
@@ -123,15 +123,15 @@ const AIPage = ({ taskItems }) => {
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
             <StyledH3 text={`Click me to analyze ${monthName}! 📊📈`} style={styles.buttonTitle} />
             {errorMessage &&
-              <StyledH3 text={errorMessage}/>
+              <StyledH3 text={errorMessage} />
             }
           </TouchableOpacity>
 
           <View style={styles.infoBox}>
-              <StyledH3 text={"Daisy is an AI bot designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks & habits you add, the better Daisy becomes at offering tailored advice!"} style={styles.infoText} />
+            <StyledH3 text={"Daisy is an AI bot designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks & habits you add, the better Daisy becomes at offering tailored advice!"} style={styles.infoText} />
           </View>
           {isLoading &&
-              <ActivityIndicator size="large" />
+            <ActivityIndicator size="large" />
           }
           {/* <StyledH3 text={myText} style={styles.sectionHeading} /> */}
           <Markdown style={markdownStyles}>
