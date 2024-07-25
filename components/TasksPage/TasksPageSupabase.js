@@ -117,6 +117,7 @@ export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitH
 }
 
 
+// adds a list of entries to the habitHistory for a particular habitId
 export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, habitHistory, setHabitHistory, setHabitStats, batchSize = 50) => {
 
   const habitHistoryCopy = { ...habitHistory }
@@ -423,8 +424,11 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
       newEntries.push({
         "habit_due_date": habit_due_date,
         "status": status,
-        // "is_streak": false, // not needed anymore!
         "id": habitId,
+        "title": habitSettings.title,
+        "duration": habitSettings.duration,
+        "importance": habitSettings.importance,
+        "description": habitSettings.description, 
       })
     }
 
@@ -533,9 +537,6 @@ export const getTasksForMonthString = (month, year, taskItems) => {
     return result
 
 }
-
-
-
 
 export const getAllTasks = async (session) => {
   const { data, error } = await supabase

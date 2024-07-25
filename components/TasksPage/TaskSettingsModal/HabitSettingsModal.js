@@ -112,7 +112,7 @@ function reducer(taskSettings, action) {
   }
 }
 
-const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats }, ref) => {
+const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats, habitApplyModalRef }, ref) => {
 
 
   const getInitSettings = (selectedDate = new Date()) => {
@@ -188,6 +188,21 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     }
   }
 
+
+  const onConfirmEditsComplete = async (taskSettingsEdited, optionSelected) => {
+    console.log(optionSelected)
+    if (optionSelected == "edit_selected_habit") {
+
+      // await supabaseUpdateTaskSettings(session, taskSettingsEdited, taskSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory);
+    } else if (optionSelected == "edit_selected_and_upcoming") {
+
+    } else if (optionSelected == "edit_all") {
+
+    } else {
+      console.warn("invalid option selected for confirming edits")
+    }
+  }
+
   const onSavePress = async () => {
 
     let error = validateFields()
@@ -196,24 +211,30 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
 
+    var taskSettingsEdited
     if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
 
-      settingsCopy = { ...habitSettings }
-      settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
-      settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
-      await onSaveTask(settingsCopy)
+      taskSettingsEdited = { ...habitSettings }
+      taskSettingsEdited.description = taskSettingsEdited.description.replace(/^\s+|\s+$/g, '');
+      taskSettingsEdited.title = taskSettingsEdited.title.replace(/^\s+|\s+$/g, '');
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: taskSettingsEdited } })
+      await onSaveTask(taskSettingsEdited)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
-      settingsCopy = { ...habitSettings }
-      settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
-      settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
-      await onEditTaskComplete(settingsCopy)
+      taskSettingsEdited = { ...habitSettings }
+      taskSettingsEdited.description = taskSettingsEdited.description.replace(/^\s+|\s+$/g, '');
+      taskSettingsEdited.title = taskSettingsEdited.title.replace(/^\s+|\s+$/g, '');
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: taskSettingsEdited } })
+
+      console.log("func: "+onConfirmEditsComplete)
+      habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, taskSettingsEdited)
+      // await onEditTaskComplete(settingsCopy)
     }
 
 
   }
+
+
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
@@ -229,9 +250,11 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     await supabaseInsertTask(session, newTaskSettings, setTaskItems, taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats)
   }
 
-  const onEditTaskComplete = async (taskSettingsEdited) => {
-    await supabaseUpdateTaskSettings(session, taskSettingsEdited, taskSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory);
-  }
+  // const onEditTaskComplete = async (taskSettingsEdited) => {
+  //   // commented for now
+  // }
+
+
 
   const onDelete = async (taskSettingsToDelete) => {
     await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats)
