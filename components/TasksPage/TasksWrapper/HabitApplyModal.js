@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import Color from '../../../assets/themes/Color';
 import React, { useEffect } from 'react'
 import BottomSheet from '../../FormComponents/BottomSheet';
@@ -15,31 +15,35 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
   const heightPercent = 0.8
   useEffect(() => {
     // supposed to be 0
-    bottomSheetRef?.current?.scrollTo(heightPercent)
+    bottomSheetRef?.current?.scrollTo(0)
   }, [])
   const bottomSheetRef = useRef(null)
 
 
   const [onConfirmEditsComplete, setOnConfirmEditsComplete] = useState()
   const [taskSettingsEdited, setTaskSettingsEdited] = useState()
+  const [isLoading, setIsLoading] = useState(false)
 
   useImperativeHandle(ref, () => ({
     showHabitApplyModal(onConfirmEditsCompleteArg, taskSettingsEditedArg) {
-      console.log(onConfirmEditsCompleteArg)
+      // console.log(onConfirmEditsCompleteArg)
       bottomSheetRef?.current?.scrollTo(heightPercent)
-      console.log("saved on confirm func")
+      // console.log("saved on confirm func")
       setOnConfirmEditsComplete(() => onConfirmEditsCompleteArg)
       setTaskSettingsEdited(taskSettingsEditedArg)
     }
   }));
 
-  const onCancelPress = () => {
+  const hideModal = () => {
     bottomSheetRef?.current?.scrollTo(0)
   }
 
+
   const onSavePress = async () => {
+    setIsLoading(true)
     await onConfirmEditsComplete(taskSettingsEdited, optionSelected)
-    // console.log("saving!")
+    setIsLoading(false)
+    hideModal()
   }
 
   const [optionSelected, setOptionSelected] = useState("edit_selected_habit") // or edit_selected_and_upcoming or edit_all
@@ -69,7 +73,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity  onPress={() => setOptionSelected("edit_selected_and_upcoming")}>
+          <TouchableOpacity onPress={() => setOptionSelected("edit_selected_and_upcoming")}>
             <View style={styles.markAsButton}>
               {optionSelected == "edit_selected_and_upcoming" ? (
                 <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
@@ -81,7 +85,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity  onPress={() => setOptionSelected("edit_all")}>
+          <TouchableOpacity onPress={() => setOptionSelected("edit_all")}>
             <View style={styles.markAsButton}>
               {optionSelected == "edit_all" ? (
                 <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
@@ -94,7 +98,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
         </View>
 
         <View style={styles.userButtons}>
-          <TouchableOpacity onPress={onCancelPress}>
+          <TouchableOpacity onPress={hideModal}>
             <View style={styles.cancelTaskButton}>
               <Text style={[fontStyles.styledH1, styles.buttonText]}>Cancel</Text>
               <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
@@ -104,6 +108,9 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
           <TouchableOpacity onPress={onSavePress}>
             <View style={styles.saveButton}>
               <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
+              {isLoading &&
+                <ActivityIndicator size="large" color={Color.DarkestBlue} />
+              }
               {/* <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} /> */}
             </View>
           </TouchableOpacity>

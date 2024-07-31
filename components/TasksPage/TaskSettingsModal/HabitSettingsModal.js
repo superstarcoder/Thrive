@@ -18,7 +18,7 @@ import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSetting
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, onlyDatesAreSame, getEndOfDay } from '../../../utils/DateHelper';
-import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } from '../TasksPageSupabase';
+import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry, editSelectedHabitOn_ConfirmEdit, editSelectedAndUpcoming_OnConfirmEdit, editAll_OnConfirmEdit } from '../TasksPageSupabase';
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -114,6 +114,12 @@ function reducer(taskSettings, action) {
 
 const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats, habitApplyModalRef }, ref) => {
 
+  const bottomSheetRef = useRef(null)
+  const durationBoxRef = useRef(null)
+  const importanceBoxRef = useRef(null)
+  const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
+  const [initialHabitHistoryEntry, setInitialHabitHistoryEntry] = useState()
+  const [initialHabitSettings, setInitialHabitSettings] = useState()
 
   const getInitSettings = (selectedDate = new Date()) => {
     var endOfDayObj = getEndOfDay(selectedDate)
@@ -146,7 +152,9 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       importanceBoxRef?.current?.setImportance(initSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
     },
-    showEditHabitModal(myHabitSettings) {
+    showEditHabitModal(myHabitSettings, habitHistoryEntry) {
+      // console.log("habitHistoryEntry")
+      // console.log(JSON.stringify(habitHistoryEntry))
       bottomSheetRef?.current?.scrollTo(1)
       scrollViewRef?.current?.scrollTo({
         y: 0,
@@ -155,13 +163,11 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       durationBoxRef?.current?.setDuration(myHabitSettings.duration)
       importanceBoxRef?.current?.setImportance(myHabitSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.EDIT_TASK)
+
+      setInitialHabitSettings(myHabitSettings)
+      setInitialHabitHistoryEntry(habitHistoryEntry)
     }
   }));
-
-  const bottomSheetRef = useRef(null)
-  const durationBoxRef = useRef(null)
-  const importanceBoxRef = useRef(null)
-  const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
 
 
   useEffect(() => {
@@ -189,14 +195,45 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
   }
 
 
-  const onConfirmEditsComplete = async (taskSettingsEdited, optionSelected) => {
+  const onConfirmEditsComplete = async (habitSettingsEdited, optionSelected) => {
+
+
     console.log(optionSelected)
+    // console.log(JSON.stringify(taskSettingsEdited, null, 2 ))
+
+    // 3 functions to make
+
+
+
+    // edit habit settings in Tasks table
+
+    // edit ALL habitHistory entries (based on habitId) with correct settings
+
+
+    // edit specific habitHistory entry (based on id and habit_due_date) with correct settings
     if (optionSelected == "edit_selected_habit") {
 
-      // await supabaseUpdateTaskSettings(session, taskSettingsEdited, taskSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory);
-    } else if (optionSelected == "edit_selected_and_upcoming") {
+      // initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory, habitHistory
+      await editSelectedHabitOn_ConfirmEdit({
+        initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats,
+        setHabitHistory, habitHistory
+      })
 
+      // edit habit history entries (with habitId) between current habit_due_date and today's date
+      // edit entry in Tasks table (affects future tasks)
+    } else if (optionSelected == "edit_selected_and_upcoming") {
+      await editSelectedAndUpcoming_OnConfirmEdit({
+        session, initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory,
+        habitHistory, setTaskItems, taskItems
+      })
+
+      // 1, edit all habitHistory entries with habitId
+      // 2. edit correct habit settings in Tasks table
     } else if (optionSelected == "edit_all") {
+      await editAll_OnConfirmEdit({
+        session, initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory,
+        habitHistory, setTaskItems, taskItems
+      })
 
     } else {
       console.warn("invalid option selected for confirming edits")
@@ -211,23 +248,23 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
 
-    var taskSettingsEdited
+    var habitSettingsEdited
     if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
 
-      taskSettingsEdited = { ...habitSettings }
-      taskSettingsEdited.description = taskSettingsEdited.description.replace(/^\s+|\s+$/g, '');
-      taskSettingsEdited.title = taskSettingsEdited.title.replace(/^\s+|\s+$/g, '');
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: taskSettingsEdited } })
-      await onSaveTask(taskSettingsEdited)
+      habitSettingsEdited = { ...habitSettings }
+      habitSettingsEdited.description = habitSettingsEdited.description.replace(/^\s+|\s+$/g, '');
+      habitSettingsEdited.title = habitSettingsEdited.title.replace(/^\s+|\s+$/g, '');
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: habitSettingsEdited } })
+      await onSaveTask(habitSettingsEdited)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
-      taskSettingsEdited = { ...habitSettings }
-      taskSettingsEdited.description = taskSettingsEdited.description.replace(/^\s+|\s+$/g, '');
-      taskSettingsEdited.title = taskSettingsEdited.title.replace(/^\s+|\s+$/g, '');
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: taskSettingsEdited } })
+      habitSettingsEdited = { ...habitSettings }
+      habitSettingsEdited.description = habitSettingsEdited.description.replace(/^\s+|\s+$/g, '');
+      habitSettingsEdited.title = habitSettingsEdited.title.replace(/^\s+|\s+$/g, '');
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: habitSettingsEdited } })
 
-      console.log("func: "+onConfirmEditsComplete)
-      habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, taskSettingsEdited)
+      console.log("func: " + onConfirmEditsComplete)
+      habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, habitSettingsEdited)
       // await onEditTaskComplete(settingsCopy)
     }
 
