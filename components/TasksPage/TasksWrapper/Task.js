@@ -10,8 +10,6 @@ import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
 
-  // const [complete, setComplete] = useState(completeDefault)
-
   if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
     importanceText = <StyledH4 text={"low importance"} style={styles.importanceText}/>
@@ -54,23 +52,6 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
 
 
   if (isHabit) {
-
-
-
-
-    // habit db stuff
-    // console.log({habitHistory, habitInitDate})
-    // get habit due time
-
-    // const habitItem = habitHistory.find(entry => onlyDatesAreSame(entry.exactDueDate, selectedDate));
-    // if (habitItem != undefined) {
-    //   console.log(habitItem.exactDueDate)
-    // }
-
-    // console.log(exactDueDate)
-
-    // console.log("HABIT HISTORY ENTRY!!: "+habitHistoryEntry)
-
     // UPDATE UI FOR HABIT
     // console.log({habitStatsEntry})
     var streak
@@ -80,8 +61,6 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
     else {
       streak = habitStatsEntry.streak
     }
-    
-
 
     // from 1 to 50
     // goal is multiple of 5
@@ -90,19 +69,18 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
     // from 100+
     // goal is multiple of 50
 
-    let goal = 10
-    // if (streak >= 0 && streak <= 50) {
-    //   goal = 5 * (Math.floor(streak / 5)) + 5
-    // } else if (streak >= 50 && streak <= 100) {
-    //   goal = 20 * (Math.floor(streak / 20)) + 20
-    // } else {
-    //   goal = 50 * (Math.floor(streak / 50)) + 50
-    // }
+    let goal
+    if (streak >= 0 && streak <= 50) {
+      goal = 5 * (Math.floor(streak / 5)) + 5
+    } else if (streak >= 50 && streak <= 100) {
+      goal = 20 * (Math.floor(streak / 20)) + 20
+    } else {
+      goal = 50 * (Math.floor(streak / 50)) + 50
+    }
 
     const progressBarMaxWidth = 200
     const fireIconSize = 35
 
-    
     let progressBarWidth = (streak/goal)*progressBarMaxWidth
     if (progressBarWidth < fireIconSize) {
       progressBarWidth = fireIconSize/2 + 7
