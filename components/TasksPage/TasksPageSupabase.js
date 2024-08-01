@@ -489,15 +489,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
 // when task is edited
 
 
-// no
 export const updateHabitStats = (setHabitStats, newHabitHistory) => {
-  // console.log("updating habit stats!")
-
-
-  // console.log("hi")
-
-  // console.log(newHabitHistory)
-
   let newHabitStats = {}
 
   for (const [habitId, habitEntriesArray] of Object.entries(newHabitHistory)) {
@@ -568,13 +560,9 @@ export const getAllTasks = async (session) => {
   if (error) console.warn(error)
   return data
 }
-
-
-
-// used by HabitSettingsModal.js
-
 /**
- * this function edits the selected habit history entry after the user selects "edit selected habit"
+ * This function edits the selected habit history entry after the user selects "edit selected habit"
+ * Used by onConfirmEditsComplete in HabitSettingsModal.js
  * @param {TaskSettings} initialHabitSettings habit settings when "edit" is clicked 
  * @param {HabitHistoryEntry} initialHabitHistoryEntry habit history entry that corresponds to the habit that was clicked on for editing 
  * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
@@ -597,11 +585,13 @@ export const editSelectedHabitOn_ConfirmEdit = async ({ initialHabitSettings, ha
 }
 
 /**
- * this funnction updates all habit entries that match habitSettingsEdited.id and have a habit_due_date that is >= habitSettingsEdited.habit_due_date
- * this function also updates the habit in the Tasks table so that upcoming habits reflect the edited changes
+ * This funnction updates all habit entries that match habitSettingsEdited.id and have a habit_due_date that is >= habitSettingsEdited.habit_due_date
+ * This function also updates the habit in the Tasks table so that upcoming habits reflect the edited changes
+ * Used by onConfirmEditsComplete in HabitSettingsModal.js
  * @param {TaskSettings} initialHabitSettings habit settings when "edit" is clicked 
  * @param {HabitHistoryEntry} initialHabitHistoryEntry habit history entry that corresponds to the habit that was clicked on for editing 
  * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
+ * @param {ReactState} setLoadingString loading string that gets displayed while process is loading 
  */
 export const editSelectedAndUpcoming_OnConfirmEdit = async (
   { session,
@@ -613,7 +603,8 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async (
     habitHistory,
     setTaskItems,
     taskItems,
-    editAll = false
+    setLoadingString,
+    editAll = false,
   }) => {
 
   // get update dict by comparing initial and edited habit settings
@@ -673,25 +664,26 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async (
     const selectedHabitHistoryEntry = allHabitEntries[i]
     await supabaseUpdateHabitHistoryEntry(updateDict, habitSettingsEdited.id, habitHistory, setHabitHistory, selectedHabitHistoryEntry.habit_due_date, setHabitStats)
 
-    console.log(`${i+1} / ${allHabitEntries.length}`)
+    let myLoadingString = `${i + 1 - startIndex} / ${allHabitEntries.length - startIndex} habits updated. Please wait.`
+    console.log(myLoadingString)
+    setLoadingString(myLoadingString)
   }
 
-
+  setLoadingString("")
 
   // update habit in Tasks table so that upcoming tasks would follow the new edited settings
   await supabaseUpdateTaskSettings(session, updateDict_TasksTable, habitSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory)
 }
 
-
-// // function for older users to reflect newer changes
-// // copies title, duration, importance, description, and dueTimeOverride based on Tasks table
-// export const fillHabitHistoryColumns = async(
-// )
-
 /**
- * reuseseditSelectedAndUpcoming_OnConfirmEdit such that ALL habit entries with habitSettingsEdited.id gets updated
+ * Reuses editSelectedAndUpcoming_OnConfirmEdit such that ALL habit entries with habitSettingsEdited.id gets updated
  * habit in Tasks table gets updated to reflect new changes
- * @param {*} param0 
+ * 
+ * Used by onConfirmEditsComplete in HabitSettingsModal.js
+ * @param {TaskSettings} initialHabitSettings habit settings when "edit" is clicked 
+ * @param {HabitHistoryEntry} initialHabitHistoryEntry habit history entry that corresponds to the habit that was clicked on for editing 
+ * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
+ * @param {ReactState} setLoadingString loading string that gets displayed while process is loading 
  */
 export const editAll_OnConfirmEdit = async ({ session,
   initialHabitSettings,
@@ -701,7 +693,8 @@ export const editAll_OnConfirmEdit = async ({ session,
   setHabitHistory,
   habitHistory,
   setTaskItems,
-  taskItems }) => {
+  taskItems,
+  setLoadingString }) => {
 
   let editAll = true
   await editSelectedAndUpcoming_OnConfirmEdit({
@@ -714,6 +707,7 @@ export const editAll_OnConfirmEdit = async ({ session,
     habitHistory,
     setTaskItems,
     taskItems,
+    setLoadingString,
     editAll
   })
 }

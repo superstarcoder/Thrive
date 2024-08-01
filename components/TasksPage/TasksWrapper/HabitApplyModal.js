@@ -5,7 +5,7 @@ import BottomSheet from '../../FormComponents/BottomSheet';
 import { forwardRef, useRef, useImperativeHandle, useState } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Trash, XCircle, CheckCircle, Check, Circle } from 'phosphor-react-native';
-import { fontStyles } from '../../text/StyledText';
+import { StyledH2, fontStyles } from '../../text/StyledText';
 import { Square, CheckSquare, XSquare, Placeholder, PencilSimpleLine } from 'phosphor-react-native';
 import { supabaseDeleteTask } from '../TasksPageSupabase';
 
@@ -23,14 +23,20 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
   const [onConfirmEditsComplete, setOnConfirmEditsComplete] = useState()
   const [taskSettingsEdited, setTaskSettingsEdited] = useState()
   const [isLoading, setIsLoading] = useState(false)
+  const [scrollingEnabled, setScrollingEnabled] = useState(true)
+  const [loadingString, setLoadingString] = useState("")
 
   useImperativeHandle(ref, () => ({
     showHabitApplyModal(onConfirmEditsCompleteArg, taskSettingsEditedArg) {
-      // console.log(onConfirmEditsCompleteArg)
       bottomSheetRef?.current?.scrollTo(heightPercent)
-      // console.log("saved on confirm func")
       setOnConfirmEditsComplete(() => onConfirmEditsCompleteArg)
       setTaskSettingsEdited(taskSettingsEditedArg)
+    },
+    disableScrolling() {
+      setScrollingEnabled(false)
+    },
+    enableScrolling() {
+      setScrollingEnabled(true)
     }
   }));
 
@@ -41,7 +47,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
 
   const onSavePress = async () => {
     setIsLoading(true)
-    await onConfirmEditsComplete(taskSettingsEdited, optionSelected)
+    await onConfirmEditsComplete(taskSettingsEdited, optionSelected, setLoadingString)
     setIsLoading(false)
     hideModal()
   }
@@ -50,7 +56,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
 
   return (
 
-    <BottomSheet ref={bottomSheetRef} customStyle={styles.taskMenuModal} clamps={[0, heightPercent]} scrollingEnabled={true}>
+    <BottomSheet ref={bottomSheetRef} customStyle={styles.taskMenuModal} clamps={[0, heightPercent]} scrollingEnabled={scrollingEnabled}>
 
       <View style={styles.taskMenuContainer}>
         <View style={styles.myTitle}>
@@ -98,12 +104,14 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
         </View>
 
         <View style={styles.userButtons}>
-          <TouchableOpacity onPress={hideModal}>
-            <View style={styles.cancelTaskButton}>
-              <Text style={[fontStyles.styledH1, styles.buttonText]}>Cancel</Text>
-              <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
-            </View>
-          </TouchableOpacity>
+          {scrollingEnabled &&
+            <TouchableOpacity onPress={hideModal}>
+              <View style={styles.cancelTaskButton}>
+                <Text style={[fontStyles.styledH1, styles.buttonText]}>Cancel</Text>
+                <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              </View>
+            </TouchableOpacity>
+          }
 
           <TouchableOpacity onPress={onSavePress}>
             <View style={styles.saveButton}>
@@ -115,7 +123,11 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
             </View>
           </TouchableOpacity>
         </View>
-
+        {!scrollingEnabled &&
+          <View style={styles.loadingStringContainer}>
+            <StyledH2 text={loadingString} style={styles.loadingStringText} />
+          </View>
+        }
       </View>
     </BottomSheet>
   );
@@ -132,6 +144,14 @@ const styles = StyleSheet.create({
   userButtons: {
     flexDirection: "row",
     gap: 18,
+  },
+  loadingStringContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  loadingStringText: {
+    color: "white"
+
   },
   taskMenuModal: {
     backgroundColor: Color.GrayBlue,

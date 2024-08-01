@@ -29,10 +29,7 @@ const onEditTask = (taskSettings, habitHistoryEntry=undefined) => {
 }
 
 const onTaskClicked = (taskSettings, habitHistoryEntry) => {
-  // console.log("task clicked")
-  console.log("==================================")
   console.log(taskSettings.id)
-  console.log("importance: "+taskSettings.importance)
   taskMenuRef?.current?.showTaskMenuModal(taskSettings, habitHistoryEntry, onEditTask, onCheckBoxPressed)
 }
 
@@ -66,15 +63,11 @@ function SelectedDayTasks() {
 
     return (
       <View>
-        {/* <StyledH2 style={styles.sectionTitle} text={"Tasks"}/> */}
-        {/* <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/> */}
         <View style={styles.items}>
         {
           taskItems.map((task, index) => {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
-            let habitEntryFound = false
-            // let isSelected = task.complete
 
             if (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
               return (
@@ -139,14 +132,12 @@ function SelectedDayTasks() {
     return (
       <View>
         <StyledH2 style={styles.sectionTitle} text={"Habits"}/>
-        {/* <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/> */}
         <View style={styles.items}>
         {
           taskItems.map((task, index) => {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
             let habitEntryFound = false
-            // let isSelected = task.complete
 
             if (task.isHabit && habitHistory[task.id] != undefined) {
               for (const entry of habitHistory[task.id]) {

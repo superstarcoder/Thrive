@@ -195,25 +195,27 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
   }
 
 
-  const onConfirmEditsComplete = async (habitSettingsEdited, optionSelected) => {
+  /**
+   * When "save" is clicked on the HabitApplyModal, this function is called
+   * Based on the option selected in the model, and using the local states stored in the habitSettingsModal, one of 3 things happen:
+   * selected habit is edited (HabitHistory affected)
+   * selected and upcoming is edited (HabitHistory affected and Tasks Table affected)
+   * all habits are edited (all entries' details, in both Tasks table and HabitHistory, are replaced with the edited data)
+   * 
+   * Note: the changes that are applied are only the edited properties, not the unedited ones
+   * 
+   * @param {TaskSettings} habitSettingsEdited 
+   * @param {String} optionSelected - "edit_selected_habit" or "edit_selected_and_upcoming" or "edit_all" 
+   */
+  const onConfirmEditsComplete = async (habitSettingsEdited, optionSelected, setLoadingString) => {
 
 
     console.log(optionSelected)
     // console.log(JSON.stringify(taskSettingsEdited, null, 2 ))
 
-    // 3 functions to make
-
-
-
-    // edit habit settings in Tasks table
-
-    // edit ALL habitHistory entries (based on habitId) with correct settings
-
-
     // edit specific habitHistory entry (based on id and habit_due_date) with correct settings
     if (optionSelected == "edit_selected_habit") {
 
-      // initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory, habitHistory
       await editSelectedHabitOn_ConfirmEdit({
         initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats,
         setHabitHistory, habitHistory
@@ -222,18 +224,26 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       // edit habit history entries (with habitId) between current habit_due_date and today's date
       // edit entry in Tasks table (affects future tasks)
     } else if (optionSelected == "edit_selected_and_upcoming") {
+      habitApplyModalRef?.current?.disableScrolling()
+
       await editSelectedAndUpcoming_OnConfirmEdit({
         session, initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory,
-        habitHistory, setTaskItems, taskItems
+        habitHistory, setTaskItems, taskItems, setLoadingString
       })
+
+      habitApplyModalRef?.current?.enableScrolling()
 
       // 1, edit all habitHistory entries with habitId
       // 2. edit correct habit settings in Tasks table
     } else if (optionSelected == "edit_all") {
+      habitApplyModalRef?.current?.disableScrolling()
+
       await editAll_OnConfirmEdit({
         session, initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory,
-        habitHistory, setTaskItems, taskItems
+        habitHistory, setTaskItems, taskItems, setLoadingString
       })
+
+      habitApplyModalRef?.current?.enableScrolling()
 
     } else {
       console.warn("invalid option selected for confirming edits")
