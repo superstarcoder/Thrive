@@ -7,7 +7,7 @@ import HighlightSelect from '../../FormComponents/HighlightSelect';
 import * as Haptics from 'expo-haptics';
 import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
-const RepeatBox = ({dispatch, repeatDays, isHabit}) => {
+const RepeatBox = ({dispatch, repeatDays, isHabit, showNote}) => {
 
   const updateSelectedList = (value, text) => {
     dispatch({type: ACTIONS.SINGLE_UPDATE_REPEAT_DAYS, payload: {dayInt: text, selected: value, isHabit: isHabit}})
@@ -26,6 +26,9 @@ const RepeatBox = ({dispatch, repeatDays, isHabit}) => {
         <HighlightSelect text="Sat" onChange={updateSelectedList} selected={repeatDays[5]}/>
         <HighlightSelect text="Sun" onChange={updateSelectedList} selected={repeatDays[6]}/>
       </View>
+      {showNote &&
+        <StyledH4 text={"Note: editing repeat days will not affect past habits (only upcoming habits)"} style={styles.note}/>
+      }
     </View>
   )
 }
@@ -41,23 +44,20 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     flexDirection: "column",
     marginBottom: 22,
-	  justifyContent: "center"
+	  justifyContent: "center",
+    gap: 8,
   },
-  bottomTextContainer: {
-    marginTop: 5,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  bottomText: {
-    marginRight: 5,
-    color: Color.Gray
+  note: {
+    color: Color.Blue,
+    textAlign: "left",
+
   },
   multiSelect: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 1,
+
   },
   inputTitle: {
-	marginBottom: 8,
   }
 })

@@ -263,9 +263,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       habitSettingsEdited.title = habitSettingsEdited.title.replace(/^\s+|\s+$/g, '');
       dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: habitSettingsEdited } })
 
-      console.log("func: " + onConfirmEditsComplete)
       habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, habitSettingsEdited)
-      // await onEditTaskComplete(settingsCopy)
     }
 
 
@@ -314,7 +312,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
         <DurationBox duration={habitSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
         <ImportanceBox importance={habitSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
         {/* <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} /> */}
-        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} />
+        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} showNote={settingsMode==TASK_SETTINGS_MODES.EDIT_TASK} />
         <DueDatePickerBox dispatch={dispatch} dateTime={habitSettings.dueDate} isHabit={habitSettings.isHabit} />
         <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
       </ScrollView>
