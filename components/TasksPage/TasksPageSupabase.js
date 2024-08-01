@@ -1,6 +1,7 @@
 
 import { supabase } from "../../lib/supabase"
 import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat } from "../../utils/DateHelper"
+import { HABIT_HISTORY_COLUMNS } from "../../utils/AppConstants"
 
 // local AND supabase changes
 export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, setTaskItems, taskItems, setHabitStats, habitHistory) => {
@@ -77,7 +78,7 @@ export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, se
 }
 
 // local AND supabase changes
-// NOTE (outdated?): DID NOT ADD LOGIC TO CONVER TO ISO_STRING YET
+// NOTE: habit_due_date is of type ISO string, not Date()
 export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitHistory, setHabitHistory, habit_due_date, setHabitStats) => {
   // local changes
   //find the entry that matches the id AND habit_due_date
@@ -117,6 +118,7 @@ export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitH
 }
 
 
+// adds a list of entries to the habitHistory for a particular habitId
 export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, habitHistory, setHabitHistory, setHabitStats, batchSize = 50) => {
 
   const habitHistoryCopy = { ...habitHistory }
@@ -130,6 +132,10 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
   for (const entry of entriesToAdd) {
     if ("habit_due_date" in entry) {
       entry.habit_due_date = entry.habit_due_date.toISOString()
+      // console.log
+    }
+    if ("dueTimeOverride" in entry) {
+      entry.dueTimeOverride = entry.dueTimeOverride.toISOString()
     }
   }
 
@@ -146,7 +152,7 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
       .insert(batch)
 
     if (error) {
-      console.log("unable to insert habit. HabitId: "+habitId)
+      console.log("unable to insert habit. HabitId: " + habitId)
       console.warn(error)
     } else {
       console.log("completed successfully!!")
@@ -218,8 +224,8 @@ export const supabaseInsertTask = async (session, newTaskSetting, setTaskItems, 
     .from('Tasks')
     .insert(newTaskSettingsCopy).select().single()
   // console.log("HELLLOOOO")
-  
-    // console.log({data})
+
+  // console.log({data})
   // console.log(newTaskSettingsCopy)
 
   if (error) console.warn(error)
@@ -308,7 +314,7 @@ export const supabaseSyncLocalWithDb = async (session, setTaskItems, setHabitSta
 
   console.log("syncing complete!")
 
-  return {newTaskItems, newHabitHistory, newHabitStats}
+  return { newTaskItems, newHabitHistory, newHabitStats }
 }
 
 
@@ -323,8 +329,20 @@ const getAllHabitHistories = async (setHabitHistory, taskItems) => {
         .select()
         .eq('id', task.id)
         .order('created_at', { ascending: false })
-      if (error) console.warn(error)
+
+      if (error) {
+        console.warn(error);
+      } else {
+        // Iterate through each item in the data array and modify the properties
+        // data.forEach(item => {
+        //   item.dueTimeOverride = new Date(item.dueTimeOverride);
+
+        //   // note that this must remain commented since habit_due_date is used as a part of a key for habit history
+        //   // item.habit_due_date = new Date(item.habit_due_date);
+        // });
+      }
       newHabitHistory[task.id] = data
+
     }
   }
   setHabitHistory(newHabitHistory)
@@ -355,12 +373,12 @@ const findEntryWithDate = (habitHistoryEntries, myDate) => {
 
 // call this function when: habit is added and when page loads
 export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats) => {
-  
+
   console.log("Starting fix...")
   for (var habitSettings of taskItems) {
     if (habitSettings.isHabit == true) {
       // update stats is set to false since we would rather update stats after ALL the habit histories have been made up to date
-      console.log("fixing habit id: "+habitSettings.id)
+      console.log("fixing habit id: " + habitSettings.id)
       await supabaseFixHistoryForSingleHabit(habitSettings, habitSettings.id, habitHistory, setHabitHistory, setHabitStats, false)
       console.log("fixed!")
     }
@@ -371,13 +389,13 @@ export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHa
 }
 
 
-  // basic logic of fixing habit histories:
-  // loop between habit creation date and today's date:
-  //     if day is valid:  
-  //         if entry does not exist already for this date:
-  //             add entry ("pending" if it is today's date and "incomplete" if it is old date)
-  //         if entry does exist for this date & is "pending" & selected date is today & habit_due_date != today:
-  //             change from "pending" to "incomplete"
+// basic logic of fixing habit histories:
+// loop between habit creation date and today's date:
+//     if day is valid:  
+//         if entry does not exist already for this date:
+//             add entry ("pending" if it is today's date and "incomplete" if it is old date)
+//         if entry does exist for this date & is "pending" & selected date is today & habit_due_date != today:
+//             change from "pending" to "incomplete"
 export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, habitHistory, setHabitHistory, setHabitStats) => {
   // console.log("===============================")
   // possibility of missing some habits
@@ -416,15 +434,19 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
         status = "incomplete"
       }
 
-      const other = new Date(habitSettings["dueDate"])
+      const other = new Date(habitSettings.dueDate)
       const habit_due_date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(),
         other.getHours(), other.getMinutes(), other.getSeconds(), other.getMilliseconds())
 
       newEntries.push({
         "habit_due_date": habit_due_date,
         "status": status,
-        // "is_streak": false, // not needed anymore!
         "id": habitId,
+        "title": habitSettings.title,
+        "duration": habitSettings.duration,
+        "importance": habitSettings.importance,
+        "description": habitSettings.description,
+        "dueTimeOverride": habit_due_date
       })
     }
 
@@ -467,15 +489,7 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
 // when task is edited
 
 
-// no
 export const updateHabitStats = (setHabitStats, newHabitHistory) => {
-  // console.log("updating habit stats!")
-
-
-  // console.log("hi")
-
-  // console.log(newHabitHistory)
-
   let newHabitStats = {}
 
   for (const [habitId, habitEntriesArray] of Object.entries(newHabitHistory)) {
@@ -528,14 +542,11 @@ export const getTasksForMonthString = (month, year, taskItems) => {
       ];
     });
 
-    let result = selectedTasks.map(subList => `"`+subList.join('","')+`"`).join('\n');
-    result = "dueDate, title, duration, importance, status\n" + result
-    return result
+  let result = selectedTasks.map(subList => `"` + subList.join('","') + `"`).join('\n');
+  result = "dueDate, title, duration, importance, status\n" + result
+  return result
 
 }
-
-
-
 
 export const getAllTasks = async (session) => {
   const { data, error } = await supabase
@@ -548,4 +559,155 @@ export const getAllTasks = async (session) => {
 
   if (error) console.warn(error)
   return data
+}
+/**
+ * This function edits the selected habit history entry after the user selects "edit selected habit"
+ * Used by onConfirmEditsComplete in HabitSettingsModal.js
+ * @param {TaskSettings} initialHabitSettings habit settings when "edit" is clicked 
+ * @param {HabitHistoryEntry} initialHabitHistoryEntry habit history entry that corresponds to the habit that was clicked on for editing 
+ * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
+ */
+export const editSelectedHabitOn_ConfirmEdit = async ({ initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory, habitHistory }) => {
+  const updateDict = {}
+
+  for (const col of HABIT_HISTORY_COLUMNS) {
+    if (initialHabitSettings[col] != habitSettingsEdited[col]) {
+      updateDict[col] = habitSettingsEdited[col]
+    }
+  }
+
+  if ("dueDate" in updateDict) {
+    updateDict.dueTimeOverride = (habitSettingsEdited.dueDate).toISOString()
+    delete updateDict["dueDate"]
+  }
+  const habit_due_date = initialHabitHistoryEntry.habit_due_date
+  await supabaseUpdateHabitHistoryEntry(updateDict, habitSettingsEdited.id, habitHistory, setHabitHistory, habit_due_date, setHabitStats)
+}
+
+/**
+ * This funnction updates all habit entries that match habitSettingsEdited.id and have a habit_due_date that is >= habitSettingsEdited.habit_due_date
+ * This function also updates the habit in the Tasks table so that upcoming habits reflect the edited changes
+ * Used by onConfirmEditsComplete in HabitSettingsModal.js
+ * @param {TaskSettings} initialHabitSettings habit settings when "edit" is clicked 
+ * @param {HabitHistoryEntry} initialHabitHistoryEntry habit history entry that corresponds to the habit that was clicked on for editing 
+ * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
+ * @param {ReactState} setLoadingString loading string that gets displayed while process is loading 
+ */
+export const editSelectedAndUpcoming_OnConfirmEdit = async (
+  { session,
+    initialHabitSettings,
+    habitSettingsEdited,
+    initialHabitHistoryEntry,
+    setHabitStats,
+    setHabitHistory,
+    habitHistory,
+    setTaskItems,
+    taskItems,
+    setLoadingString,
+    editAll = false,
+  }) => {
+
+  // get update dict by comparing initial and edited habit settings
+  const updateDict = {}
+
+  for (const col of HABIT_HISTORY_COLUMNS) {
+    if (initialHabitSettings[col] != habitSettingsEdited[col]) {
+      updateDict[col] = habitSettingsEdited[col]
+    }
+  }
+
+
+  let updateDict_TasksTable = { ...updateDict }
+  if ("dueDate" in updateDict_TasksTable) {
+    updateDict_TasksTable.dueDate = new Date(habitSettingsEdited.dueDate) // we don't convert to ISO string since `supabaseUpdateTaskSettings` does that for us
+  }
+
+  // We do this because the HabitHistory table has column 'dueTimeOverride' instead of due date
+  if ("dueDate" in updateDict) {
+    updateDict.dueTimeOverride = (habitSettingsEdited.dueDate).toISOString() // convert to ISOString
+    delete updateDict["dueDate"]
+  }
+
+  let allHabitEntries
+  let startIndex = -1
+
+  if (!editAll) {
+    // list of habit entries (sorted based on habit_due_date) for one habit
+    // Note: this creates a list of references to the objets in habitHistory, therefore the individual objects must not be edited
+    allHabitEntries = [...habitHistory[habitSettingsEdited.id]]
+
+    // sorts habitEntries of selected habit in ascending order based on habit_due_date
+    allHabitEntries.sort((a, b) => new Date(a.habit_due_date) - new Date(b.habit_due_date));
+
+    // get index of object where it's habit_due_date == initialHabitHistoryEntry.habit_due_date
+    for (let i = allHabitEntries.length - 1; i >= 0; i--) {
+      if (allHabitEntries[i].habit_due_date == initialHabitHistoryEntry.habit_due_date) {
+        startIndex = i
+        break
+      }
+    }
+  }
+  // if we ARE trying to edit all habit entries
+  else {
+    allHabitEntries = [...habitHistory[habitSettingsEdited.id]]
+  }
+
+
+  if (editAll) startIndex = 0
+
+  if (startIndex == -1) {
+    console.warn(f`editSelectedAndUpcoming_OnConfirmEdit: unable to find habit history entry with habit_due_date of ${initialHabitHistoryEntry.habit_due_date}`)
+  }
+
+  // once we found the index, loop between current index and end of the list, and apply the edits
+  for (let i = startIndex; i < allHabitEntries.length; i++) {
+    const selectedHabitHistoryEntry = allHabitEntries[i]
+    await supabaseUpdateHabitHistoryEntry(updateDict, habitSettingsEdited.id, habitHistory, setHabitHistory, selectedHabitHistoryEntry.habit_due_date, setHabitStats)
+
+    let myLoadingString = `${i + 1 - startIndex} / ${allHabitEntries.length - startIndex} habits updated. Please wait.`
+    console.log(myLoadingString)
+    setLoadingString(myLoadingString)
+  }
+
+  setLoadingString("")
+
+  // update habit in Tasks table so that upcoming tasks would follow the new edited settings
+  await supabaseUpdateTaskSettings(session, updateDict_TasksTable, habitSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory)
+}
+
+/**
+ * Reuses editSelectedAndUpcoming_OnConfirmEdit such that ALL habit entries with habitSettingsEdited.id gets updated
+ * habit in Tasks table gets updated to reflect new changes
+ * 
+ * Used by onConfirmEditsComplete in HabitSettingsModal.js
+ * @param {TaskSettings} initialHabitSettings habit settings when "edit" is clicked 
+ * @param {HabitHistoryEntry} initialHabitHistoryEntry habit history entry that corresponds to the habit that was clicked on for editing 
+ * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
+ * @param {ReactState} setLoadingString loading string that gets displayed while process is loading 
+ */
+export const editAll_OnConfirmEdit = async ({ session,
+  initialHabitSettings,
+  habitSettingsEdited,
+  initialHabitHistoryEntry,
+  setHabitStats,
+  setHabitHistory,
+  habitHistory,
+  setTaskItems,
+  taskItems,
+  setLoadingString }) => {
+
+  let editAll = true
+  await editSelectedAndUpcoming_OnConfirmEdit({
+    session,
+    initialHabitSettings,
+    habitSettingsEdited,
+    initialHabitHistoryEntry,
+    setHabitStats,
+    setHabitHistory,
+    habitHistory,
+    setTaskItems,
+    taskItems,
+    setLoadingString,
+    editAll
+  })
 }

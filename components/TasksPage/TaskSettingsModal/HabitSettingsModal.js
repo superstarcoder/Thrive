@@ -18,7 +18,7 @@ import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSetting
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, onlyDatesAreSame, getEndOfDay } from '../../../utils/DateHelper';
-import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } from '../TasksPageSupabase';
+import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry, editSelectedHabitOn_ConfirmEdit, editSelectedAndUpcoming_OnConfirmEdit, editAll_OnConfirmEdit } from '../TasksPageSupabase';
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -112,8 +112,14 @@ function reducer(taskSettings, action) {
   }
 }
 
-const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats }, ref) => {
+const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, habitStats, setHabitStats, habitApplyModalRef }, ref) => {
 
+  const bottomSheetRef = useRef(null)
+  const durationBoxRef = useRef(null)
+  const importanceBoxRef = useRef(null)
+  const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
+  const [initialHabitHistoryEntry, setInitialHabitHistoryEntry] = useState()
+  const [initialHabitSettings, setInitialHabitSettings] = useState()
 
   const getInitSettings = (selectedDate = new Date()) => {
     var endOfDayObj = getEndOfDay(selectedDate)
@@ -146,7 +152,9 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       importanceBoxRef?.current?.setImportance(initSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.ADD_TASK)
     },
-    showEditHabitModal(myHabitSettings) {
+    showEditHabitModal(myHabitSettings, habitHistoryEntry) {
+      // console.log("habitHistoryEntry")
+      // console.log(JSON.stringify(habitHistoryEntry))
       bottomSheetRef?.current?.scrollTo(1)
       scrollViewRef?.current?.scrollTo({
         y: 0,
@@ -155,13 +163,11 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       durationBoxRef?.current?.setDuration(myHabitSettings.duration)
       importanceBoxRef?.current?.setImportance(myHabitSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.EDIT_TASK)
+
+      setInitialHabitSettings(myHabitSettings)
+      setInitialHabitHistoryEntry(habitHistoryEntry)
     }
   }));
-
-  const bottomSheetRef = useRef(null)
-  const durationBoxRef = useRef(null)
-  const importanceBoxRef = useRef(null)
-  const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
 
 
   useEffect(() => {
@@ -188,6 +194,62 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     }
   }
 
+
+  /**
+   * When "save" is clicked on the HabitApplyModal, this function is called
+   * Based on the option selected in the model, and using the local states stored in the habitSettingsModal, one of 3 things happen:
+   * selected habit is edited (HabitHistory affected)
+   * selected and upcoming is edited (HabitHistory affected and Tasks Table affected)
+   * all habits are edited (all entries' details, in both Tasks table and HabitHistory, are replaced with the edited data)
+   * 
+   * Note: the changes that are applied are only the edited properties, not the unedited ones
+   * 
+   * @param {TaskSettings} habitSettingsEdited 
+   * @param {String} optionSelected - "edit_selected_habit" or "edit_selected_and_upcoming" or "edit_all" 
+   */
+  const onConfirmEditsComplete = async (habitSettingsEdited, optionSelected, setLoadingString) => {
+
+
+    console.log(optionSelected)
+    // console.log(JSON.stringify(taskSettingsEdited, null, 2 ))
+
+    // edit specific habitHistory entry (based on id and habit_due_date) with correct settings
+    if (optionSelected == "edit_selected_habit") {
+
+      await editSelectedHabitOn_ConfirmEdit({
+        initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats,
+        setHabitHistory, habitHistory
+      })
+
+      // edit habit history entries (with habitId) between current habit_due_date and today's date
+      // edit entry in Tasks table (affects future tasks)
+    } else if (optionSelected == "edit_selected_and_upcoming") {
+      habitApplyModalRef?.current?.disableScrolling()
+
+      await editSelectedAndUpcoming_OnConfirmEdit({
+        session, initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory,
+        habitHistory, setTaskItems, taskItems, setLoadingString
+      })
+
+      habitApplyModalRef?.current?.enableScrolling()
+
+      // 1, edit all habitHistory entries with habitId
+      // 2. edit correct habit settings in Tasks table
+    } else if (optionSelected == "edit_all") {
+      habitApplyModalRef?.current?.disableScrolling()
+
+      await editAll_OnConfirmEdit({
+        session, initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory,
+        habitHistory, setTaskItems, taskItems, setLoadingString
+      })
+
+      habitApplyModalRef?.current?.enableScrolling()
+
+    } else {
+      console.warn("invalid option selected for confirming edits")
+    }
+  }
+
   const onSavePress = async () => {
 
     let error = validateFields()
@@ -196,24 +258,28 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
 
+    var habitSettingsEdited
     if (settingsMode == TASK_SETTINGS_MODES.ADD_TASK) {
 
-      settingsCopy = { ...habitSettings }
-      settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
-      settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
-      await onSaveTask(settingsCopy)
+      habitSettingsEdited = { ...habitSettings }
+      habitSettingsEdited.description = habitSettingsEdited.description.replace(/^\s+|\s+$/g, '');
+      habitSettingsEdited.title = habitSettingsEdited.title.replace(/^\s+|\s+$/g, '');
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: habitSettingsEdited } })
+      await onSaveTask(habitSettingsEdited)
     }
     else if (settingsMode == TASK_SETTINGS_MODES.EDIT_TASK) {
-      settingsCopy = { ...habitSettings }
-      settingsCopy.description = settingsCopy.description.replace(/^\s+|\s+$/g, '');
-      settingsCopy.title = settingsCopy.title.replace(/^\s+|\s+$/g, '');
-      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
-      await onEditTaskComplete(settingsCopy)
+      habitSettingsEdited = { ...habitSettings }
+      habitSettingsEdited.description = habitSettingsEdited.description.replace(/^\s+|\s+$/g, '');
+      habitSettingsEdited.title = habitSettingsEdited.title.replace(/^\s+|\s+$/g, '');
+      dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: habitSettingsEdited } })
+
+      habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, habitSettingsEdited)
     }
 
 
   }
+
+
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     bottomSheetRef?.current?.scrollTo(0)
@@ -229,9 +295,11 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     await supabaseInsertTask(session, newTaskSettings, setTaskItems, taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats)
   }
 
-  const onEditTaskComplete = async (taskSettingsEdited) => {
-    await supabaseUpdateTaskSettings(session, taskSettingsEdited, taskSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory);
-  }
+  // const onEditTaskComplete = async (taskSettingsEdited) => {
+  //   // commented for now
+  // }
+
+
 
   const onDelete = async (taskSettingsToDelete) => {
     await supabaseDeleteTask(taskSettingsToDelete.id, taskSettingsToDelete.isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats)
@@ -254,7 +322,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
         <DurationBox duration={habitSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
         <ImportanceBox importance={habitSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
         {/* <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} /> */}
-        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} />
+        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} showNote={settingsMode==TASK_SETTINGS_MODES.EDIT_TASK} />
         <DueDatePickerBox dispatch={dispatch} dateTime={habitSettings.dueDate} isHabit={habitSettings.isHabit} />
         <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
       </ScrollView>

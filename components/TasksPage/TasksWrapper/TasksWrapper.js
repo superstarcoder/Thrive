@@ -20,16 +20,15 @@ const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => 
   } 
 }
 
-const onEditTask = (taskSettings) => {
+const onEditTask = (taskSettings, habitHistoryEntry=undefined) => {
   if (taskSettings.isHabit) {
-    habitSettingsRef?.current?.showEditHabitModal(taskSettings)
+    habitSettingsRef?.current?.showEditHabitModal(taskSettings, habitHistoryEntry)
   } else {
     taskSettingsRef?.current?.showEditTaskModal(taskSettings)
   }
 }
 
 const onTaskClicked = (taskSettings, habitHistoryEntry) => {
-  // console.log("task clicked")
   console.log(taskSettings.id)
   taskMenuRef?.current?.showTaskMenuModal(taskSettings, habitHistoryEntry, onEditTask, onCheckBoxPressed)
 }
@@ -64,15 +63,11 @@ function SelectedDayTasks() {
 
     return (
       <View>
-        {/* <StyledH2 style={styles.sectionTitle} text={"Tasks"}/> */}
-        {/* <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/> */}
         <View style={styles.items}>
         {
           taskItems.map((task, index) => {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
-            let habitEntryFound = false
-            // let isSelected = task.complete
 
             if (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
               return (
@@ -137,14 +132,12 @@ function SelectedDayTasks() {
     return (
       <View>
         <StyledH2 style={styles.sectionTitle} text={"Habits"}/>
-        {/* <StyledH2 style={styles.sectionTitle} text={dateText+"'s Tasks"}/> */}
         <View style={styles.items}>
         {
           taskItems.map((task, index) => {
             var dueDateObj = new Date(task.dueDate)
             var habitHistoryEntry = undefined
             let habitEntryFound = false
-            // let isSelected = task.complete
 
             if (task.isHabit && habitHistory[task.id] != undefined) {
               for (const entry of habitHistory[task.id]) {
@@ -152,39 +145,50 @@ function SelectedDayTasks() {
                   habitEntryFound = true
                   count += 1
                   habitHistoryEntry = entry
-                  // if (entry.status == "complete") {
-                  //   isSelected = true
-                  // } else {
-                  //   isSelected = false
-                  // }
                   break
                 }
               }
             }
 
 
+
             if (task.isHabit && habitEntryFound) {
+            // this is simply to ensure backward compatibility (for habit entires that have not been updated to the new format)
+
+
+            // copy task properties to habit variable, but override columns where title, importance,
+            // duration, or description are null
+            // pass habit variable into respective functions
+            let habit = {...task}
+            if (habitHistoryEntry.title != null) habit.title = habitHistoryEntry.title
+            if (habitHistoryEntry.importance != null) habit.importance = habitHistoryEntry.importance
+            if (habitHistoryEntry.duration != null) habit.duration = habitHistoryEntry.duration
+            if (habitHistoryEntry.description != null) habit.description = habitHistoryEntry.description
+
               return (
-                <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, habitHistoryEntry)}}>
+                <TouchableOpacity key={index}  onPress={() => {onTaskClicked(habit, habitHistoryEntry)}}>
                   <Task 
-                  habitStatsEntry={habitStats[task.id]}
+                  habitStatsEntry={habitStats[habit.id]}
                   selectedDate={selectedDate}
-                  habitHistoryEntry={habitHistoryEntry}
-                  habitHistory={task.habitHistory}
-                  habitInitDate={task.habitInitDate}
-                  isHabit={task.isHabit}
-                  repeatDays={task.repeatDays}
-                  dueDate={task.dueDate}
+                  habitHistory={habit.habitHistory} // note that this is outdated and should be removed later
+                  habitInitDate={habit.habitInitDate} // 
+                  isHabit={habit.isHabit}
+                  repeatDays={habit.repeatDays}
+                  dueDate={habit.dueDate}
                   showDueTime={true}
-                  taskId={task.id}
+                  taskId={habit.id}
                   onChange={onCheckBoxPressed}
-                  // isSelected={isSelected}
-                  text={task.title}
-                  priority={task.importance}
-                  duration={task.duration}
-                  description={task.description}
-                  status={habitHistoryEntry.status} // habitHistoryEntry.status instead of task.status because task is of type habit!!!
-                  points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                  // work in progress:
+                  points={parseFloat(habit.importance)+parseFloat(habit.duration)}
+                  // note that the following depend on habitHistoryEntry, NOT the original task that is created
+                  text={habit.title}
+                  priority={habit.importance}
+                  duration={habit.duration}
+                  description={habit.description}
+                  status={habitHistoryEntry.status}
+                  dueTimeOverride={habitHistoryEntry.dueTimeOverride}
+                  habitHistoryEntry={habitHistoryEntry}
+                  /> 
                 </TouchableOpacity>
               )
             }
@@ -238,12 +242,36 @@ function SelectedDayTasks() {
           taskItems.map((task, index) => {
 
           var dueDateObj = new Date(task.dueDate)
+          var habitHistoryEntry = undefined
+          let habitEntryFound = false
 
           // due after end of day
           if (endOfDayObj < dueDateObj && task.isHabit == false) {
             return (
               <TouchableOpacity key={index}  onPress={() => {onTaskClicked(task, undefined)}}>
-                <Task
+
+                <Task 
+                  habitStatsEntry={habitStats[task.id]}
+                  selectedDate={selectedDate}
+                  habitHistoryEntry={habitHistoryEntry}
+                  habitHistory={task.habitHistory}
+                  habitInitDate={task.habitInitDate}
+                  isHabit={task.isHabit}
+                  repeatDays={task.repeatDays}
+                  dueDate={task.dueDate}
+                  showDueDate={true}
+                  taskId={task.id}
+                  onChange={onCheckBoxPressed}
+                  // isSelected={isSelected}
+                  text={task.title}
+                  priority={task.importance}
+                  duration={task.duration}
+                  description={task.description}
+                  status={task.status}
+                  points={parseFloat(task.importance)+parseFloat(task.duration)}/>                 
+
+
+                {/* <Task
                 selectedDate={selectedDate}
                 habitHistory={task.habitHistory}
                 habitInitDate={task.habitInitDate}
@@ -258,7 +286,7 @@ function SelectedDayTasks() {
                 duration={task.duration}
                 description={task.description}
                 status={task.status}
-                points={parseFloat(task.importance)+parseFloat(task.duration)}/> 
+                points={parseFloat(task.importance)+parseFloat(task.duration)}/>  */}
               </TouchableOpacity>
             )
           }

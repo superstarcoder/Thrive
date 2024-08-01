@@ -1,0 +1,1 @@
+export const HABIT_HISTORY_COLUMNS = ["status", "title", "duration", "importance", "description", "dueDate"]
