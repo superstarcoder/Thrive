@@ -14,6 +14,7 @@ import { LogBox, Platform } from 'react-native';
 import TasksWrapper from './TasksWrapper/TasksWrapper';
 import { subscribeToChangesTasksTable, supabaseSyncLocalWithDb } from './TasksPageSupabase';
 import TaskMenu from './TasksWrapper/TaskMenu';
+import HabitApplyModal from './TasksWrapper/HabitApplyModal';
 // import BackgroundImg from './components/BackgroundImage';
 
 
@@ -42,7 +43,7 @@ const TasksPage = forwardRef(({
 
   // useEffect(() => {
   //   const fetchData = async () => {
-	//     await syncLocalWithDb()
+  //     await syncLocalWithDb()
   //   }
   //   fetchData()
   // }, [])
@@ -58,14 +59,15 @@ const TasksPage = forwardRef(({
 
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  
+
   // const [taskSettings, dispatch] = useReducer(reducer, {})
-  
+
 
 
   const taskSettingsRef = useRef();
   const habitSettingsRef = useRef();
   const taskMenuRef = useRef();
+  const habitApplyModalRef = useRef();
 
 
   const goToPreviousDay = () => {
@@ -128,7 +130,7 @@ const TasksPage = forwardRef(({
 
 
   const syncLocalWithDb = async () => {
-    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)    
+    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
   }
 
   useEffect(() => {
@@ -142,7 +144,7 @@ const TasksPage = forwardRef(({
     {
       /* display tasks */
     }
-    <TasksWrapper session={session} taskMenuRef={taskMenuRef} habitSettingsRef={habitSettingsRef}  taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
+    <TasksWrapper session={session} taskMenuRef={taskMenuRef} habitSettingsRef={habitSettingsRef} taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
 
     {
       /* bottom bar/buttons */
@@ -152,9 +154,21 @@ const TasksPage = forwardRef(({
     </KeyboardAvoidingView>
 
     <TaskSettingsModal session={session} ref={taskSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
-    <HabitSettingsModal session={session} ref={habitSettingsRef} syncLocalWithDb={syncLocalWithDb} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
+    <HabitSettingsModal session={session}
+      ref={habitSettingsRef}
+      syncLocalWithDb={syncLocalWithDb}
+      supabase={supabase}
+      taskItems={taskItems}
+      setTaskItems={setTaskItems}
+      habitHistory={habitHistory}
+      setHabitHistory={setHabitHistory}
+      habitStats={habitStats}
+      setHabitStats={setHabitStats}
+      habitApplyModalRef={habitApplyModalRef}
+    />
 
-    <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems}  habitHistory={habitHistory} setHabitHistory={setHabitHistory} setHabitStats={setHabitStats}/>
+    <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} setHabitStats={setHabitStats} />
+    <HabitApplyModal ref={habitApplyModalRef} />
 
 
 

@@ -10,24 +10,24 @@ import { Square, CheckSquare, XSquare, Placeholder, PencilSimpleLine } from 'pho
 import { supabaseDeleteTask } from '../TasksPageSupabase';
 
 
-const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, setHabitStats}, ref) => {
+const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, setHabitStats }, ref) => {
 
-  const heightPercent = 0.8 
+  const heightPercent = 0.8
   useEffect(() => {
     bottomSheetRef?.current?.scrollTo(0)
   }, [])
   const bottomSheetRef = useRef(null)
   const [taskSettings, setTaskSettings] = useState()
   const [habitHistoryEntry, setHabitHistoryEntry] = useState()
-  const [onEditPressed, setOnEditPressed] = useState()
+  const [onEditTask, setOnEditTask] = useState()
   const [onCheckBoxPressed, setOnCheckBoxPressed] = useState()
 
   useImperativeHandle(ref, () => ({
-    showTaskMenuModal(taskSettingsArg, habitHistoryEntryArg, onEditPressedArg, onCheckBoxPressedArg) {
+    showTaskMenuModal(taskSettingsArg, habitHistoryEntryArg, onEditTaskArg, onCheckBoxPressedArg) {
       bottomSheetRef?.current?.scrollTo(heightPercent)
       setTaskSettings(taskSettingsArg)
       setHabitHistoryEntry(habitHistoryEntryArg)
-      setOnEditPressed(() => onEditPressedArg)
+      setOnEditTask(() => onEditTaskArg)
       setOnCheckBoxPressed(() => onCheckBoxPressedArg)
     }
   }));
@@ -62,40 +62,45 @@ const TaskMenu = forwardRef(({supabase, taskItems, setTaskItems, habitHistory, s
     onCheckBoxPressed(taskSettings.id, taskSettings.isHabit, habitHistoryEntry, "exempt")
   }
 
+  const onEditPressedWrapper = () => {
+    onCancelPress();
+    onEditTask(taskSettings, habitHistoryEntry, habitHistoryEntry)
+  }
+
   return (
 
     <BottomSheet ref={bottomSheetRef} customStyle={styles.taskMenuModal} clamps={[0, heightPercent]} scrollingEnabled={true}>
 
       <View style={styles.taskMenuContainer}>
-        <Text style={[fontStyles.styledH1, {color: "#CFD6FC",}]}>Mark As:</Text>
+        <Text style={[fontStyles.styledH1, { color: "#CFD6FC", }]}>Mark As:</Text>
 
         <TouchableOpacity onPress={onMarkAsCompletePressed}>
           <View style={styles.markAsButton}>
             <Text style={[fontStyles.styledH1, styles.buttonText2]}>Complete</Text>
-            <CheckSquare size={38} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon}/>
+            <CheckSquare size={38} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onMarkAsIncompletePressed}>
           <View style={styles.markAsButton}>
             <Text style={[fontStyles.styledH1, styles.buttonText2]}>Incomplete</Text>
-            <XSquare size={38} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+            <XSquare size={38} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onMarkAsExemptPressed}>
           <View style={styles.markAsButton}>
             <Text style={[fontStyles.styledH1, styles.buttonText2]}>Exempt</Text>
-            <Placeholder size={38} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, {borderColor: "black"}]}/>
+            <Placeholder size={38} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
           </View>
         </TouchableOpacity>
-        
+
         <View style={styles.taskMenuButtons}>
 
-          <TouchableOpacity onPress={() => {onCancelPress(); onEditPressed(taskSettings)}}>
+          <TouchableOpacity onPress={onEditPressedWrapper}>
             <View style={styles.editTaskButton}>
               <Text style={[fontStyles.styledH1, styles.buttonText]}>Edit</Text>
-              <PencilSimpleLine  size={25} weight="bold" color={"black"} />
+              <PencilSimpleLine size={25} weight="bold" color={"black"} />
             </View>
           </TouchableOpacity>
 
@@ -134,7 +139,7 @@ const styles = StyleSheet.create({
     gap: 22,
     paddingBottom: 370,
     justifyContent: "center"
-    
+
   },
   addTaskModalSettings: {
     flexDirection: "column",

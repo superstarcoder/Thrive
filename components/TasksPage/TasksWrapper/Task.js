@@ -8,7 +8,7 @@ import { BlurView } from 'expo-blur';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
+const Task = ({isOverdue=false, dueTimeOverride, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
 
   if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
@@ -35,15 +35,26 @@ const Task = ({isOverdue=false, habitStatsEntry,selectedDate, habitHistory, habi
     }
   }
 
+  // override dueDate with dueTimeOverride if dueTimeOverride is defined!!
+  var correctDueDateTime
+  if (dueTimeOverride != null && dueTimeOverride != undefined) {
+    // console.log("overriding due time!!")
+    // console.log(new Date(dueTimeOverride))
+    // console.log(dueDate)
+    correctDueDateTime = new Date(dueTimeOverride)
+  } else {
+    correctDueDateTime = new Date(dueDate)
+  }
+
   if (showDueTime) {
     dueDateTimeInfo =
     <View style={styles.dateTimeInfoContainer}>
-      <StyledH4 text={dueDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
+      <StyledH4 text={correctDueDateTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
     </View>
   }
   else if (showDueDate) {
     dueDateTimeInfo = <View style={styles.dateTimeInfoContainer}>
-      <StyledH4 text={dueDate.toLocaleDateString()} style={styles.currentDate}/>
+      <StyledH4 text={correctDueDateTime.toLocaleDateString()} style={styles.currentDate}/>
     </View>
   }
   else {

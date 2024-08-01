@@ -8,7 +8,6 @@ const {height: SCREEN_HEIGHT} = Dimensions.get("window")
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50
 
 const BottomSheet = React.forwardRef (({children, includeLine=true, customStyle, clamps=[0, 0.6, 1], scrollingEnabled=true}, bottomSheetRef) => {
-
   const translateY = useSharedValue(0)
   const active = useSharedValue(false)
   const context = useSharedValue({y: 0})
