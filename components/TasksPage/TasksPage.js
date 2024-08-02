@@ -15,6 +15,7 @@ import TasksWrapper from './TasksWrapper/TasksWrapper';
 import { subscribeToChangesTasksTable, supabaseSyncLocalWithDb } from './TasksPageSupabase';
 import TaskMenu from './TasksWrapper/TaskMenu';
 import HabitApplyModal from './TasksWrapper/HabitApplyModal';
+import { TASKS_PAGE_VIEW_MODES } from '../../utils/AppConstants';
 // import BackgroundImg from './components/BackgroundImage';
 
 
@@ -59,10 +60,7 @@ const TasksPage = forwardRef(({
 
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
-  // const [taskSettings, dispatch] = useReducer(reducer, {})
-
-
+  const [viewMode, setViewMode] = useState(TASKS_PAGE_VIEW_MODES[0])
 
   const taskSettingsRef = useRef();
   const habitSettingsRef = useRef();
@@ -140,11 +138,37 @@ const TasksPage = forwardRef(({
 
   return (<View style={styles.container}>
 
-    <TasksHeader onAddTask={onAddTaskButtonPressed} onAddHabit={onAddHabitButtonPressed} goToPreviousDay={goToPreviousDay} showDatePicker={showDatePicker} dateText={dateText} goToNextDay={goToNextDay} isDatePickerVisible={isDatePickerVisible} handleConfirm={handleConfirm} hideDatePicker={hideDatePicker} selectedDate={selectedDate} />
+    <TasksHeader
+      viewMode={viewMode}
+      setViewMode={setViewMode}
+      onAddTask={onAddTaskButtonPressed}
+      onAddHabit={onAddHabitButtonPressed}
+      goToPreviousDay={goToPreviousDay}
+      showDatePicker={showDatePicker}
+      dateText={dateText}
+      goToNextDay={goToNextDay}
+      isDatePickerVisible={isDatePickerVisible}
+      handleConfirm={handleConfirm}
+      hideDatePicker={hideDatePicker}
+      selectedDate={selectedDate} />
     {
       /* display tasks */
     }
-    <TasksWrapper session={session} taskMenuRef={taskMenuRef} habitSettingsRef={habitSettingsRef} taskSettingsRef={taskSettingsRef} selectedDate={selectedDate} taskItems={taskItems} setTaskItems={setTaskItems} dateText={dateText} habitHistory={habitHistory} setHabitHistory={setHabitHistory} habitStats={habitStats} setHabitStats={setHabitStats} />
+    <TasksWrapper
+      session={session}
+      taskMenuRef={taskMenuRef}
+      habitSettingsRef={habitSettingsRef}
+      taskSettingsRef={taskSettingsRef}
+      selectedDate={selectedDate}
+      taskItems={taskItems}
+      setTaskItems={setTaskItems}
+      dateText={dateText}
+      habitHistory={habitHistory}
+      setHabitHistory={setHabitHistory}
+      habitStats={habitStats}
+      setHabitStats={setHabitStats}
+      viewMode={viewMode}
+      />
 
     {
       /* bottom bar/buttons */

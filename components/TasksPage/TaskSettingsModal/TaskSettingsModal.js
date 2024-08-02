@@ -204,8 +204,6 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
       dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: settingsCopy } })
       await onEditTaskComplete(settingsCopy)
     }
-
-
   }
   const onCancelPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)

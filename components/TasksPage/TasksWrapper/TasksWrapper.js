@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, FlatList, } from 'react-native';
 import Task from './Task';
 import { StyledH1, StyledH2, StyledH4, fontStyles } from '../../text/StyledText';
 import { useFonts } from 'expo-font'
@@ -10,7 +10,7 @@ import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../
 import Color from '../../../assets/themes/Color';
 
 
-const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats }) => {
+const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats, viewMode }) => {
 
   const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
     if (!isHabit) {
@@ -418,6 +418,58 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
   }
 
 
+  // NOTE: this does not render any habits
+  function AllTasks() {
+
+    return (
+      <>
+        <StyledH2 style={styles.sectionTitle} text={"All Tasks"} />
+
+
+
+
+        <View style={styles.items}>
+
+          <FlatList
+            scrollIndicatorInsets={styles.scrollIndicatorStyle}
+            contentContainerStyle={styles.flatListContainerStyle}
+            data={taskItems}
+            renderItem={({ item, index }) => {
+
+              if (item.isHabit == true) { return <></> }
+              var dueDateObj = new Date(item.dueDate)
+
+              return (
+                <TouchableOpacity key={index} onPress={() => { onTaskClicked(item, undefined) }} styles={styles.taskContainer}>
+                  <Task
+                    habitStatsEntry={habitStats[item.id]}
+                    selectedDate={selectedDate}
+                    habitHistoryEntry={undefined}
+                    habitHistory={item.habitHistory}
+                    habitInitDate={item.habitInitDate}
+                    isHabit={item.isHabit}
+                    repeatDays={item.repeatDays}
+                    dueDate={item.dueDate}
+                    showDueDate={true}
+                    taskId={item.id}
+                    onChange={onCheckBoxPressed}
+                    text={item.title}
+                    priority={item.importance}
+                    duration={item.duration}
+                    description={item.description}
+                    status={item.status}
+                    points={parseFloat(item.importance) + parseFloat(item.duration)} />
+                </TouchableOpacity>
+              )
+
+            }}
+            keyExtractor={task => task.id}
+          />
+        </View>
+      </>
+    )
+  }
+
 
 
 
@@ -439,24 +491,39 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
 
   return (
 
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        paddingBottom: 20,
-      }}
-      keyboardShouldPersistTaps='handled'
-      style={styles.taskWrapperContainer}>
+    <>
+      {viewMode == "Journal View (Default)" &&
+        <>
+          <ScrollView contentContainerStyle={{
+            flexGrow: 1, paddingBottom: 20,
+          }} keyboardShouldPersistTaps='handled'>
 
-      <View style={styles.tasksWrapper}>
-        <SelectedDayTasks />
-        <OverdueTasks />
-        <SelectedDayHabits />
-        <UpcomingHabits />
-        <DueLaterTasks />
-      </View>
+            <View style={styles.tasksWrapper}>
+              <>
+                <SelectedDayTasks />
+                <OverdueTasks />
+                <SelectedDayHabits />
+                <UpcomingHabits />
+                <DueLaterTasks />
+              </>
+              <>
+              </>
+            </View>
 
+          </ScrollView>
+        </>
+      }
+      {viewMode == "All Tasks View" &&
+        <>
+          <View style={styles.tasksWrapperContainer}>
+            <View style={styles.tasksWrapper} >
+              <AllTasks />
+            </View>
+          </View>
+        </>
 
-    </ScrollView>
+      }
+    </>
   )
 }
 
@@ -469,7 +536,22 @@ const styles = StyleSheet.create({
   tasksWrapper: {
     paddingHorizontal: 20,
   },
+  tasksWrapperContainer: {
+    flex: 1,
+  },
   sectionTitle: {
     marginVertical: 5,
+  },
+  flatListContainerStyle: {
+    flexGrow: 1,
+    paddingBottom: 200,
+  },
+  items: {
+    flexGrow: 1,
+  },
+  scrollIndicatorStyle: {
+  },
+  taskContainer: {
+
   }
 })
