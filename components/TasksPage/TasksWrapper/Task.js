@@ -8,7 +8,7 @@ import { BlurView } from 'expo-blur';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 
 
-const Task = ({isOverdue=false, dueTimeOverride, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
+const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
 
   if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
@@ -152,7 +152,7 @@ const Task = ({isOverdue=false, dueTimeOverride, habitStatsEntry,selectedDate, h
         {isOverdue &&
           <View style={styles.warningBox}>
             <StyledH3 text={"overdue"} style={styles.overdueText}/>            
-            <TouchableOpacity onPress={() => {onChange(taskId, isHabit, habitHistoryEntry, "incomplete_ignored")}}>
+            <TouchableOpacity disabled={disabled} onPress={() => { !disabled && onChange(taskId, isHabit, habitHistoryEntry, "incomplete_ignored")}}>
               <View style={styles.warningIgnoreButton}>
                 <StyledH3 text={"ignore"} style={[styles.ignoreText, {color: "black"}]}/>            
               </View>
@@ -185,7 +185,7 @@ const Task = ({isOverdue=false, dueTimeOverride, habitStatsEntry,selectedDate, h
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
       <View style={styles.checkBoxSection}>
-        <TaskCheckBox size={45} onChange={onChange} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry} status={status}/>
+        <TaskCheckBox disabled={disabled} size={45} onChange={onChange} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry} status={status}/>
       </View>
 
     </View>

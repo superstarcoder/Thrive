@@ -8,7 +8,7 @@ import { onlyDatesAreSame } from '../../../utils/DateHelper';
 import { SvgUri, SvgXml } from 'react-native-svg';
 // import exemptIconSvg from "../../../assets/images/exempt_icon.svg"
 
-const TaskCheckBox = ({onChange=null, size=38, taskId, isHabit, habitHistoryEntry, status}) => {
+const TaskCheckBox = ({onChange=null, size=38, taskId, isHabit, habitHistoryEntry, status, disabled}) => {
   // const [checked, setChecked] = useState(false)
 
   const onCheckPress = async () => {
@@ -76,7 +76,7 @@ const TaskCheckBox = ({onChange=null, size=38, taskId, isHabit, habitHistoryEntr
 
   
   return (
-	<TouchableOpacity onPress={onCheckPress}>
+	<TouchableOpacity disabled={disabled} onPress={!disabled && onCheckPress}>
 			{statusIcon}
 	</TouchableOpacity>
   )

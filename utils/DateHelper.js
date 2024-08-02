@@ -28,6 +28,8 @@ export function getDateFromDatetime(datetime) {
 	return new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate())
 }
 
+export const toDateOnly = getDateFromDatetime // alias for getDateFromDatetime
+
 // convert a datetime object that is in the UTC timezone into YYYY-MM-DD format
 
 export function toYMDFormat(utcDateTime) {
