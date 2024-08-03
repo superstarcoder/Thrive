@@ -28,6 +28,25 @@ export function getDateFromDatetime(datetime) {
 	return new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate())
 }
 
+export function getTimeFromDatetime(datetime) {
+	// Extract hours, minutes, seconds, and milliseconds from the original Date object
+	const hours = datetime.getHours();
+	const minutes = datetime.getMinutes();
+	const seconds = datetime.getSeconds();
+	const milliseconds = datetime.getMilliseconds();
+
+	// Get today's date
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = today.getMonth(); // Note: January is 0
+	const day = today.getDate();
+
+	// Create a new Date object with today's date and the extracted time
+	const newDate = new Date(year, month, day, hours, minutes, seconds, milliseconds);
+
+	return newDate;
+}
+
 export const toDateOnly = getDateFromDatetime // alias for getDateFromDatetime
 
 // convert a datetime object that is in the UTC timezone into YYYY-MM-DD format
@@ -47,7 +66,14 @@ export function toYMDFormat(utcDateTime) {
 // edits the time of datetime to 11:59
 export function getEndOfDay(datetime) {
 	return new Date(datetime.getFullYear()
-	, datetime.getMonth()
-	, datetime.getDate()
-	, 23, 59, 59);
+		, datetime.getMonth()
+		, datetime.getDate()
+		, 23, 59, 59);
+}
+
+export function getStartOfDay(datetime) {
+	return new Date(datetime.getFullYear(),
+		datetime.getMonth(),
+		datetime.getDate(),
+		0, 0, 0)
 }

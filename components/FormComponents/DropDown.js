@@ -4,18 +4,18 @@ import { StyleSheet, Text, View } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import Color from '../../assets/themes/Color';
 import { fontStyles } from '../text/StyledText';
-import { ActivityIndicator } from 'react-native-web';
 
 /**
- * 
+ * Note: This component uses https://www.npmjs.com/package/react-native-select-dropdown
  * @param {ReactComponent} buttonComponent button component that gets rendered, and when clicked opens up the dropdown 
  * @param {dropDownOptions} dropDownOptions list of names of dropdown options
  * @param {string} defaultValue default value for select
  * @param {function} onSelect function that gets updated when a new option is selected
  * @param {string} position either "left" or "right"
+ * @param {boolean} hasHeading "true" if there is an unclickable heading in the dropdown; false if not
  * @returns 
  */
-const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, position="right", isLoading, loadingItemIndex }) => {
+const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, sortButtonRef, position = "right", hasHeading = false, headingIndex = null, headingComponent = null }) => {
 
   let dynamicMarginStyle
   if (position == "left") {
@@ -32,6 +32,8 @@ const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, po
         defaultValue={defaultValue}
         data={dropDownOptions}
         onSelect={onSelect}
+        disabledIndexes={[headingIndex]}
+        ref={sortButtonRef}
         renderButton={(selectedItem, isOpen) => {
           return buttonComponent;
         }}
@@ -39,32 +41,34 @@ const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, po
           return (
             <View>
 
-              <View
-                style={{
-                  ...styles.dropdownItemStyle,
-                  ...(isSelected && { backgroundColor: Color.GrayBlue }),
-                }}>
-                <Text style={
+              {index == headingIndex ? (
+                <>
+                  {headingComponent}
+                </>
+              ) : (
+                <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: Color.GrayBlue }), }}>
+                  <Text style={
+                    {
+                      ...fontStyles.styledH4,
+                      ...styles.dropdownItemTxtStyle,
+                      ...(isSelected && { color: "gray" }),
+                    }
 
-                  {
-                    ...fontStyles.styledH4,
-                    ...styles.dropdownItemTxtStyle,
-                    ...(isSelected && { color: "gray" }),
+                  }>{item}</Text>
+
+                  {(isSelected) &&
+                    <Check size={20} color='gray' />
                   }
+                </View>
+              )
 
-                }>{item}</Text>
-                {/* {(isLoading && (loadingItemIndex == index)) &&
-                  <ActivityIndicator size="small" color={Color.DarkestBlue} />
-                } */}
-                {(isSelected) &&
-                  <Check size={20} color='gray' />
-                }
-              </View>
+              }
+
             </View>
           );
         }}
         showsVerticalScrollIndicator={false}
-        dropdownStyle={{...styles.dropdownMenuStyle, ...dynamicMarginStyle}}
+        dropdownStyle={{ ...styles.dropdownMenuStyle, ...dynamicMarginStyle }}
       />
     </View >
   );

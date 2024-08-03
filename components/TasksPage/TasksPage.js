@@ -15,7 +15,7 @@ import TasksWrapper from './TasksWrapper/TasksWrapper';
 import { subscribeToChangesTasksTable, supabaseSyncLocalWithDb } from './TasksPageSupabase';
 import TaskMenu from './TasksWrapper/TaskMenu';
 import HabitApplyModal from './TasksWrapper/HabitApplyModal';
-import { TASKS_PAGE_VIEW_MODES } from '../../utils/AppConstants';
+import { TASKS_PAGE_SORT_MODES, TASKS_PAGE_VIEW_MODES } from '../../utils/AppConstants';
 // import BackgroundImg from './components/BackgroundImage';
 
 
@@ -61,6 +61,9 @@ const TasksPage = forwardRef(({
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [viewMode, setViewMode] = useState(TASKS_PAGE_VIEW_MODES[0])
+  // tuple: first item is the mode, 2nd item is true if ascending (false if descending)
+  const [sortModeJournalView, setSortModeJournalView] = useState([TASKS_PAGE_SORT_MODES[1], true])
+  const [sortModeAllTasksView, setSortModeAllTasksView] = useState([TASKS_PAGE_SORT_MODES[3], false])
 
   const taskSettingsRef = useRef();
   const habitSettingsRef = useRef();
@@ -150,7 +153,12 @@ const TasksPage = forwardRef(({
       isDatePickerVisible={isDatePickerVisible}
       handleConfirm={handleConfirm}
       hideDatePicker={hideDatePicker}
-      selectedDate={selectedDate} />
+      selectedDate={selectedDate}
+      sortModeJournalView={sortModeJournalView}
+      setSortModeJournalView={setSortModeJournalView}
+      sortModeAllTasksView={sortModeAllTasksView}
+      setSortModeAllTasksView={setSortModeAllTasksView}
+      />
     {
       /* display tasks */
     }
@@ -168,6 +176,8 @@ const TasksPage = forwardRef(({
       habitStats={habitStats}
       setHabitStats={setHabitStats}
       viewMode={viewMode}
+      sortModeJournalView={sortModeJournalView}
+      sortModeAllTasksView={sortModeAllTasksView}
       />
 
     {

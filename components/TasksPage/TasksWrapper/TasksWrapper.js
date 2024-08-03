@@ -4,15 +4,32 @@ import Task from './Task';
 import { StyledH1, StyledH2, StyledH4, fontStyles } from '../../text/StyledText';
 import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
-import { getEndOfDay, onlyDatesAreSame, toDateOnly } from '../../../utils/DateHelper';
+import { getEndOfDay, getStartOfDay, getTimeFromDatetime, onlyDatesAreSame, toDateOnly } from '../../../utils/DateHelper';
 import TaskMenu from './TaskMenu';
 import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../TasksPageSupabase';
 import Color from '../../../assets/themes/Color';
 
 
-const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef, selectedDate, taskItems, setTaskItems, dateText, habitHistory, setHabitHistory, habitStats, setHabitStats, viewMode }) => {
+const TasksWrapper = ({
+  session,
+  taskMenuRef,
+  taskSettingsRef,
+  habitSettingsRef,
+  selectedDate,
+  taskItems,
+  setTaskItems,
+  dateText,
+  habitHistory,
+  setHabitHistory,
+  habitStats,
+  setHabitStats,
+  viewMode,
+  sortModeJournalView,
+  sortModeAllTasksView
+}) => {
 
   const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
+    console.log(habitHistoryEntry)
     if (!isHabit) {
       await supabaseUpdateTaskSettings(session, { "status": status }, taskId, setTaskItems, taskItems, setHabitStats, habitHistory);
     }
@@ -34,39 +51,74 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
     taskMenuRef?.current?.showTaskMenuModal(taskSettings, habitHistoryEntry, onEditTask, onCheckBoxPressed)
   }
 
+  /**
+   * 
+   * @param {taskItems} tasksToDisplay a susbset of taskItems that we would like to sort and display 
+   * @param {sortMode} sortMode the current sortMode, which is a list, where
+   * index 0 => option selected and index 1 => isAscending (true/false)
+   * @param {boolean} compareOnlyTime is set to true only if we want to compare the times of dueDate, rather than the dates (example for Tasks table)
+   */
+  const sortTasks = (tasksToDisplay, sortMode, compareOnlyTime = false) => {
+
+    // sorts in place in ascending order
+    if (sortMode[0] == "Importance") {
+      tasksToDisplay.sort((a, b) => a.importance - b.importance);
+    } else if (sortMode[0] == "Duration") {
+      tasksToDisplay.sort((a, b) => a.duration - b.duration);
+    } else if (sortMode[0] == "Due Date/Time") {
+      tasksToDisplay.sort((a, b) => {
+        if (!compareOnlyTime) {
+          const aDueTime = new Date(a.habitHistoryEntry?.dueTimeOverride || a.dueDate)
+          const bDueTime = new Date(b.habitHistoryEntry?.dueTimeOverride || b.dueDate)
+          return aDueTime - bDueTime;
+        } else {
+          const aDueTime =  getTimeFromDatetime(a.dueDate)
+          const bDueTime = getTimeFromDatetime(b.dueDate)
+          return aDueTime - bDueTime;
+        }
+      });
+
+    }
+
+    // if mode is descending (not ascending), then we reverse the list
+    if (viewMode == "Journal View (Default)" && sortModeJournalView[1] == false) {
+      tasksToDisplay.reverse()
+      return
+    }
+
+    if (viewMode == "All Tasks View" && sortModeAllTasksView[1] == false) {
+      tasksToDisplay.reverse()
+    }
+  }
+
   function SelectedDayTasks() {
     /**
      * todays tasks includes tasks that are due between the start and end of the selected date
      */
+    var endOfDayObj = getEndOfDay(selectedDate);
+    var startOfDayObj = getStartOfDay(selectedDate);
 
-    var endOfDayObj = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23, 59, 59);
-    var startOfDayObj = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0);
-
-    let count = 0
-
-    let entryFound = false
     // code to count how many tasks/habits to display (that meet the conditions)
+    const tasksToDisplay = []
     for (const task of taskItems) {
 
-      if (!task.isHabit) {
-        var dueDateObj = new Date(task["dueDate"])
-        if (endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
-          count += 1
-        }
+      var dueDateObj = new Date(task["dueDate"])
+      if (!task.isHabit && endOfDayObj >= dueDateObj && dueDateObj >= startOfDayObj) {
+        tasksToDisplay.push(task)
       }
-      // }
     }
     // return if there's no tasks to display
-    if (count == 0) {
+    if (tasksToDisplay.length == 0) {
       return
     }
 
+    sortTasks(tasksToDisplay, sortModeJournalView)
 
     return (
       <View>
         <View style={styles.items}>
           {
-            taskItems.map((task, index) => {
+            tasksToDisplay.map((task, index) => {
               var dueDateObj = new Date(task.dueDate)
               var habitHistoryEntry = undefined
 
@@ -108,91 +160,75 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
      * todays tasks includes tasks that are due between the start and end of the selected date
      */
 
-    var endOfDayObj = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23, 59, 59);
-    var startOfDayObj = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0);
+    var endOfDayObj = getEndOfDay(selectedDate);
+    // var startOfDayObj = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0);
     let count = 0
 
-    let entryFound = false
-
+    const tasksToDisplay = []
     // code to count how many tasks/habits to display (that meet the conditions)
     for (const task of taskItems) {
       if (task.isHabit && habitHistory[task.id] != undefined) {
-        for (const entry of habitHistory[task.id]) {
-          if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj)) {
-            count += 1
+        for (const habitHistoryEntry of habitHistory[task.id]) {
+          // if habitHistoryEntry found with a matching date, then let's add the habit to the display list!
+          if (onlyDatesAreSame(new Date(habitHistoryEntry.habit_due_date), endOfDayObj)) {
+
+            let habit = { ...task }
+
+            // this is simply to ensure backward compatibility (for habit entires that have not been updated to the new format)
+            // copy task properties to habit variable, but override columns where title, importance,
+            // duration, or description are null
+            if (habitHistoryEntry.title != null) habit.title = habitHistoryEntry.title
+            if (habitHistoryEntry.importance != null) habit.importance = habitHistoryEntry.importance
+            if (habitHistoryEntry.duration != null) habit.duration = habitHistoryEntry.duration
+            if (habitHistoryEntry.description != null) habit.description = habitHistoryEntry.description
+
+            habit.habitHistoryEntry = habitHistoryEntry
+            tasksToDisplay.push(habit)
           }
         }
       }
     }
     // return if there's no habits to display
-    if (count == 0) {
+    if (tasksToDisplay.length == 0) {
       return
     }
 
+    sortTasks(tasksToDisplay, sortModeJournalView)
+
+    // console.log(JSON.stringify(tasksToDisplay, null, 2))
 
     return (
       <View>
         <StyledH2 style={styles.sectionTitle} text={"Habits"} />
         <View style={styles.items}>
           {
-            taskItems.map((task, index) => {
-              var dueDateObj = new Date(task.dueDate)
-              var habitHistoryEntry = undefined
-              let habitEntryFound = false
-
-              if (task.isHabit && habitHistory[task.id] != undefined) {
-                for (const entry of habitHistory[task.id]) {
-                  if (onlyDatesAreSame(new Date(entry.habit_due_date), endOfDayObj)) {
-                    habitEntryFound = true
-                    count += 1
-                    habitHistoryEntry = entry
-                    break
-                  }
-                }
-              }
-
-
-
-              if (task.isHabit && habitEntryFound) {
-                // this is simply to ensure backward compatibility (for habit entires that have not been updated to the new format)
-
-
-                // copy task properties to habit variable, but override columns where title, importance,
-                // duration, or description are null
-                // pass habit variable into respective functions
-                let habit = { ...task }
-                if (habitHistoryEntry.title != null) habit.title = habitHistoryEntry.title
-                if (habitHistoryEntry.importance != null) habit.importance = habitHistoryEntry.importance
-                if (habitHistoryEntry.duration != null) habit.duration = habitHistoryEntry.duration
-                if (habitHistoryEntry.description != null) habit.description = habitHistoryEntry.description
-
-                return (
-                  <TouchableOpacity key={index} onPress={() => { onTaskClicked(habit, habitHistoryEntry) }}>
-                    <Task
-                      habitStatsEntry={habitStats[habit.id]}
-                      selectedDate={selectedDate}
-                      habitHistory={habit.habitHistory} // note that this is outdated and should be removed later
-                      habitInitDate={habit.habitInitDate} // 
-                      isHabit={habit.isHabit}
-                      repeatDays={habit.repeatDays}
-                      dueDate={habit.dueDate}
-                      showDueTime={true}
-                      taskId={habit.id}
-                      onChange={onCheckBoxPressed}
-                      // work in progress:
-                      points={parseFloat(habit.importance) + parseFloat(habit.duration)}
-                      // note that the following depend on habitHistoryEntry, NOT the original task that is created
-                      text={habit.title}
-                      priority={habit.importance}
-                      duration={habit.duration}
-                      description={habit.description}
-                      status={habitHistoryEntry.status}
-                      dueTimeOverride={habitHistoryEntry.dueTimeOverride}
-                      habitHistoryEntry={habitHistoryEntry}
-                    />
-                  </TouchableOpacity>
-                )
-              }
+            tasksToDisplay.map((habit, index) => {
+              return (
+                <TouchableOpacity key={index} onPress={() => { onTaskClicked(habit, habit.habitHistoryEntry) }}>
+                  <Task
+                    habitStatsEntry={habitStats[habit.id]}
+                    selectedDate={selectedDate}
+                    habitHistory={habit.habitHistory} // note that this is outdated and should be removed later
+                    habitInitDate={habit.habitInitDate} // 
+                    isHabit={habit.isHabit}
+                    repeatDays={habit.repeatDays}
+                    dueDate={habit.dueDate}
+                    showDueTime={true}
+                    taskId={habit.id}
+                    onChange={onCheckBoxPressed}
+                    // work in progress:
+                    points={parseFloat(habit.importance) + parseFloat(habit.duration)}
+                    // note that the following depend on habitHistoryEntry, NOT the original task that is created
+                    text={habit.title}
+                    priority={habit.importance}
+                    duration={habit.duration}
+                    description={habit.description}
+                    status={habit.habitHistoryEntry.status}
+                    dueTimeOverride={habit.habitHistoryEntry.dueTimeOverride}
+                    habitHistoryEntry={habit.habitHistoryEntry}
+                  />
+                </TouchableOpacity>
+              )
             })
           }
         </View>
@@ -216,60 +252,51 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
 
     var endOfDayObj = getEndOfDay(selectedDate)
 
-
-
-
     // code to count how many tasks to display (that meet the conditions)
-    let count = 0
+    const tasksToDisplay = []
     for (const task of taskItems) {
       var dueDateObj = new Date(task["dueDate"])
       if (endOfDayObj < dueDateObj && !task.isHabit) {
-        count += 1
+        tasksToDisplay.push(task)
       }
     }
     // return if there's no tasks to display
-    if (count == 0) {
+    if (tasksToDisplay.length == 0) {
       return
     }
+
+    sortTasks(tasksToDisplay, sortModeJournalView)
 
     return (
       <View>
         <StyledH2 style={styles.sectionTitle} text={"Due Later"} />
         <View style={styles.items}>
           {
-            taskItems.map((task, index) => {
-
-              var dueDateObj = new Date(task.dueDate)
-              var habitHistoryEntry = undefined
-              let habitEntryFound = false
-
+            tasksToDisplay.map((task, index) => {
+              const habitHistoryEntry = undefined
               // due after end of day
-              if (endOfDayObj < dueDateObj && task.isHabit == false) {
-                return (
-                  <TouchableOpacity key={index} onPress={() => { onTaskClicked(task, undefined) }}>
-
-                    <Task
-                      habitStatsEntry={habitStats[task.id]}
-                      selectedDate={selectedDate}
-                      habitHistoryEntry={habitHistoryEntry}
-                      habitHistory={task.habitHistory}
-                      habitInitDate={task.habitInitDate}
-                      isHabit={task.isHabit}
-                      repeatDays={task.repeatDays}
-                      dueDate={task.dueDate}
-                      showDueDate={true}
-                      taskId={task.id}
-                      onChange={onCheckBoxPressed}
-                      // isSelected={isSelected}
-                      text={task.title}
-                      priority={task.importance}
-                      duration={task.duration}
-                      description={task.description}
-                      status={task.status}
-                      points={parseFloat(task.importance) + parseFloat(task.duration)} />
-                  </TouchableOpacity>
-                )
-              }
+              return (
+                <TouchableOpacity key={index} onPress={() => { onTaskClicked(task, undefined) }}>
+                  <Task
+                    habitStatsEntry={habitStats[task.id]}
+                    selectedDate={selectedDate}
+                    habitHistoryEntry={habitHistoryEntry}
+                    habitHistory={task.habitHistory}
+                    habitInitDate={task.habitInitDate}
+                    isHabit={task.isHabit}
+                    repeatDays={task.repeatDays}
+                    dueDate={task.dueDate}
+                    showDueDate={true}
+                    taskId={task.id}
+                    onChange={onCheckBoxPressed}
+                    text={task.title}
+                    priority={task.importance}
+                    duration={task.duration}
+                    description={task.description}
+                    status={task.status}
+                    points={parseFloat(task.importance) + parseFloat(task.duration)} />
+                </TouchableOpacity>
+              )
             })}
         </View>
       </View>
@@ -288,18 +315,20 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
       return <View></View>
     }
 
+    let tasksToDisplay = []
     // code to count how many habits to display such that "repeatDays" condition is met
-    let count = 0
     for (const task of taskItems) {
       if (task.isHabit && task["repeatDays"][(selectedDate.getDay() + 6) % 7] == true) {
-        count += 1
+        tasksToDisplay.push(task)
       }
     }
 
     // return if there's no tasks to display
-    if (count == 0) {
+    if (tasksToDisplay.length == 0) {
       return
     }
+
+    sortTasks(tasksToDisplay, sortModeJournalView, compareOnlyTime=true)
 
     return (
       <View>
@@ -309,7 +338,7 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
         </View>
         <View style={styles.items}>
           {
-            taskItems.map((task, index) => {
+            tasksToDisplay.map((task, index) => {
               // if task is a habit and repeatDays condition is met, then we display the habit
               if (task.isHabit && task["repeatDays"][(selectedDate.getDay() + 6) % 7] == true) {
                 return (
@@ -359,58 +388,51 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
       return <View></View>
     }
 
-    var startOfDayObj = new Date(selectedDate.getFullYear()
-      , selectedDate.getMonth()
-      , selectedDate.getDate()
-      , 0, 0, 0);
+    var startOfDayObj = getStartOfDay(selectedDate)
 
+    let tasksToDisplay = []
 
     // code to count how many tasks to display (that meet the conditions)
-    let count = 0
     for (const task of taskItems) {
-      var dueDateObj = new Date(task["dueDate"])
+      var dueDateObj = new Date(task.dueDate)
       if (startOfDayObj > dueDateObj && task.status == "incomplete" && task.isHabit == false) {
-        count += 1
+        tasksToDisplay.push(task)
       }
     }
     // return if there's no tasks to display
-    if (count == 0) {
+    if (tasksToDisplay.length == 0) {
       return
     }
 
+    sortTasks(tasksToDisplay, sortModeJournalView)
+
     return (
       <View>
-        {/* <StyledH2 style={styles.sectionTitle} text={"Overdue"}/> */}
         <View style={styles.items}>
           {
-            taskItems.map((task, index) => {
-
-              var dueDateObj = new Date(task["dueDate"])
-
+            tasksToDisplay.map((task, index) => {
               // due before the start of selected date and incomplete
-              if (startOfDayObj > dueDateObj && task.status == "incomplete" && task.isHabit == false) {
-                return (
-                  <TouchableOpacity key={index} onPress={() => { onTaskClicked(task, undefined) }}>
-                    <Task
-                      isOverdue={true}
-                      selectedDate={selectedDate}
-                      habitHistory={task.habitHistory}
-                      habitInitDate={task.habitInitDate}
-                      dueDate={task.dueDate}
-                      repeatDays={task.repeatDays}
-                      showDueDate={true}
-                      taskId={task.id}
-                      onChange={onCheckBoxPressed}
-                      // complete={task.complete}
-                      text={task.title}
-                      priority={task.importance}
-                      duration={task.duration}
-                      description={task.description}
-                      status={task.status}
-                      points={parseFloat(task.importance) + parseFloat(task.duration)} />
-                  </TouchableOpacity>
-                )
-              }
+              return (
+                <TouchableOpacity key={index} onPress={() => { onTaskClicked(task, undefined) }}>
+                  <Task
+                    isOverdue={true}
+                    selectedDate={selectedDate}
+                    habitHistory={task.habitHistory}
+                    habitInitDate={task.habitInitDate}
+                    dueDate={task.dueDate}
+                    repeatDays={task.repeatDays}
+                    showDueDate={true}
+                    taskId={task.id}
+                    onChange={onCheckBoxPressed}
+                    // complete={task.complete}
+                    text={task.title}
+                    priority={task.importance}
+                    duration={task.duration}
+                    description={task.description}
+                    status={task.status}
+                    points={parseFloat(task.importance) + parseFloat(task.duration)} />
+                </TouchableOpacity>
+              )
             })}
         </View>
       </View>
@@ -421,23 +443,25 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
   // NOTE: this does not render any habits
   function AllTasks() {
 
+    let tasksToDisplay = []
+    for (const task of taskItems) {
+      if (task.isHabit == true) continue
+      tasksToDisplay.push(task)
+    }
+
+    sortTasks(tasksToDisplay, sortModeAllTasksView)
+
     return (
       <>
         <StyledH2 style={styles.sectionTitle} text={"All Tasks"} />
-
-
-
 
         <View style={styles.items}>
 
           <FlatList
             scrollIndicatorInsets={styles.scrollIndicatorStyle}
             contentContainerStyle={styles.flatListContainerStyle}
-            data={taskItems}
+            data={tasksToDisplay}
             renderItem={({ item, index }) => {
-
-              if (item.isHabit == true) { return <></> }
-              var dueDateObj = new Date(item.dueDate)
 
               return (
                 <TouchableOpacity key={index} onPress={() => { onTaskClicked(item, undefined) }} styles={styles.taskContainer}>
@@ -505,8 +529,6 @@ const TasksWrapper = ({ session, taskMenuRef, taskSettingsRef, habitSettingsRef,
                 <SelectedDayHabits />
                 <UpcomingHabits />
                 <DueLaterTasks />
-              </>
-              <>
               </>
             </View>
 

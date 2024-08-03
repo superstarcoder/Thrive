@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { CaretRight, CaretLeft, Eye, Funnel, ArrowsDownUp } from 'phosphor-react-native';
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Color from '../../../assets/themes/Color'
 import AddTasksButton from "./AddTasksButton";
 import DropDown from "../../FormComponents/DropDown";
-import { TASKS_PAGE_VIEW_MODES } from "../../../utils/AppConstants";
+import { TASKS_PAGE_SORT_MODES, TASKS_PAGE_VIEW_MODES } from "../../../utils/AppConstants";
+import { Switch } from "react-native-elements/dist/switch/switch";
 
 
 /**
@@ -27,11 +28,16 @@ const TaskHeader = ({
 	hideDatePicker,
 	selectedDate,
 	viewMode,
-	setViewMode
+	setViewMode,
+	sortModeJournalView,
+	setSortModeJournalView,
+	sortModeAllTasksView,
+	setSortModeAllTasksView,
 }) => {
 
-	const [isLoading, setIsLoading] = useState(false)
 	const [loadingItemIndex, setLoadingItemIndex] = useState()
+	const [isAscending, setIsAscending] = useState(false)
+	const sortButtonRef = useRef()
 
 	const viewButton =
 		<View style={styles.viewButton}>
@@ -43,11 +49,71 @@ const TaskHeader = ({
 		</View>
 	const onViewModeChanged = (selectedItem, index) => {
 		if (selectedItem == viewMode) return // if view mode didn't actually change
-		console.log(selectedItem + ": " + index);
-		setIsLoading(true)
+
 		setLoadingItemIndex(index)
 		setViewMode(selectedItem)
+
+		let sortMode = getCurrSortMode(selectedItem)
+		let myIndex = TASKS_PAGE_SORT_MODES.indexOf(sortMode[0])
+		sortButtonRef?.current?.selectIndex(myIndex)
+		
+		setIsAscending(sortMode[1])
 	}
+	const onSortModeChanged = (selectedItem, index) => {
+		if (viewMode == "Journal View (Default)") {
+			if (selectedItem == sortModeJournalView[0]) return // if sort mode didn't actually change
+			setSortModeJournalView([selectedItem, isAscending])
+		} else if (viewMode == "All Tasks View") {
+			if (selectedItem == sortModeAllTasksView[0]) return // if sort mode didn't actually change
+			setSortModeAllTasksView([selectedItem, isAscending])
+		}
+	}
+	const isAscendingChanged = () => {
+		setIsAscending((prevState) => {
+			if (viewMode == "Journal View (Default)") {
+				console.log(`inside of journal view: [${sortModeJournalView[0]}, ${!prevState}]`)
+				setSortModeJournalView([sortModeJournalView[0], !prevState])
+				return !prevState
+			} else if (viewMode == "All Tasks View") {
+				console.log(`inside of all tasks view: [${sortModeAllTasksView[0]}, ${!prevState}]`)
+				setSortModeAllTasksView([sortModeAllTasksView[0], !prevState])
+				return !prevState
+			}
+		})
+	}
+
+	const getCurrSortMode = (myViewMode) => {
+
+		console.log("getting default value!!!")
+		console.log({myViewMode})
+		if (myViewMode == "Journal View (Default)") {
+			console.log(sortModeJournalView[0])
+			return sortModeJournalView
+		}
+		if (myViewMode == "All Tasks View") {
+			console.log(sortModeAllTasksView[0])
+			return sortModeAllTasksView
+		}
+	}
+
+	const sortByHeadingComponent =
+		<View style={{ ...styles.dropDownHeadingStyle }}>
+			<View style={styles.ascendingSwitchContainer}>
+				{isAscending &&
+					<Text style={[fontStyles.styledH4, styles.ascendingSwitchText]}>Ascending </Text>
+				}
+				{!isAscending &&
+					<Text style={[fontStyles.styledH4, styles.ascendingSwitchText]}>Descending </Text>
+				}
+				<Switch
+					style={styles.ascendingSwitch}
+					onValueChange={isAscendingChanged}
+					value={isAscending}
+					trackColor={{ false: '#767577', true: '#81b0ff' }}
+				/>
+			</View>
+			<Text style={[fontStyles.styledH4, styles.dropDownHeadingTextStyle]}>Sort By: </Text>
+		</View>
 
 	return (
 
@@ -61,10 +127,9 @@ const TaskHeader = ({
 						buttonComponent={viewButton}
 						dropDownOptions={TASKS_PAGE_VIEW_MODES}
 						onSelect={onViewModeChanged}
-						defaultValue={viewMode}
 						loadingItemIndex={loadingItemIndex}
-						isLoading={isLoading}
-						 />
+						defaultValue={"Journal View (Default)"}
+					/>
 
 					<View style={styles.currentDateContainer}>
 
@@ -83,7 +148,17 @@ const TaskHeader = ({
 						<DateTimePickerModal isVisible={isDatePickerVisible} mode="date" display='inline' onConfirm={handleConfirm} onCancel={hideDatePicker} date={selectedDate} />
 
 					</View>
-					<DropDown buttonComponent={sortButton} dropDownOptions={TASKS_PAGE_VIEW_MODES} position="left" />
+					<DropDown
+						headingComponent={sortByHeadingComponent}
+						buttonComponent={sortButton}
+						dropDownOptions={TASKS_PAGE_SORT_MODES}
+						position="left"
+						hasHeading={true}
+						headingIndex={0}
+						onSelect={onSortModeChanged}
+						sortButtonRef={sortButtonRef}
+						defaultValue={"Importance"}
+					/>
 				</View>
 			</View>
 			<View style={styles.addButtons}>
@@ -100,6 +175,30 @@ const TaskHeader = ({
 }
 
 const styles = StyleSheet.create({
+	ascendingSwitch: {
+		transform: [{ scaleX: .8 }, { scaleY: .8 }]
+
+	},
+	ascendingSwitchText: {
+		fontSize: 15,
+		color: "gray"
+	},
+	ascendingSwitchContainer: {
+		flexDirection: "row",
+		gap: 3,
+		alignItems: "center"
+	},
+	dropDownHeadingTextStyle: {
+		fontSize: 18,
+		color: 'gray',
+	},
+	dropDownHeadingStyle: {
+		backgroundColor: Color.DarkestBlue,
+		flexDirection: 'column',
+		paddingHorizontal: 12,
+		paddingVertical: 8,
+		borderWidth: 0.5,
+	},
 	viewButton: {
 		backgroundColor: Color.DarkBlue,
 		borderRadius: 5,
