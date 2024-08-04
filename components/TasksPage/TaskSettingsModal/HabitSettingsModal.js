@@ -19,6 +19,8 @@ import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/S
 import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, onlyDatesAreSame, getEndOfDay } from '../../../utils/DateHelper';
 import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry, editSelectedHabitOn_ConfirmEdit, editSelectedAndUpcoming_OnConfirmEdit, editAll_OnConfirmEdit } from '../TasksPageSupabase';
+import { HABIT_HISTORY_COLUMNS, HABIT_TASKS_TABLE_COLUMNS } from '../../../utils/AppConstants';
+import { deepCopyObject, getHabitHistoryUpdateDict, getHabitTasksTableUpdateDict, objIsEmpty } from '../../../utils/OtherHelpers';
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -164,8 +166,11 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       importanceBoxRef?.current?.setImportance(myHabitSettings.importance)
       setSettingsMode(TASK_SETTINGS_MODES.EDIT_TASK)
 
-      setInitialHabitSettings(myHabitSettings)
-      setInitialHabitHistoryEntry(habitHistoryEntry)
+      setInitialHabitSettings(deepCopyObject(myHabitSettings))
+      setInitialHabitHistoryEntry(deepCopyObject(habitHistoryEntry))
+
+      console.log("=================================")
+      console.log(JSON.stringify(initialHabitSettings, null, 2))
     }
   }));
 
@@ -211,6 +216,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
 
 
     console.log(optionSelected)
+    const habitHistoryUpdateDict = getHabitHistoryUpdateDict({initialHabitSettings, habitSettingsEdited})
     // console.log(JSON.stringify(taskSettingsEdited, null, 2 ))
 
     // edit specific habitHistory entry (based on id and habit_due_date) with correct settings
@@ -248,6 +254,8 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
     } else {
       console.warn("invalid option selected for confirming edits")
     }
+
+    // update repeatDays if ncessary:
   }
 
   const onSavePress = async () => {
@@ -273,7 +281,28 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       habitSettingsEdited.title = habitSettingsEdited.title.replace(/^\s+|\s+$/g, '');
       dispatch({ type: ACTIONS.UPDATE_ALL, payload: { newTaskSettings: habitSettingsEdited } })
 
-      habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, habitSettingsEdited)
+      const tasksTableUpdateDict = getHabitTasksTableUpdateDict({ initialHabitSettings, habitSettingsEdited })
+      const habitHistoryUpdateDict = getHabitHistoryUpdateDict({ initialHabitSettings, habitSettingsEdited })
+
+      // if we need to make changing to the habitHistory table, only then we open the modal
+      // so we can ask the user how exactly they want to apply these changes
+      if (!objIsEmpty(habitHistoryUpdateDict)) {
+        habitApplyModalRef?.current?.showHabitApplyModal(onConfirmEditsComplete, habitSettingsEdited)
+      }
+
+      // if tasksTableUpdateDict is not empty, then we apply its edits for the Tasks table
+      if (!objIsEmpty(tasksTableUpdateDict)) {
+        console.log(JSON.stringify(tasksTableUpdateDict, null, 2))
+        await supabaseUpdateTaskSettings(
+          session,
+          tasksTableUpdateDict,
+          habitSettingsEdited.id,
+          setTaskItems,
+          taskItems,
+          setHabitStats,
+          habitHistory)
+      }
+
     }
 
 
@@ -322,7 +351,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
         <DurationBox duration={habitSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
         <ImportanceBox importance={habitSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
         {/* <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} /> */}
-        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} showNote={settingsMode==TASK_SETTINGS_MODES.EDIT_TASK} />
+        <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} showNote={settingsMode == TASK_SETTINGS_MODES.EDIT_TASK} />
         <DueDatePickerBox dispatch={dispatch} dateTime={habitSettings.dueDate} isHabit={habitSettings.isHabit} />
         <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
       </ScrollView>

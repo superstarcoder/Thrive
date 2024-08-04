@@ -2,6 +2,7 @@
 import { supabase } from "../../lib/supabase"
 import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat } from "../../utils/DateHelper"
 import { HABIT_HISTORY_COLUMNS } from "../../utils/AppConstants"
+import { getHabitHistoryUpdateDict } from "../../utils/OtherHelpers"
 
 // local AND supabase changes
 export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, setTaskItems, taskItems, setHabitStats, habitHistory) => {
@@ -413,13 +414,6 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
   for (var d = start_date; d < dayAfterNow; d.setDate(d.getDate() + 1)) {
     if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true) datesToCheck.push(new Date(d));
   }
-  // if (habitId == 587) {
-  //   for (const day of datesToCheck) {
-  //     console.log((new Date(start_date)).toLocaleDateString())
-  //     // console.log(day.toLocaleDateString())
-  //   }
-  //   console.log({ daysToCheck: datesToCheck, "id": habitSettings["id"] })
-  // }
 
   for (var i = 0; i < datesToCheck.length; i += 1) {
     const selectedDate = datesToCheck[i]
@@ -487,7 +481,6 @@ export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, h
 // when task is added
 // when task is removed
 // when task is edited
-
 
 export const updateHabitStats = (setHabitStats, newHabitHistory) => {
   let newHabitStats = {}
@@ -568,18 +561,11 @@ export const getAllTasks = async (session) => {
  * @param {TaskSettings} habitSettingsEdited  updated habit settings based on habitSettingsModal form 
  */
 export const editSelectedHabitOn_ConfirmEdit = async ({ initialHabitSettings, habitSettingsEdited, initialHabitHistoryEntry, setHabitStats, setHabitHistory, habitHistory }) => {
-  const updateDict = {}
 
-  for (const col of HABIT_HISTORY_COLUMNS) {
-    if (initialHabitSettings[col] != habitSettingsEdited[col]) {
-      updateDict[col] = habitSettingsEdited[col]
-    }
-  }
+  updateDict = getHabitHistoryUpdateDict({initialHabitSettings, habitSettingsEdited})
 
-  if ("dueDate" in updateDict) {
-    updateDict.dueTimeOverride = (habitSettingsEdited.dueDate).toISOString()
-    delete updateDict["dueDate"]
-  }
+  console.log({updateDict})
+
   const habit_due_date = initialHabitHistoryEntry.habit_due_date
   await supabaseUpdateHabitHistoryEntry(updateDict, habitSettingsEdited.id, habitHistory, setHabitHistory, habit_due_date, setHabitStats)
 }
@@ -607,25 +593,11 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async (
     editAll = false,
   }) => {
 
-  // get update dict by comparing initial and edited habit settings
-  const updateDict = {}
-
-  for (const col of HABIT_HISTORY_COLUMNS) {
-    if (initialHabitSettings[col] != habitSettingsEdited[col]) {
-      updateDict[col] = habitSettingsEdited[col]
-    }
-  }
-
-
+  const updateDict = getHabitHistoryUpdateDict({initialHabitSettings, habitSettingsEdited})
   let updateDict_TasksTable = { ...updateDict }
-  if ("dueDate" in updateDict_TasksTable) {
-    updateDict_TasksTable.dueDate = new Date(habitSettingsEdited.dueDate) // we don't convert to ISO string since `supabaseUpdateTaskSettings` does that for us
-  }
-
-  // We do this because the HabitHistory table has column 'dueTimeOverride' instead of due date
-  if ("dueDate" in updateDict) {
-    updateDict.dueTimeOverride = (habitSettingsEdited.dueDate).toISOString() // convert to ISOString
-    delete updateDict["dueDate"]
+  if ("dueTimeOverride" in updateDict_TasksTable) {
+    updateDict_TasksTable.dueDate = new Date(updateDict_TasksTable.dueTimeOverride)
+    delete updateDict_TasksTable["dueTimeOverride"]
   }
 
   let allHabitEntries
