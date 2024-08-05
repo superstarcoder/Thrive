@@ -1,43 +1,35 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react'
-import { Clock } from 'phosphor-react-native';
+import { Clock, Pencil, PencilSimple, PencilSimpleLine } from 'phosphor-react-native';
 import Color from '../../../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../../text/StyledText';
+import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts } from '../../text/StyledText';
+// import ScrollSelect from '../../FormComponents/ScrollSelect';
 import ScrollSelect from '../../FormComponents/ScrollSelect';
 
-const DurationBox =  forwardRef(({dispatch, duration}, ref) => {
+const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
 
-  // const [duration, setDuration] = useState(0)
-
-  // useEffect(() => {
-  //   onChange(duration)
-  // }, [duration])
-
-  // load fonts
- 
-
-  let dataArray = [0, 0.2, 0.5, 0.8]
+  var dataArray = [0, 0.1, 0.2, 0.5, 0.8]
 
   for (let i = 1; i < 9; i += 0.5) {
     dataArray.push(i)
   }
 
-  // const setDurationOnUpdate = (value) => {
-  //   setDuration(value)
-  // }
+  const [selectedIndex, setSelectedIndex] = useState(dataArray.indexOf(duration));
 
   const scrollSelectRef = useRef()
 
   useImperativeHandle(ref, () => ({
 
-    setDuration (duration) {
+    setDuration(duration) {
       const index = dataArray.indexOf(duration)
       if (index == -1) {
         console.error("DurationBox.js: setDuration: duration not in list of possible durations")
       }
       // console.log(index, duration, dataArray)
       scrollSelectRef?.current?.scrollToIndex(index)
+
+      setSelectedIndex(dataArray.indexOf(duration))
     }
 
   }));
@@ -55,16 +47,22 @@ const DurationBox =  forwardRef(({dispatch, duration}, ref) => {
     <View style={styles.inputBox}>
       <View style={styles.inputBoxLeft}>
         <Text style={styles.boxTitleContainer}>
-            <StyledH2 text={"Duration "}/>
-            <StyledH4 text={"(estimate)"} style={{color: Color.Gray}}/>
+          <StyledH2 text={"Duration "} />
+          <StyledH4 text={"(estimate)"} style={{ color: Color.Gray }} />
         </Text>
         <View style={styles.timeText}>
           <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
-          <StyledH4 text={duration+" hours "}/>
+          {/* <View style={styles.durationContainer}> */}
+          <StyledH4 text={dataArray[selectedIndex] + " hours "} style={styles.durationText} />
+          {/* </View> */}
+          {/* <View style={styles.editButton}>
+            <Pencil size={25} weight="regular" color={"black"} style={styles.buttonIcon} />
+          </View> */}
         </View>
       </View>
       <View style={styles.inputBoxRight}>
-        <ScrollSelect dataArray={dataArray} dispatch={dispatch} duration={duration} ref={scrollSelectRef}/>
+        <ScrollSelect dispatch={dispatch} dataArray={dataArray} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
+        {/* <ScrollSelect dataArray={dataArray} dispatch={dispatch} duration={duration} ref={scrollSelectRef} /> */}
       </View >
     </View>
   )
@@ -77,9 +75,29 @@ const styles = StyleSheet.create({
     backgroundColor: Color.DarkestBlue,
     borderRadius: 12,
     paddingHorizontal: 27,
-    paddingVertical: 20,
+    paddingVertical: 35,
     flexDirection: "row",
     marginBottom: 22,
+  },
+  durationContainer: {
+    backgroundColor: Color.DarkBlue,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 2,
+  },
+  durationText: {
+    textAlign: "center"
+  },
+  editButton: {
+    marginLeft: 10,
+    backgroundColor: Color.LightBlue,
+    padding: 3,
+    borderRadius: 10,
+    flexDirection: "row",
+  },
+  editButtonText: {
+    color: "black"
   },
   inputBoxLeft: {
 
@@ -87,15 +105,17 @@ const styles = StyleSheet.create({
   inputBoxRight: {
     flex: 1,
     justifyContent: "center",
+    position: "absolute",
+    right: "10%",
     paddingRight: 10
   },
 
   clockIcon: {
-	  marginRight: 7,
+    marginRight: 7,
   },
   timeText: {
-	flexDirection: "row",
-
+    flexDirection: "row",
+    alignItems: "center",
   },
   textInput: {
     borderBottomColor: "#000",

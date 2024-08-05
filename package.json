@@ -54,6 +54,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.8.6",
+    "react-native-wheely": "^0.6.0",
     "semver": "^7.5.2",
     "typescript": "~5.3.3",
     "uuid": "^9.0.0"
