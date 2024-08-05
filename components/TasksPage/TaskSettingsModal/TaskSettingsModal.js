@@ -166,8 +166,8 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
   // returns false if there was no error & true if there was
   const validateFields = () => {
 
-    console.log(taskSettings.isHabit)
-    console.log(taskSettings.repeatDays)
+    // console.log(taskSettings.isHabit)
+    // console.log(taskSettings.repeatDays)
 
     if (taskSettings.title == "") {
       Alert.alert("Title cannot be left blank")
@@ -233,24 +233,33 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
   const [taskSettings, dispatch] = useReducer(reducer, getInitSettings())
   const scrollViewRef = useRef()
 
+  const handleScroll = (event) => {
+    // console.log(event.nativeEvent.contentOffset.y);
+  }
+
   return (
     <BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
-        <View style={styles.headingBox}>
+      <View style={styles.headingBox}>
         <StyledH2 style={styles.infoText} text={"Task Settings"} />
         <CheckFat size={25} weight={"fill"} color={"green"} style={styles.buttonIcon} />
       </View>
 
-      <ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
-        <TitleBox title={taskSettings.title} dispatch={dispatch} />
-        <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
-        <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
-        <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
-        <DescriptionBox description={taskSettings.description} dispatch={dispatch} />
-        {/* <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
+
+      <ScrollView onScroll={handleScroll} style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
+        {/* <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'center', }} behavior="padding" enabled keyboardVerticalOffset={100}> */}
+          <TitleBox title={taskSettings.title} dispatch={dispatch} />
+          <DescriptionBox bottomSheetRef={bottomSheetRef} description={taskSettings.description} dispatch={dispatch} />
+          <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
+          <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
+          <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
+          {/* <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
         <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} />
         <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit} /> */}
-        {/* <StyledH1 style={styles.settingsTitle} text={"Advanced"} /> */}
+          {/* <StyledH1 style={styles.settingsTitle} text={"Advanced"} /> */}
+        {/* </KeyboardAvoidingView> */}
       </ScrollView>
+
+
 
       <View style={styles.addTaskModalButtons}>
         <TouchableOpacity onPress={onSavePress}>

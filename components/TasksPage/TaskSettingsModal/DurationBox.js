@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native'
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Clock, Pencil, PencilSimple, PencilSimpleLine } from 'phosphor-react-native';

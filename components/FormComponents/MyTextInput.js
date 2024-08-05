@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
 import Color from '../../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
+import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts } from '../text/StyledText';
 import { useFonts } from 'expo-font'
-import React, {useState, forwardRef, useImperativeHandle} from 'react'
+import React, { useState, forwardRef, useImperativeHandle } from 'react'
 
 
 
-const MyTextInput = ({placeholderText, onChangeText, text, multiline=false}) => {
+const MyTextInput = ({ onFocus, onBlur, placeholderText, onChangeText, text, inputRef=undefined, multiline = false }) => {
 
   // load fonts
   var [fontsLoaded] = useFonts({
@@ -19,7 +19,7 @@ const MyTextInput = ({placeholderText, onChangeText, text, multiline=false}) => 
 
   return (
     <View>
-      <TextInput multiline={multiline} value={text} style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.GrayBlue} onChangeText={onChangeText}/>
+        <TextInput onFocus={onFocus} onBlur={onBlur} ref={inputRef} multiline={multiline} value={text} style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.GrayBlue} onChangeText={onChangeText} />
     </View>
   )
 }

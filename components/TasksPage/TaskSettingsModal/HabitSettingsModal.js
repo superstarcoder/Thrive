@@ -169,8 +169,8 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       setInitialHabitSettings(deepCopyObject(myHabitSettings))
       setInitialHabitHistoryEntry(deepCopyObject(habitHistoryEntry))
 
-      console.log("=================================")
-      console.log(JSON.stringify(initialHabitSettings, null, 2))
+      // console.log("=================================")
+      // console.log(JSON.stringify(initialHabitSettings, null, 2))
     }
   }));
 
@@ -215,7 +215,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
   const onConfirmEditsComplete = async (habitSettingsEdited, optionSelected, setLoadingString) => {
 
 
-    console.log(optionSelected)
+    // console.log(optionSelected)
     const habitHistoryUpdateDict = getHabitHistoryUpdateDict({initialHabitSettings, habitSettingsEdited})
     // console.log(JSON.stringify(taskSettingsEdited, null, 2 ))
 
@@ -292,7 +292,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
 
       // if tasksTableUpdateDict is not empty, then we apply its edits for the Tasks table
       if (!objIsEmpty(tasksTableUpdateDict)) {
-        console.log(JSON.stringify(tasksTableUpdateDict, null, 2))
+        // console.log(JSON.stringify(tasksTableUpdateDict, null, 2))
         await supabaseUpdateTaskSettings(
           session,
           tasksTableUpdateDict,
