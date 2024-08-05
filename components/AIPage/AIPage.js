@@ -59,7 +59,7 @@ Below, I've pasted productivity data for the month of ${monthName}
 const promptFooter = `
 
 As a reminder, please output a RAW markdown file only.`
-const AIPage = ({ taskItems }) => {
+const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
 
 
   var [fontsLoaded] = useFonts({
@@ -79,10 +79,10 @@ const AIPage = ({ taskItems }) => {
 
   const askAIButtonPressed = async (myMonth, myYear, taskItems) => {
 
-    if (lastClickedTime != null) {
+    if (lastAnalyzedTime != null) {
       let now = new Date()
       let time1 = now.getTime()
-      let time2 = lastClickedTime.getTime()
+      let time2 = lastAnalyzedTime.getTime()
       let timePassed = Math.abs(time2 - time1) / 1000
       if (timePassed < APISecondsTimeout) {
         setErrorMessage(`Please try again in ${(APISecondsTimeout - timePassed).toFixed()} seconds!`)
@@ -105,14 +105,13 @@ const AIPage = ({ taskItems }) => {
 
     setIsLoading(false)
     setAnalysisText(completion.choices[0].message.content)
-    setLastClickedTime(new Date())
+    setLastAnalyzedTime(new Date())
   }
 
   // Keep up the good work and focus on these areas for continued improvement! 💪
 
   const [analsysisText, setAnalysisText] = useState(``)
   const [isLoading, setIsLoading] = useState(false)
-  const [lastClickedTime, setLastClickedTime] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
   return (

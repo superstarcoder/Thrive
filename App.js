@@ -82,6 +82,7 @@ export default function App() {
   const [taskItems, setTaskItems] = useState([]);
   const [habitHistory, setHabitHistory] = useState({})
   const [habitStats, setHabitStats] = useState({})
+  const [lastAnalyzedTime, setLastAnalyzedTime] = useState(null)
   // const [dataIsFetched, setDataIsFetched] = useState(true)
   const tasksPageRef = useRef();
   // authorize user into session
@@ -199,7 +200,7 @@ export default function App() {
           }
           {currentPage == "AI" &&
             <>
-              <AIPage taskItems={taskItems} />
+              <AIPage taskItems={taskItems} lastAnalyzedTime={lastAnalyzedTime} setLastAnalyzedTime={setLastAnalyzedTime} />
             </>
           }
           {currentPage == "enter_new_password_form" &&
