@@ -154,6 +154,7 @@ export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, h
 
     if (error) {
       console.log("unable to insert habit. HabitId: " + habitId)
+      console.log("habit_due_date: "+habit_due_date)
       console.warn(error)
     } else {
       console.log("completed successfully!!")
