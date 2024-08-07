@@ -259,8 +259,10 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		shadowColor: "black",
-		shadowOpacity: 1,
-		shadowRadius: 8,
+		shadowOpacity: 0.3,
+		shadowRadius: 5,
+		shadowOffset: { width: 0, height: 5 },
+		borderBottomColor: "black",
 	},
 	currentDateContainer: {
 		flexDirection: "row",

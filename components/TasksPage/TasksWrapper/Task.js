@@ -292,8 +292,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5,
-    marginBottom: 10,
+    // marginTop: 5,
+    marginBottom: 13,
     // marginTop: 10,
   },
   taskContent: {
