@@ -59,5 +59,6 @@ const styles = StyleSheet.create({
 
   },
   inputTitle: {
+    color: Color.TextColorOnBg
   }
 })

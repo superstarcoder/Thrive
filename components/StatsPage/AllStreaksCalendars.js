@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
     paddingBottom: 200,
   },
   sectionHeading: {
-    alignSelf: "center"
+    alignSelf: "center",
+	color: Color.TextColorOnBg
   },
   infoBox: {
     display: "flex",

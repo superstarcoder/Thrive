@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   sliderBarFilled: {
     height: 29,
     width: 50,
-    backgroundColor: Color.Orange,
+    backgroundColor: Color.StreaksBar,
     borderRadius: 30,
   },
   sliderCircle: {

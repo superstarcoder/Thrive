@@ -44,13 +44,14 @@ const styles = StyleSheet.create({
 		paddingTop: 100,
 	},
 	sectionHeading: {
-		alignSelf: "center"
+		alignSelf: "center",
+		color: Color.TextColorOnBg
 	},
 	container: {
 		gap: 10,
 	},
 	text: {
-		color: Color.White,
+		color: Color.TextColor,
 	},
 
 	sectionTitle: {

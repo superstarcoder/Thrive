@@ -173,7 +173,7 @@ const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry
             <StyledH4 text={`${duration} hours`} style={styles.timeText}/>
           </View>
           <View style={styles.importanceDetail}>
-            <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
+            <WarningCircle size={20} weight="fill" color={Color.ThemeAccent} style={styles.clockIcon} />
             {importanceText}
           </View>
         </View>

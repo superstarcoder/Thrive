@@ -55,10 +55,10 @@ const DescriptionBox = ({ description, dispatch }) => {
 
   let title;
   if (description == "") {
-    title = <StyledH2 text={"Description"} />
+    title = <StyledH2 text={"Description"} style={{color: Color.TextColorOnBg}} />
   }
   else {
-    title = <StyledH3 text={"Description"} style={{ color: Color.Gray }} />
+    title = <StyledH3 text={"Description"} style={{color: Color.TextColorOnBg}} />
   }
 
   return (

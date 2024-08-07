@@ -72,7 +72,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
               {optionSelected == "edit_selected_habit" ? (
                 <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
               ) : (
-                <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
+                <Circle size={30} weight="fill" color={Color.TextColor} style={styles.buttonIcon} />
               )}
 
               <Text style={[fontStyles.styledH3, styles.buttonText2]}>Selected habit event</Text>
@@ -96,7 +96,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
               {optionSelected == "edit_all" ? (
                 <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
               ) : (
-                <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
+                <Circle size={30} weight="fill" color={Color.TextColor} style={styles.buttonIcon} />
               )}
               <Text style={[fontStyles.styledH3, styles.buttonText2]}>All habit events (old habit setting will be replaced)</Text>
             </View>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingStringText: {
-    color: "white"
+    color: Color.TextColor
 
   },
   taskMenuModal: {

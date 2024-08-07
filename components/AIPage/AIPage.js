@@ -165,10 +165,10 @@ const styles = StyleSheet.create({
     color: Color.RedAccent
   },
   body: {
-    color: "white"
+    color: Color.TextColor
   },
   heading: {
-    color: "white"
+    color: Color.TextColor
   },
   scrollView: {
     display: "flex",
@@ -197,7 +197,8 @@ const styles = StyleSheet.create({
     paddingBottom: 200,
   },
   sectionHeading: {
-    alignSelf: "center"
+    alignSelf: "center",
+    color: Color.TextColorOnBg
   },
   container: {
     flex: 1,
@@ -209,18 +210,18 @@ const styles = StyleSheet.create({
 const markdownStyles = StyleSheet.create({
 
   body: {
-    color: Color.Gray,
+    color: Color.GrayOnBg,
     fontFamily: "MPlusRegular",
     fontSize: 18,
   },
   heading2: {
     fontSize: 40,
-    color: '#FFFFFF',
+    color: Color.TextColorOnBg,
   },
   heading3: {
     fontSize: 25,
     // marginBottom: 20,
-    color: '#FFFFFF',
+    color: Color.TextColorOnBg,
     fontFamily: "MPlusMedium",
     // backgroundColor: "black"
   },
@@ -228,7 +229,7 @@ const markdownStyles = StyleSheet.create({
     fontSize: 22,
     marginBottom: 5,
     marginTop: 25,
-    color: Color.LightBlue,
+    color: Color.Blue,
     fontFamily: "MPlusMedium",
   },
   heading5: {

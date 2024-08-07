@@ -66,7 +66,7 @@ const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
       <View style={styles.inputBox}>
         <View style={styles.inputBoxLeft}>
           <Text style={styles.boxTitleContainer}>
-              <StyledH2 text={"Importance"}/>
+              <StyledH2 text={"Importance"} style={{color: Color.TextColorOnBg}}/>
           </Text>
         <View style={styles.sliderRow}>
           <SliderBar getSliderPercent={setSliderPercent} ref={sliderBarRef} onSliderMoveEnd={onSliderMoveEnd}/>
@@ -74,7 +74,7 @@ const ImportanceBox = forwardRef (({dispatch, importance}, ref) => {
         </View>
           <View style={styles.importanceText}>
             <WarningCircle size={20} weight="fill" color={Color.Blue} style={styles.clockIcon} />
-            <StyledH4 text={importanceText+" importance "}/>
+            <StyledH4 text={importanceText+" importance "} style={{color: Color.TextColorOnBg}}/>
           </View>
         </View>
         <View style={styles.inputBoxRight}>
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   sliderInfo: {
+    color: Color.TextColorOnBg,
     marginTop: 17,
     marginLeft: 5,
   },

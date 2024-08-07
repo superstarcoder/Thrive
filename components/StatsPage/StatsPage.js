@@ -62,14 +62,15 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   sectionHeading: {
-    alignSelf: "center"
+    alignSelf: "center",
+    color: Color.TextColorOnBg
   },
   container: {
     flex: 1,
     backgroundColor: Color.DarkestBlue,
   },
   text: {
-    color: Color.White,
+    color: Color.TextColor,
   },
   tasksWrapper: {
     marginTop: 20,

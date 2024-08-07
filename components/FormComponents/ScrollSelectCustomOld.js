@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   scrollView: {
-    backgroundColor: Color.White,
+    backgroundColor: "white",
     borderRadius: 11,
     width: 45,
     height: 35,

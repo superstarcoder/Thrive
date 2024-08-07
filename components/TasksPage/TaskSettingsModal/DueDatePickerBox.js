@@ -177,10 +177,11 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   currentDate: {
-    color: "white",
+    color: Color.TextColor,
     // color: "hsla(114, 100%, 50%, 1)"
   },
   inputTitle: {
+    color: Color.TextColorOnBg,
     marginBottom: 8,
   },
   changeDateButton: {

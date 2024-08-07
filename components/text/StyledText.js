@@ -76,22 +76,22 @@ export function StyledH4({text, style={}, weight="regular"}) {
 export const fontStyles = StyleSheet.create({
 	styledH1: {
     fontFamily: "MPlusMedium",
-    color: Color.White,
+    color: Color.TextColor,
     fontSize: 24,
 	},
   styledH2: {
     fontFamily: "MPlusMedium",
-    color: Color.White,
+    color: Color.TextColor,
     fontSize: 20,
 	},
   styledH3: {
     fontFamily: "MPlusMedium",
-    color: Color.White,
+    color: Color.TextColor,
     fontSize: 16,
 	},
   styledH4: {
     fontFamily: "MPlusMedium",
-    color: Color.White,
+    color: Color.TextColor,
     fontSize: 12,
 	},
 })

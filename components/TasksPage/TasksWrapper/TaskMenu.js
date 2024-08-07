@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   buttonText2: {
-    color: "#CFD6FC",
+    color: Color.TextColorOnBg,
     marginRight: "auto",
   }
 })

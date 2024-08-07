@@ -34,6 +34,6 @@ const styles = StyleSheet.create({
 		backgroundColor: Color.DarkBlue
 	},
 	itemTextStyle: {
-		color: "white"
+		color: Color.TextColor
 	}
 })

@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.DarkestBlue,
   },
   text: {
-    color: Color.White,
+    color: Color.TextColor,
   },
   tasksWrapper: {
     marginTop: 20,

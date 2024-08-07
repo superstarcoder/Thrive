@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Color from '../assets/themes/Color';
 import NavBarButtons from './NavBarButtons';
 
-const NavBar = ({currentPage, setCurrentPage}) => {
+const NavBar = ({ currentPage, setCurrentPage }) => {
 
 	const onNavBarButtonPress = async (pageName) => {
 		if (currentPage != pageName) {
@@ -11,17 +11,17 @@ const NavBar = ({currentPage, setCurrentPage}) => {
 		}
 	}
 
-  return (
+	return (
 		<View style={styles.navbarContainer}>
-            <View style={styles.navbar}>
-				<NavBarButtons label={"settings"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
-				<NavBarButtons label={"stats"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
-				<NavBarButtons label={"home"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
-				<NavBarButtons label={"stats"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
-				<NavBarButtons label={"AI"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
-            </View>
-          </View>
-  )
+			<View style={styles.navbar}>
+				<NavBarButtons label={"settings"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage} />
+				<NavBarButtons label={"stats"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage} />
+				<NavBarButtons label={"home"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage} />
+				<NavBarButtons label={"stats"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage} />
+				<NavBarButtons label={"AI"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage} />
+			</View>
+		</View>
+	)
 }
 
 export default NavBar
@@ -35,10 +35,10 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		paddingHorizontal: 35
-	  },
-	  navbar: {
+	},
+	navbar: {
 		borderRadius: 30,
-		backgroundColor: Color.DarkestBlue,
+		backgroundColor: Color.NavBarColor,
 		height: 70,
 		alignItems: "center",
 		justifyContent: "space-between",
@@ -48,8 +48,11 @@ const styles = StyleSheet.create({
 		width: "100%",
 		// width: "80%",
 		shadowColor: "black",
-		shadowOpacity: 0.2,
 		paddingHorizontal: 23,
 		paddingBottom: 10,
-	  },
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 0 },
+		shadowOpacity: 1,
+		shadowRadius: 5,
+	},
 })

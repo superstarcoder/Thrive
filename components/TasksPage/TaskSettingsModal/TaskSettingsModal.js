@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: "white",
+    color: Color.TextColorOnBg,
     alignSelf: "center",
   },
 

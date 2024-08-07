@@ -41,11 +41,11 @@ const TaskHeader = ({
 
 	const viewButton =
 		<View style={styles.viewButton}>
-			<Eye size={30} weight="duotone" />
+			<Eye size={30} weight="duotone" color={Color.IconColor} />
 		</View>
 	const sortButton =
 		<View style={styles.sortButton}>
-			<ArrowsDownUp size={30} weight="duotone" />
+			<ArrowsDownUp size={30} weight="duotone" color={Color.IconColor} />
 		</View>
 	const onViewModeChanged = (selectedItem, index) => {
 		if (selectedItem == viewMode) return // if view mode didn't actually change
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
 	},
 	ascendingSwitchText: {
 		fontSize: 15,
-		color: "gray"
+		color: Color.GrayOnBg,
 	},
 	ascendingSwitchContainer: {
 		flexDirection: "row",
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
 	},
 	dropDownHeadingTextStyle: {
 		fontSize: 18,
-		color: 'gray',
+		color: Color.GrayOnBg,
 	},
 	dropDownHeadingStyle: {
 		backgroundColor: Color.DarkestBlue,

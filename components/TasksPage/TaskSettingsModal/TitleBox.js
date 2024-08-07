@@ -8,34 +8,12 @@ import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
 
 const TitleBox = ({title, dispatch}) => {
 
-  // const [currentText, setCurrentText] = useState(defaultValue)
-  // console.log("default title in title box: "+defaultValue)
-
-	// const onChange = (title) => {
-  //   onChange(title)
-  //   // setCurrentText(text)
-	// }
-
-  // const inputRef = useRef()
-
-  // useImperativeHandle(ref, () => ({
-  //   setValue (newValue) {
-  //     setCurrentText(newValue)
-  //     inputRef?.current?.setValue(newValue)
-  //   }
-  // }));
-
-
-  // useEffect(() => {
-  //   onChange(currentText)
-  // }, [currentText])
-
   let titleComp;
   if (title == "") {
-    titleComp = <StyledH2 text={"Title"}/>
+    titleComp = <StyledH2 text={"Title"} style={{color: Color.TextColorOnBg}}/>
   }
   else {
-    titleComp = <StyledH3 text={"Title"} style={{color: Color.Gray}}/>
+    titleComp = <StyledH3 text={"Title"} style={{color: Color.TextColorOnBg}}/>
   }
 
   return (

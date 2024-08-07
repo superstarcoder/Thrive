@@ -47,8 +47,8 @@ const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
     <View style={styles.inputBox}>
       <View style={styles.inputBoxLeft}>
         <Text style={styles.boxTitleContainer}>
-          <StyledH2 text={"Duration "} />
-          <StyledH4 text={"(estimate)"} style={{ color: Color.Gray }} />
+          <StyledH2 text={"Duration "} style={{ color: Color.TextColorOnBg }}  />
+          <StyledH4 text={"(estimate)"} style={{ color: Color.GrayOnBg }} />
         </Text>
         <View style={styles.timeText}>
           <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   durationText: {
+    color: Color.TextColorOnBg,
     textAlign: "center"
   },
   editButton: {

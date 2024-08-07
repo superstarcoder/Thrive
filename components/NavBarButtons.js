@@ -23,11 +23,8 @@ const NavBarButtons = ({label, onNavBarButtonPress, currentPage}) => {
 		}
 	}
 	if (label == "home") {
-		selectedStyle = {
-			backgroundColor: Color.LightBlue,
-			width: 47,
-			height: 47,
-		}
+		selectedStyle["width"] = 47
+		selectedStyle["height"] = 47
 	}
 
 	const renderIcon = (label) => {

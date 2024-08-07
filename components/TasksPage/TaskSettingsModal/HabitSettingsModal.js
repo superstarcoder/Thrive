@@ -348,12 +348,12 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       </View>
       <ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
         <TitleBox title={habitSettings.title} dispatch={dispatch} />
+        <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
         <DurationBox duration={habitSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
         <ImportanceBox importance={habitSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
         {/* <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} /> */}
         <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} showNote={settingsMode == TASK_SETTINGS_MODES.EDIT_TASK} />
         <DueDatePickerBox dispatch={dispatch} dateTime={habitSettings.dueDate} isHabit={habitSettings.isHabit} />
-        <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
       </ScrollView>
 
       <View style={styles.addTaskModalButtons}>
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: "white",
+    color: Color.TextColorOnBg,
     alignSelf: "center",
   },
   buttonText: {

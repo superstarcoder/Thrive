@@ -562,6 +562,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
+    color: Color.TextColorOnBg,
     marginVertical: 5,
   },
   flatListContainerStyle: {

@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
   textInput: {
     borderBottomColor: "#000",
     borderBottomWidth: 1,
-    fontFamily: "MPlusRegular"
+    fontFamily: "MPlusRegular",
+    color: Color.TextColorOnBg
   }
 })
