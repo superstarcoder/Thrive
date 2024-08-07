@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: Color.BlueAccent,
+    color: Color.TextColorOnBg,
     fontSize: 13,
   },
   errorText: {

@@ -25,8 +25,8 @@ const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry
   
   if (status == "complete" || (status == "incomplete" && isHabit) || (status == "incomplete_ignored" && !isHabit) || (status == "exempt")) {
     taskConditionalStyle = {
-      backgroundColor: "#28265c",
-      opacity: 0.65,
+      backgroundColor: Color.DarkBlue,
+      opacity: 0.55,
     }
   }
   else {
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     // marginTop: 5,
-    marginBottom: 13,
+    marginBottom: 15,
     // marginTop: 10,
   },
   taskContent: {
