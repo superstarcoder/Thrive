@@ -15,6 +15,7 @@ const NavBar = ({currentPage, setCurrentPage}) => {
 		<View style={styles.navbarContainer}>
             <View style={styles.navbar}>
 				<NavBarButtons label={"settings"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
+				<NavBarButtons label={"stats"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
 				<NavBarButtons label={"home"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
 				<NavBarButtons label={"stats"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
 				<NavBarButtons label={"AI"} onNavBarButtonPress={onNavBarButtonPress} currentPage={currentPage}/>
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
 		height: 90,
 		justifyContent: "center",
 		alignItems: "center",
+		paddingHorizontal: 35
 	  },
 	  navbar: {
 		borderRadius: 30,
@@ -43,10 +45,11 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignSelf: "center",
 		bottom: 0,
-		width: "80%",
+		width: "100%",
+		// width: "80%",
 		shadowColor: "black",
 		shadowOpacity: 0.2,
-		paddingHorizontal: 30,
+		paddingHorizontal: 23,
 		paddingBottom: 10,
 	  },
 })
