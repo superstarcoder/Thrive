@@ -19,7 +19,7 @@ const MyTextInput = ({ onFocus, onBlur, placeholderText, onChangeText, text, inp
 
   return (
     <View>
-        <TextInput onFocus={onFocus} onBlur={onBlur} ref={inputRef} multiline={multiline} value={text} style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.GrayBlue} onChangeText={onChangeText} />
+        <TextInput onFocus={onFocus} onBlur={onBlur} ref={inputRef} multiline={multiline} value={text} style={[fontStyles.styledH2, styles.textInput]} placeholder={placeholderText} placeholderTextColor={Color.PlaceholderTextColor} onChangeText={onChangeText} />
     </View>
   )
 }

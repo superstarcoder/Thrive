@@ -188,8 +188,8 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
                         stackData={hoursData}
                         xAxisColor={Color.Blue}
                         yAxisColor={Color.Blue}
-                        xAxisLabelTextStyle={{ color: "white", fontSize: 10 }}
-                        yAxisTextStyle={{ color: "white", fontSize: 10 }}
+                        xAxisLabelTextStyle={{ color: Color.TextColor, fontSize: 10 }}
+                        yAxisTextStyle={{ color: Color.TextColor, fontSize: 10 }}
                         maxValue={maxHoursGraph}
                     // labelTextStyle={{color: 'gray'}}
                     />
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.GrayBlue,
     },
     titleText: {
-        color: 'white',
+        color: Color.TextColor,
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.RedAccent,
         marginRight: 8,
     },
-    labelLegendText: { color: "lightgray" },
+    labelLegendText: { color: Color.TextColor },
     barChartContainer: {
         padding: 10,
         alignItems: 'center'

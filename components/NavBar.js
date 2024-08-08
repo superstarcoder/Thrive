@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 	navbarContainer: {
 		marginTop: "auto",
 		display: "flex",
-		backgroundColor: Color.GrayBlue,
+		backgroundColor: Color.DarkestBlue,
 		height: 90,
 		justifyContent: "center",
 		alignItems: "center",

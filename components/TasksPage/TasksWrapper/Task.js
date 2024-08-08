@@ -209,14 +209,14 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 24,
     width: 200,
-    backgroundColor: Color.DarkGray,
+    backgroundColor: Color.StreaksBarBg,
     marginTop: 12,
     borderRadius: 30,
   },
   progressBarFilled: {
     height: 24,
     width: 50,
-    backgroundColor: "#d55500",
+    backgroundColor: Color.StreaksBar,
     borderRadius: 30,
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'
   },
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     
   },
   dateTimeInfoContainer: {
-    backgroundColor: "hsl(0, 0%, 24%)",
+    backgroundColor: Color.DateTimeInfoContainer,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",

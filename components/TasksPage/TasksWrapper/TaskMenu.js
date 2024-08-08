@@ -72,7 +72,7 @@ const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, 
     <BottomSheet ref={bottomSheetRef} customStyle={styles.taskMenuModal} clamps={[0, heightPercent]} scrollingEnabled={true}>
 
       <View style={styles.taskMenuContainer}>
-        <Text style={[fontStyles.styledH1, { color: "#CFD6FC", }]}>Mark As:</Text>
+        <Text style={[fontStyles.styledH1, { color: Color.TextColorOnGrayBlueBg, }]}>Mark As:</Text>
 
         <TouchableOpacity onPress={onMarkAsCompletePressed}>
           <View style={styles.markAsButton}>
@@ -100,19 +100,19 @@ const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, 
           <TouchableOpacity onPress={onEditPressedWrapper}>
             <View style={styles.editTaskButton}>
               <Text style={[fontStyles.styledH1, styles.buttonText]}>Edit</Text>
-              <PencilSimpleLine size={25} weight="bold" color={"black"} />
+              <PencilSimpleLine size={25} weight="bold" color={Color.IconColor} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onCancelPress}>
             <View style={styles.cancelTaskButton}>
-              <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              <XCircle size={30} weight="bold" color={Color.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onDeletePress}>
             <View style={styles.deleteTaskButton}>
-              <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              <Trash size={30} weight="bold" color={Color.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
         </View>
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   editTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    backgroundColor: Color.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cancelTaskButton: {
-    backgroundColor: Color.Blue,
+    backgroundColor: Color.BlueAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
+    backgroundColor: Color.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: "#000"
+    color: Color.IconColor
   },
   buttonText2: {
     color: Color.TextColorOnBg,

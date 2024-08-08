@@ -109,7 +109,7 @@ const TaskHeader = ({
 					style={styles.ascendingSwitch}
 					onValueChange={isAscendingChanged}
 					value={isAscending}
-					trackColor={{ false: '#767577', true: '#81b0ff' }}
+					trackColor={{ false: Color.GrayOnBg, true: Color.DarkBlue }}
 				/>
 			</View>
 			<Text style={[fontStyles.styledH4, styles.dropDownHeadingTextStyle]}>Sort By: </Text>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
 	},
 	currentDateContainer: {
 		flexDirection: "row",
-		backgroundColor: "#101326",
+		backgroundColor: Color.DarkBlue,
 		borderRadius: 8,
 		paddingHorizontal: 0,
 		alignItems: "center"

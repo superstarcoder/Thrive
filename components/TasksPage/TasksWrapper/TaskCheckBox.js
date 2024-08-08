@@ -55,7 +55,7 @@ const TaskCheckBox = ({ onChange = null, size = 38, taskId, isHabit, habitHistor
     if (status == "complete") {
       statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon} />
     } else if (status == "incomplete") {
-      statusIcon = <Square size={size} weight="duotone" color={"black"} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <Square size={size} weight="regular" color={Color.CheckBoxColor} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else if (status == "exempt") {
       statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else { // incomplete_ignored
@@ -66,7 +66,7 @@ const TaskCheckBox = ({ onChange = null, size = 38, taskId, isHabit, habitHistor
     if (status == "complete") {
       statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon} />
     } else if (status == "pending") {
-      statusIcon = <Square size={size} weight="duotone" color={"black"} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <Square size={size} weight="regular" color={Color.CheckBoxColor} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else if (status == "exempt") {
       statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else if (status == "incomplete") { // incomplete_ignored

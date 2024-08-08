@@ -365,14 +365,14 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
 
         <TouchableOpacity onPress={onCancelPress}>
           <View style={styles.cancelTaskButton}>
-            <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+            <XCircle size={30} weight="bold" color={Color.IconColor} style={styles.buttonIcon} />
           </View>
         </TouchableOpacity>
 
         {settingsMode != TASK_SETTINGS_MODES.ADD_TASK &&
           <TouchableOpacity onPress={onDeletePress}>
             <View style={styles.deleteTaskButton}>
-              <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              <Trash size={30} weight="bold" color={Color.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
         }
@@ -403,13 +403,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   buttonText: {
-    color: "#000"
+    color: Color.IconColor
   },
   saveButtonIcon: {
     marginLeft: 5,
   },
   saveTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    backgroundColor: Color.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
+    backgroundColor: Color.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,

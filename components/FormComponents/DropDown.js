@@ -51,13 +51,13 @@ const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, so
                     {
                       ...fontStyles.styledH4,
                       ...styles.dropdownItemTxtStyle,
-                      ...(isSelected && { color: "gray" }),
+                      ...(isSelected && { color: Color.TextColor }),
                     }
 
                   }>{item}</Text>
 
                   {(isSelected) &&
-                    <Check size={20} color='gray' />
+                    <Check size={20} color={Color.Gray} />
                   }
                 </View>
               )
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     // marginLeft: -165
   },
   dropdownItemStyle: {
-    backgroundColor: '#818181',
+    backgroundColor: Color.Gray,
     flexDirection: 'row',
     paddingHorizontal: 12,
     justifyContent: 'center',

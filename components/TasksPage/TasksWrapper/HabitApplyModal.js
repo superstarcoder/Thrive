@@ -60,7 +60,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
 
       <View style={styles.taskMenuContainer}>
         <View style={styles.myTitle}>
-          <Text style={[fontStyles.styledH1, { color: "#CFD6FC" }]}>Apply Edits For:</Text>
+          <Text style={[fontStyles.styledH1, { color: Color.TextColorOnGrayBlueBg }]}>Apply Edits For:</Text>
           <Text style={[fontStyles.styledH2, { color: Color.BlueAccent }]}>(Habit Name: Sleep 7.5+ hours)</Text>
         </View>
 
@@ -72,7 +72,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
               {optionSelected == "edit_selected_habit" ? (
                 <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
               ) : (
-                <Circle size={30} weight="fill" color={Color.TextColor} style={styles.buttonIcon} />
+                <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
               )}
 
               <Text style={[fontStyles.styledH3, styles.buttonText2]}>Selected habit event</Text>
@@ -96,7 +96,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
               {optionSelected == "edit_all" ? (
                 <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
               ) : (
-                <Circle size={30} weight="fill" color={Color.TextColor} style={styles.buttonIcon} />
+                <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
               )}
               <Text style={[fontStyles.styledH3, styles.buttonText2]}>All habit events (old habit setting will be replaced)</Text>
             </View>
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   editTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    backgroundColor: Color.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
 
   },
   deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
+    backgroundColor: Color.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,

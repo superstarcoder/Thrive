@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   note: {
-    color: Color.Blue,
+    color: Color.TextColorOnBg,
     textAlign: "left",
 
   },

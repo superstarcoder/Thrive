@@ -95,7 +95,7 @@ const SliderBar = forwardRef (({getSliderPercent, onSliderMoveEnd}, sliderBarRef
       backgroundColor = Color.BlueAccent
     }
     else {
-      backgroundColor = "#FF4646"
+      backgroundColor = Color.RedAccent
     }
 
     return {

@@ -15,11 +15,11 @@ const NavBarButtons = ({label, onNavBarButtonPress, currentPage}) => {
 	if (label == currentPage) {
 		selectedStyle = {
 			// backgroundColor: Color.LightBlue
-			backgroundColor: Color.Blue
+			backgroundColor: Color.adjustBrightness(Color.NavBarButtonsColor, 0)
 		}
 	} else {
 		selectedStyle = {
-			backgroundColor: Color.LightBlue
+			backgroundColor: Color.NavBarButtonsColor
 		}
 	}
 	if (label == "home") {
@@ -35,10 +35,10 @@ const NavBarButtons = ({label, onNavBarButtonPress, currentPage}) => {
 			if (label == "AI") return <Sparkle size={30} weight="fill" color={Color.DarkBlue} style={[styles.buttonIcon]} />
 		}
 		else {
-			if (label == "settings") return <Gear size={30} weight="regular" color={"black"} style={[styles.buttonIcon]} />
-			if (label == "home") return <House size={35} weight="regular" color={"black"} style={styles.buttonIcon} />
-			if (label == "stats") return <ChartBar size={30} weight="regular" color={"black"} style={[styles.buttonIcon]} />
-			if (label == "AI") return <Sparkle size={30} weight="regular" color={"black"} style={[styles.buttonIcon]} />
+			if (label == "settings") return <Gear size={30} weight="regular" color={Color.NavBarIconsColor} style={[styles.buttonIcon]} />
+			if (label == "home") return <House size={35} weight="regular" color={Color.NavBarIconsColor} style={styles.buttonIcon} />
+			if (label == "stats") return <ChartBar size={30} weight="regular" color={Color.NavBarIconsColor} style={[styles.buttonIcon]} />
+			if (label == "AI") return <Sparkle size={30} weight="regular" color={Color.NavBarIconsColor} style={[styles.buttonIcon]} />
 		}
 	}
 
