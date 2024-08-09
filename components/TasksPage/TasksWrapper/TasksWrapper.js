@@ -7,7 +7,7 @@ import { supabase } from '../../../lib/supabase'
 import { getEndOfDay, getStartOfDay, getTimeFromDatetime, onlyDatesAreSame, toDateOnly } from '../../../utils/DateHelper';
 import TaskMenu from './TaskMenu';
 import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../TasksPageSupabase';
-import Color from '../../../assets/themes/Color';
+import { useColorsStateContext } from '../../ColorContext';
 
 
 const TasksWrapper = ({
@@ -27,6 +27,10 @@ const TasksWrapper = ({
   sortModeJournalView,
   sortModeAllTasksView
 }) => {
+
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   const onCheckBoxPressed = async (taskId, isHabit, habitHistoryEntry, status) => {
     console.log(habitHistoryEntry)
@@ -72,7 +76,7 @@ const TasksWrapper = ({
           const bDueTime = new Date(b.habitHistoryEntry?.dueTimeOverride || b.dueDate)
           return aDueTime - bDueTime;
         } else {
-          const aDueTime =  getTimeFromDatetime(a.dueDate)
+          const aDueTime = getTimeFromDatetime(a.dueDate)
           const bDueTime = getTimeFromDatetime(b.dueDate)
           return aDueTime - bDueTime;
         }
@@ -328,7 +332,7 @@ const TasksWrapper = ({
       return
     }
 
-    sortTasks(tasksToDisplay, sortModeJournalView, compareOnlyTime=true)
+    sortTasks(tasksToDisplay, sortModeJournalView, compareOnlyTime = true)
 
     return (
       <View>
@@ -551,9 +555,10 @@ const TasksWrapper = ({
 
 export default TasksWrapper
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   subtitle: {
-    color: Color.LightBlue
+    color: ColorState?.LightBlue
   },
   tasksWrapper: {
     paddingHorizontal: 20,
@@ -562,7 +567,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    color: Color.TextColorOnBg,
+    color: ColorState?.TextColorOnBg,
     marginVertical: 5,
   },
   flatListContainerStyle: {
@@ -577,4 +582,4 @@ const styles = StyleSheet.create({
   taskContainer: {
 
   }
-})
+});

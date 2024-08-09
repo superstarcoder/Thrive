@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Color from '../../assets/themes/Color'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { StyledH1, StyledH2, StyledH3 } from '../text/StyledText';
 import StreaksCalendar from './StreaksCalendar';
@@ -10,9 +9,14 @@ import { updateHabitStats } from '../TasksPage/TasksPageSupabase';
 import { BarChart } from "react-native-gifted-charts";
 import HoursGraph from './HoursGraph';
 import AllStreaksCalendars from './AllStreaksCalendars';
+import { useColorsStateContext } from '../ColorContext';
+
 
 
 const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   return (
     <View style={styles.container}>
@@ -23,7 +27,7 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
             <View>
               <HoursGraph taskItems={taskItems} habitHistory={habitHistory} />
             </View>
-            <AllStreaksCalendars  habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats}  />
+            <AllStreaksCalendars habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats} />
           </View>
 
 
@@ -36,10 +40,10 @@ const StatsPage = ({ habitStats, taskItems, habitHistory, setHabitStats }) => {
 export default StatsPage
 
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
   infoBox: {
     display: "flex",
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -47,7 +51,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: Color.BlueAccent
+    color: ColorState?.BlueAccent
   },
   scrollView: {
     display: "flex",
@@ -63,14 +67,14 @@ const styles = StyleSheet.create({
   },
   sectionHeading: {
     alignSelf: "center",
-    color: Color.TextColorOnBg
+    color: ColorState?.TextColorOnBg
   },
   container: {
     flex: 1,
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
   },
   text: {
-    color: Color.TextColor,
+    color: ColorState?.TextColor,
   },
   tasksWrapper: {
     marginTop: 20,

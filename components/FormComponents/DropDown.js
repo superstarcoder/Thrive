@@ -2,8 +2,8 @@ import { Check, Eye } from 'phosphor-react-native';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
-import Color from '../../assets/themes/Color';
 import { fontStyles } from '../text/StyledText';
+import { useColorsStateContext } from '../ColorContext';
 
 /**
  * Note: This component uses https://www.npmjs.com/package/react-native-select-dropdown
@@ -16,6 +16,8 @@ import { fontStyles } from '../text/StyledText';
  * @returns 
  */
 const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, sortButtonRef, position = "right", hasHeading = false, headingIndex = null, headingComponent = null }) => {
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   let dynamicMarginStyle
   if (position == "left") {
@@ -46,18 +48,18 @@ const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, so
                   {headingComponent}
                 </>
               ) : (
-                <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: Color.GrayBlue }), }}>
+                <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: ColorState?.GrayBlue }), }}>
                   <Text style={
                     {
                       ...fontStyles.styledH4,
                       ...styles.dropdownItemTxtStyle,
-                      ...(isSelected && { color: Color.TextColor }),
+                      ...(isSelected && { color: ColorState?.TextColor }),
                     }
 
                   }>{item}</Text>
 
                   {(isSelected) &&
-                    <Check size={20} color={Color.Gray} />
+                    <Check size={20} color={ColorState?.Gray} />
                   }
                 </View>
               )
@@ -76,9 +78,9 @@ const DropDown = ({ buttonComponent, dropDownOptions, onSelect, defaultValue, so
 
 export default DropDown;
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
   viewButton: {
-    backgroundColor: Color.DarkBlue,
+    backgroundColor: ColorState?.DarkBlue,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     // marginLeft: -165
   },
   dropdownItemStyle: {
-    backgroundColor: Color.Gray,
+    backgroundColor: ColorState?.Gray,
     flexDirection: 'row',
     paddingHorizontal: 12,
     justifyContent: 'center',

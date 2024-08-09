@@ -20,6 +20,7 @@ import StatsPage from './components/StatsPage/StatsPage';
 import AIPage from './components/AIPage/AIPage';
 import SettingsPage from './components/SettingsPage/SettingsPage';
 import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits } from './components/TasksPage/TasksPageSupabase';
+import { ColorsStateProvider } from './components/ColorContext';
 
 
 
@@ -83,6 +84,8 @@ export default function App() {
   const [habitHistory, setHabitHistory] = useState({})
   const [habitStats, setHabitStats] = useState({})
   const [lastAnalyzedTime, setLastAnalyzedTime] = useState(null)
+  const [selectedTheme, setSelectedTheme] = useState("Thrive Blue")
+
   // const [dataIsFetched, setDataIsFetched] = useState(true)
   const tasksPageRef = useRef();
   // authorize user into session
@@ -109,7 +112,7 @@ export default function App() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
-      console.info("onAuthStateChange: "+event)
+      console.info("onAuthStateChange: " + event)
       await updateSession()
 
       if (event == "SIGNED_IN") {
@@ -167,58 +170,60 @@ export default function App() {
 
     // <NavigationContainer style={{margin: 0}}>
     <GestureHandlerRootView style={styles.gestureHandler}>
-      {/* <BackgroundImg /> */}
-      {session && session.user ? (
-        <>
+      <ColorsStateProvider>
+        {/* <BackgroundImg /> */}
+        {session && session.user ? (
+          <>
 
-          {currentPage == "home" &&
-            <>
-              <TasksPage
-                signOutUser={signOutUser}
-                session={session}
-                ref={tasksPageRef}
-                supabase={supabase}
-                taskItems={taskItems}
-                setTaskItems={setTaskItems}
-                habitHistory={habitHistory}
-                setHabitHistory={setHabitHistory}
-                habitStats={habitStats}
-                setHabitStats={setHabitStats}
-              />
-            </>
-          }
-          {currentPage == "settings" &&
-            <>
-              <SettingsPage signOutUser={signOutUser} />
-            </>
+            {currentPage == "home" &&
+              <>
+                <TasksPage
+                  signOutUser={signOutUser}
+                  session={session}
+                  ref={tasksPageRef}
+                  supabase={supabase}
+                  taskItems={taskItems}
+                  setTaskItems={setTaskItems}
+                  habitHistory={habitHistory}
+                  setHabitHistory={setHabitHistory}
+                  habitStats={habitStats}
+                  setHabitStats={setHabitStats}
+                />
+              </>
+            }
+            {currentPage == "settings" &&
+              <>
+                <SettingsPage signOutUser={signOutUser} selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme}/>
+              </>
 
-          }
-          {currentPage == "stats" &&
-            <>
-              <StatsPage habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats} />
-            </>
-          }
-          {currentPage == "AI" &&
-            <>
-              <AIPage taskItems={taskItems} lastAnalyzedTime={lastAnalyzedTime} setLastAnalyzedTime={setLastAnalyzedTime} />
-            </>
-          }
-          {currentPage == "enter_new_password_form" &&
-            <EnterNewPasswordForm setCurrentPage={setCurrentPage} />
-          }
-          {currentPage != "enter_new_password_form" &&
-            <>
-              {myNavBar}
-            </>
-          }
-        </>
+            }
+            {currentPage == "stats" &&
+              <>
+                <StatsPage habitStats={habitStats} taskItems={taskItems} habitHistory={habitHistory} setHabitStats={setHabitStats} />
+              </>
+            }
+            {currentPage == "AI" &&
+              <>
+                <AIPage taskItems={taskItems} lastAnalyzedTime={lastAnalyzedTime} setLastAnalyzedTime={setLastAnalyzedTime} />
+              </>
+            }
+            {currentPage == "enter_new_password_form" &&
+              <EnterNewPasswordForm setCurrentPage={setCurrentPage} />
+            }
+            {currentPage != "enter_new_password_form" &&
+              <>
+                {myNavBar}
+              </>
+            }
+          </>
 
-      ) :
-        (
-          <Auth setCurrentPage={setCurrentPage} />
-        )
-      }
+        ) :
+          (
+            <Auth setCurrentPage={setCurrentPage} />
+          )
+        }
 
+      </ColorsStateProvider>
     </GestureHandlerRootView>
     // </NavigationContainer>
 

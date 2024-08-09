@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
-import Color from '../../../assets/themes/Color'
 import { useFonts } from 'expo-font'
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Square, CheckSquare, XSquare, Placeholder } from 'phosphor-react-native';
@@ -7,9 +6,13 @@ import * as Haptics from 'expo-haptics';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
 import { SvgUri, SvgXml } from 'react-native-svg';
 // import exemptIconSvg from "../../../assets/images/exempt_icon.svg"
+import { useColorsStateContext } from '../../ColorContext';
 
 const TaskCheckBox = ({ onChange = null, size = 38, taskId, isHabit, habitHistoryEntry, status, disabled }) => {
   // const [checked, setChecked] = useState(false)
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   const onCheckPress = async () => {
 
@@ -53,24 +56,24 @@ const TaskCheckBox = ({ onChange = null, size = 38, taskId, isHabit, habitHistor
 
   if (!isHabit) {
     if (status == "complete") {
-      statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon} />
+      statusIcon = <CheckSquare size={size} weight="fill" color={ColorState?.GreenAccent} style={styles.checkBoxIcon} />
     } else if (status == "incomplete") {
-      statusIcon = <Square size={size} weight="regular" color={Color.CheckBoxColor} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <Square size={size} weight="regular" color={ColorState?.CheckBoxColor} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else if (status == "exempt") {
-      statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <Placeholder size={size} weight="fill" color={ColorState?.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else { // incomplete_ignored
-      statusIcon = <XSquare size={size} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <XSquare size={size} weight="fill" color={ColorState?.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     }
   }
   else {
     if (status == "complete") {
-      statusIcon = <CheckSquare size={size} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon} />
+      statusIcon = <CheckSquare size={size} weight="fill" color={ColorState?.GreenAccent} style={styles.checkBoxIcon} />
     } else if (status == "pending") {
-      statusIcon = <Square size={size} weight="regular" color={Color.CheckBoxColor} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <Square size={size} weight="regular" color={ColorState?.CheckBoxColor} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else if (status == "exempt") {
-      statusIcon = <Placeholder size={size} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <Placeholder size={size} weight="fill" color={ColorState?.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     } else if (status == "incomplete") { // incomplete_ignored
-      statusIcon = <XSquare size={size} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+      statusIcon = <XSquare size={size} weight="fill" color={ColorState?.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
     }
   }
 
@@ -86,7 +89,8 @@ const TaskCheckBox = ({ onChange = null, size = 38, taskId, isHabit, habitHistor
 
 export default TaskCheckBox
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   checkBoxIcon: {
   },
-})
+});

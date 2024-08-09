@@ -7,13 +7,17 @@ import * as Haptics from 'expo-haptics'
 // import HighlightSelect from '../FormComponents/HighlightSelect';
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts } from '../../text/StyledText';
 import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
-import Color from '../../../assets/themes/Color'
+import { useColorsStateContext } from '../../ColorContext';
+
 
 const DueDatePickerBox = ({ dispatch, dateTime, isHabit }) => {
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [isDateTimePickerVisible, setDateTimePickerVisibility] = useState(false);
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
   // const [selectedDateTime, setSelectedDateTime] = useState(new Date())
 
   // useEffect(() => {
@@ -146,9 +150,9 @@ const DueDatePickerBox = ({ dispatch, dateTime, isHabit }) => {
 
 export default DueDatePickerBox
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
   inputBox: {
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
     borderRadius: 12,
     paddingHorizontal: 27,
     paddingVertical: 20,
@@ -161,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   currentDateContainer: {
-    backgroundColor: Color.DarkBlue,
+    backgroundColor: ColorState?.DarkBlue,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -169,7 +173,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   currentTimeContainer: {
-    backgroundColor: Color.DarkBlue,
+    backgroundColor: ColorState?.DarkBlue,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -177,15 +181,15 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   currentDate: {
-    color: Color.TextColor,
+    color: ColorState?.TextColor,
     // color: "hsla(114, 100%, 50%, 1)"
   },
   inputTitle: {
-    color: Color.TextColorOnBg,
+    color: ColorState?.TextColorOnBg,
     marginBottom: 8,
   },
   changeDateButton: {
-    backgroundColor: Color.Blue,
+    backgroundColor: ColorState?.Blue,
     width: 32,
     height: 32,
     borderRadius: 12,
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   changeTimeButton: {
-    backgroundColor: Color.Blue,
+    backgroundColor: ColorState?.Blue,
     width: 32,
     height: 32,
     borderRadius: 12,
@@ -202,4 +206,4 @@ const styles = StyleSheet.create({
     marginRight: 20,
     alignItems: 'center',
   }
-})
+});

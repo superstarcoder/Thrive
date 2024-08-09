@@ -1,37 +1,40 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Color from '../../../assets/themes/Color'
-import {StyledH1, StyledH2, StyledH3, StyledH4} from '../../text/StyledText';
+import { StyledH1, StyledH2, StyledH3, StyledH4 } from '../../text/StyledText';
 import { Clock, WarningCircle, Fire, Repeat } from 'phosphor-react-native';
 import TaskCheckBox from './TaskCheckBox';
 import { BlurView } from 'expo-blur';
 import { onlyDatesAreSame } from '../../../utils/DateHelper';
+import { useColorsStateContext } from '../../ColorContext';
 
 
-const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry,selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate=false, showDueTime=false}) => {
+const Task = ({ isOverdue = false, disabled = false, dueTimeOverride, habitStatsEntry, selectedDate, habitHistory, habitInitDate, habitHistoryEntry, text, repeatDays, duration, isHabit, priority, points, description, onChange, taskId, dueDate, status, showDueDate = false, showDueTime = false }) => {
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   if (priority <= 4) {
     accent = <View style={styles.lowPriorityAccent}></View>
-    importanceText = <StyledH4 text={"low importance"} style={styles.importanceText}/>
+    importanceText = <StyledH4 text={"low importance"} style={styles.importanceText} />
   }
   else if (priority <= 7) {
     accent = <View style={styles.mediumPriorityAccent}></View>
-    importanceText = <StyledH4 text={"medium importance"} style={styles.importanceText}/>
+    importanceText = <StyledH4 text={"medium importance"} style={styles.importanceText} />
   }
   else if (priority <= 10) {
     accent = <View style={styles.highPriorityAccent}></View>
-    importanceText = <StyledH4 text={"high importance"} style={styles.importanceText}/>
+    importanceText = <StyledH4 text={"high importance"} style={styles.importanceText} />
   }
-  
+
   if (status == "complete" || (status == "incomplete" && isHabit) || (status == "incomplete_ignored" && !isHabit) || (status == "exempt")) {
     taskConditionalStyle = {
-      backgroundColor: Color.DarkBlue,
+      backgroundColor: ColorState?.DarkBlue,
       opacity: 0.55,
     }
   }
   else {
     taskConditionalStyle = {
-      backgroundColor: Color.DarkBlue,
+      backgroundColor: ColorState?.DarkBlue,
     }
   }
 
@@ -48,13 +51,13 @@ const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry
 
   if (showDueTime) {
     dueDateTimeInfo =
-    <View style={styles.dateTimeInfoContainer}>
-      <StyledH4 text={correctDueDateTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate}/>
-    </View>
+      <View style={styles.dateTimeInfoContainer}>
+        <StyledH4 text={correctDueDateTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })} style={styles.currentDate} />
+      </View>
   }
   else if (showDueDate) {
     dueDateTimeInfo = <View style={styles.dateTimeInfoContainer}>
-      <StyledH4 text={correctDueDateTime.toLocaleDateString()} style={styles.currentDate}/>
+      <StyledH4 text={correctDueDateTime.toLocaleDateString()} style={styles.currentDate} />
     </View>
   }
   else {
@@ -92,48 +95,48 @@ const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry
     const progressBarMaxWidth = 200
     const fireIconSize = 35
 
-    let progressBarWidth = (streak/goal)*progressBarMaxWidth
+    let progressBarWidth = (streak / goal) * progressBarMaxWidth
     if (progressBarWidth < fireIconSize) {
-      progressBarWidth = fireIconSize/2 + 7
+      progressBarWidth = fireIconSize / 2 + 7
     }
-  
+
     const conditionalStyling = {
       width: progressBarWidth
-    }  
+    }
 
     habitBar =
-    <View style={styles.progressBar}>
-      <View style={[styles.progressBarFilled, conditionalStyling]}>
-        <Fire size={fireIconSize} weight="fill" color="#750909" style={styles.fireIcon}/>
+      <View style={styles.progressBar}>
+        <View style={[styles.progressBarFilled, conditionalStyling]}>
+          <Fire size={fireIconSize} weight="fill" color="#750909" style={styles.fireIcon} />
+        </View>
       </View>
-    </View>
 
     habitInfoText =
-    <View style={styles.habitInfoText}>
-      <StyledH4 text={`${streak} streaks (goal: ${goal})`} style={{marginRight: 10,}}/>
-    </View> 
+      <View style={styles.habitInfoText}>
+        <StyledH4 text={`${streak} streaks (goal: ${goal})`} style={{ marginRight: 10, }} />
+      </View>
 
     // console.log("repeat days: "+repeatDays)
     const daysOfWeek = ["M", "T", "W", "Th", "F", "S", "Su"]
     var repeatDaysStr = ""
     for (var i = 0; i < daysOfWeek.length; i++) {
       if (repeatDays[i]) {
-        repeatDaysStr += (daysOfWeek[i]+" ")
+        repeatDaysStr += (daysOfWeek[i] + " ")
       }
     }
 
     // remove last char from string
     repeatDaysStr = repeatDaysStr.substring(0, repeatDaysStr.length - 1);
-    
+
     if (repeatDaysStr == "S Su") repeatDaysStr = "weekends"
     if (repeatDaysStr == "M T W Th F") repeatDaysStr = "weekdays"
     if (repeatDaysStr == "M T W Th F S Su") repeatDaysStr = "daily"
 
     repeatDetail =
-    <View style={styles.repeatDetail}>
-      <Repeat size={20} weight="fill" color={Color.Blue} style={styles.repeatIcon} />
-      <StyledH4 text={"repeats: "+repeatDaysStr} style={{color: Color.Gray }}/>
-    </View>
+      <View style={styles.repeatDetail}>
+        <Repeat size={20} weight="fill" color={ColorState?.Blue} style={styles.repeatIcon} />
+        <StyledH4 text={"repeats: " + repeatDaysStr} style={{ color: ColorState?.Gray }} />
+      </View>
 
   }
   else {
@@ -151,29 +154,29 @@ const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry
 
         {isOverdue &&
           <View style={styles.warningBox}>
-            <StyledH3 text={"overdue"} style={styles.overdueText}/>            
-            <TouchableOpacity disabled={disabled} onPress={() => { !disabled && onChange(taskId, isHabit, habitHistoryEntry, "incomplete_ignored")}}>
+            <StyledH3 text={"overdue"} style={styles.overdueText} />
+            <TouchableOpacity disabled={disabled} onPress={() => { !disabled && onChange(taskId, isHabit, habitHistoryEntry, "incomplete_ignored") }}>
               <View style={styles.warningIgnoreButton}>
-                <StyledH3 text={"ignore"} style={[styles.ignoreText, {color: "black"}]}/>            
+                <StyledH3 text={"ignore"} style={[styles.ignoreText, { color: "black" }]} />
               </View>
             </TouchableOpacity>
           </View>
         }
 
-        <StyledH2 text={text} weight='regular' style={styles.title}/>
+        <StyledH2 text={text} weight='regular' style={styles.title} />
 
-        {description != "" ? ( <StyledH4 text={description} style={styles.description}/> ) : ( null )}
+        {description != "" ? (<StyledH4 text={description} style={styles.description} />) : (null)}
 
         {habitBar}
         {habitInfoText}
 
         <View style={styles.taskDetails}>
           <View style={styles.timeDetail}>
-            <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
-            <StyledH4 text={`${duration} hours`} style={styles.timeText}/>
+            <Clock size={20} weight="fill" color={ColorState?.RedAccent} style={styles.clockIcon} />
+            <StyledH4 text={`${duration} hours`} style={styles.timeText} />
           </View>
           <View style={styles.importanceDetail}>
-            <WarningCircle size={20} weight="fill" color={Color.ThemeAccent} style={styles.clockIcon} />
+            <WarningCircle size={20} weight="fill" color={ColorState?.ThemeAccent} style={styles.clockIcon} />
             {importanceText}
           </View>
         </View>
@@ -185,14 +188,15 @@ const Task = ({isOverdue=false, disabled=false, dueTimeOverride, habitStatsEntry
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
       </View>
       <View style={styles.checkBoxSection}>
-        <TaskCheckBox disabled={disabled} size={45} onChange={onChange} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry} status={status}/>
+        <TaskCheckBox disabled={disabled} size={45} onChange={onChange} taskId={taskId} isHabit={isHabit} habitHistoryEntry={habitHistoryEntry} status={status} />
       </View>
 
     </View>
   )
 }
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   habitInfoText: {
     flexDirection: "row",
     marginTop: 10
@@ -204,19 +208,19 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   currentDate: {
-    color: Color.Gray
+    color: ColorState?.Gray
   },
   progressBar: {
     height: 24,
     width: 200,
-    backgroundColor: Color.StreaksBarBg,
+    backgroundColor: ColorState?.StreaksBarBg,
     marginTop: 12,
     borderRadius: 30,
   },
   progressBarFilled: {
     height: 24,
     width: 50,
-    backgroundColor: Color.StreaksBar,
+    backgroundColor: ColorState?.StreaksBar,
     borderRadius: 30,
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'
   },
@@ -229,7 +233,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   description: {
-    color: Color.Gray
+    color: ColorState?.Gray
   },
   clockIcon: {
     marginRight: 6,
@@ -249,10 +253,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   timeText: {
-    color: Color.Gray
+    color: ColorState?.Gray
   },
   importanceText: {
-    color: Color.Gray
+    color: ColorState?.Gray
   },
   taskDetails: {
     flexDirection: "row",
@@ -260,26 +264,26 @@ const styles = StyleSheet.create({
   },
   pointsText: {
     margin: 0,
-    color: Color.LightBlue,
+    color: ColorState?.LightBlue,
   },
   lowPriorityAccent: {
     width: 13,
     height: '100%',
-    backgroundColor: Color.GreenAccent,
+    backgroundColor: ColorState?.GreenAccent,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
-  }, 
+  },
   mediumPriorityAccent: {
     width: 13,
     height: '100%',
-    backgroundColor: Color.BlueAccent,
+    backgroundColor: ColorState?.BlueAccent,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
-  }, 
+  },
   highPriorityAccent: {
     width: 13,
     height: '100%',
-    backgroundColor: Color.RedAccent,
+    backgroundColor: ColorState?.RedAccent,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
   },
@@ -307,10 +311,10 @@ const styles = StyleSheet.create({
     margin: 20,
     marginLeft: "auto",
     // width: 50,
-    
+
   },
   dateTimeInfoContainer: {
-    backgroundColor: Color.DateTimeInfoContainer,
+    backgroundColor: ColorState?.DateTimeInfoContainer,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -341,7 +345,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     marginVertical: 1,
-    
+
 
 
   },

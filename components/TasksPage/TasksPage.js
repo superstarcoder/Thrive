@@ -2,7 +2,6 @@
 import TasksHeader from './TasksHeader/TasksHeader';
 import React, { useState, useRef, useCallback, useEffect, useReducer, forwardRef, useImperativeHandle } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView, Modal, Button } from 'react-native';
-import Color from '../../assets/themes/Color'
 // import { XCircle } from 'phosphor-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
@@ -17,6 +16,7 @@ import TaskMenu from './TasksWrapper/TaskMenu';
 import HabitApplyModal from './TasksWrapper/HabitApplyModal';
 import { TASKS_PAGE_SORT_MODES, TASKS_PAGE_VIEW_MODES } from '../../utils/AppConstants';
 // import BackgroundImg from './components/BackgroundImage';
+import { useColorsStateContext } from '../ColorContext';
 
 
 const TasksPage = forwardRef(({
@@ -64,6 +64,8 @@ const TasksPage = forwardRef(({
   // tuple: first item is the mode, 2nd item is true if ascending (false if descending)
   const [sortModeJournalView, setSortModeJournalView] = useState([TASKS_PAGE_SORT_MODES[1], true])
   const [sortModeAllTasksView, setSortModeAllTasksView] = useState([TASKS_PAGE_SORT_MODES[3], false])
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   const taskSettingsRef = useRef();
   const habitSettingsRef = useRef();
@@ -158,7 +160,7 @@ const TasksPage = forwardRef(({
       setSortModeJournalView={setSortModeJournalView}
       sortModeAllTasksView={sortModeAllTasksView}
       setSortModeAllTasksView={setSortModeAllTasksView}
-      />
+    />
     {
       /* display tasks */
     }
@@ -178,7 +180,7 @@ const TasksPage = forwardRef(({
       viewMode={viewMode}
       sortModeJournalView={sortModeJournalView}
       sortModeAllTasksView={sortModeAllTasksView}
-      />
+    />
 
     {
       /* bottom bar/buttons */
@@ -211,13 +213,13 @@ const TasksPage = forwardRef(({
 
 export default TasksPage;
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
   container: {
     flex: 1,
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
   },
   text: {
-    color: Color.TextColor,
+    color: ColorState?.TextColor,
   },
   tasksWrapper: {
     marginTop: 20,

@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Color from '../../assets/themes/Color'
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { StyledH1, StyledH2 } from '../text/StyledText';
+import { useColorsStateContext } from '../ColorContext';
+
 
 const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 	// console.log(JSON.stringify(habitStats,))
+	const { ColorState, setColorState } = useColorsStateContext();
+	const styles = getDynamicStyles(ColorState)
+
 	return (
 		<View style={styles.container}>
 			<StyledH2 text={title} style={styles.sectionHeading} />
@@ -14,20 +18,20 @@ const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 				style={styles.myCalendar}
 				// Specify the current date
 				current={(new Date()).toISOString()}
-				
+
 				// Callback that gets called when the user selects a day
 				onDayPress={day => {
 					// console.log('selected day', day);
 				}}
 
 				theme={{
-					calendarBackground: Color.GrayBlue,
+					calendarBackground: ColorState?.GrayBlue,
 					textDayFontWeight: '500',
 					// dayTextColor: '#fff',
 					dayTextColor: "#666666",
 					textDisabledColor: '#707371',
-					monthTextColor: Color.TextColor
-					
+					monthTextColor: ColorState?.TextColor
+
 				}}
 				// Mark specific dates as marked
 				markedDates={markedDates}
@@ -40,19 +44,19 @@ const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 export default StreaksCalendar
 
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
 	scrollView: {
 		paddingTop: 100,
 	},
 	sectionHeading: {
 		alignSelf: "center",
-		color: Color.TextColorOnBg
+		color: ColorState?.TextColorOnBg
 	},
 	container: {
 		gap: 10,
 	},
 	text: {
-		color: Color.TextColor,
+		color: ColorState?.TextColor,
 	},
 
 	sectionTitle: {

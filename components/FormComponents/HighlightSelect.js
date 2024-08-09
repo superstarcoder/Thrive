@@ -1,11 +1,15 @@
 import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
 import Color from '../../assets/themes/Color'
 import { useFonts } from 'expo-font'
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Square, CheckSquare } from 'phosphor-react-native';
-import {StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts} from '../text/StyledText';
+import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts } from '../text/StyledText';
+import { useColorsStateContext } from '../ColorContext';
 
-const HighlightSelect = ({text, selected, onChange, backgroundColor=Color.LightBlue}) => {
+const HighlightSelect = ({ text, selected, onChange }) => {
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  // const styles = getDynamicStyles(ColorState)
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
@@ -15,20 +19,20 @@ const HighlightSelect = ({text, selected, onChange, backgroundColor=Color.LightB
 
   let hText;
   if (selected) {
-	  hText = <View style={[styles.highlighted, {backgroundColor: backgroundColor}]}>
-      <StyledH3 text={text} style={styles.textHighlighted}/>
+    hText = <View style={[styles.highlighted, { backgroundColor: ColorState.LightBlue }]}>
+      <StyledH3 text={text} style={styles.textHighlighted} />
     </View>
   }
   else {
     hText = <View style={styles.unHighlighted}>
-      <StyledH3 text={text} style={styles.textUnhighlighted}/>
+      <StyledH3 text={text} style={styles.textUnhighlighted} />
     </View>
   }
-  
+
   return (
-	<TouchableOpacity onPress={onCheckPress} style={styles.container}>
-    {hText}
-	</TouchableOpacity>
+    <TouchableOpacity onPress={onCheckPress} style={styles.container}>
+      {hText}
+    </TouchableOpacity>
   )
 }
 

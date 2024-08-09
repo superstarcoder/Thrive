@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Color from '../assets/themes/Color';
 import NavBarButtons from './NavBarButtons';
+import { useColorsStateContext } from './ColorContext';
 
 const NavBar = ({ currentPage, setCurrentPage }) => {
+
+	const { ColorState, setColorState } = useColorsStateContext();
+	const styles = getDynamicStyles(ColorState)
+
 
 	const onNavBarButtonPress = async (pageName) => {
 		if (currentPage != pageName) {
@@ -26,11 +31,12 @@ const NavBar = ({ currentPage, setCurrentPage }) => {
 
 export default NavBar
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
 	navbarContainer: {
 		marginTop: "auto",
 		display: "flex",
-		backgroundColor: Color.DarkestBlue,
+		backgroundColor: ColorState?.DarkestBlue,
 		height: 90,
 		justifyContent: "center",
 		alignItems: "center",
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
 	},
 	navbar: {
 		borderRadius: 30,
-		backgroundColor: Color.NavBarColor,
+		backgroundColor: ColorState?.NavBarColor,
 		height: 70,
 		alignItems: "center",
 		justifyContent: "space-between",
@@ -55,4 +61,4 @@ const styles = StyleSheet.create({
 		shadowOpacity: 1,
 		shadowRadius: 5,
 	},
-})
+});

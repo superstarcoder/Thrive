@@ -16,9 +16,10 @@ import { v4 as uuidv4 } from 'uuid';
 import BottomSheet from '../../FormComponents/BottomSheet';
 import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
-import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, getEndOfDay, onlyDatesAreSame } from '../../../utils/DateHelper';
 import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings } from '../TasksPageSupabase';
+import { useColorsStateContext } from '../../ColorContext';
+
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -152,6 +153,8 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
   const durationBoxRef = useRef(null)
   const importanceBoxRef = useRef(null)
   const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
 
   useEffect(() => {
@@ -237,6 +240,8 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
     // console.log(event.nativeEvent.contentOffset.y);
   }
 
+
+
   return (
     <BottomSheet ref={bottomSheetRef} customStyle={styles.addTaskModal} clamps={[0, 0.5, 1]} scrollingEnabled={false}>
       <View style={styles.headingBox}>
@@ -247,15 +252,15 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
 
       <ScrollView onScroll={handleScroll} style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
         {/* <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'center', }} behavior="padding" enabled keyboardVerticalOffset={100}> */}
-          <TitleBox title={taskSettings.title} dispatch={dispatch} />
-          <DescriptionBox bottomSheetRef={bottomSheetRef} description={taskSettings.description} dispatch={dispatch} />
-          <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
-          <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
-          <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
-          {/* <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
+        <TitleBox title={taskSettings.title} dispatch={dispatch} />
+        <DescriptionBox bottomSheetRef={bottomSheetRef} description={taskSettings.description} dispatch={dispatch} />
+        <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
+        <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
+        <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
+        {/* <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
         <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} />
         <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit} /> */}
-          {/* <StyledH1 style={styles.settingsTitle} text={"Advanced"} /> */}
+        {/* <StyledH1 style={styles.settingsTitle} text={"Advanced"} /> */}
         {/* </KeyboardAvoidingView> */}
       </ScrollView>
 
@@ -270,14 +275,14 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
 
         <TouchableOpacity onPress={onCancelPress}>
           <View style={styles.cancelTaskButton}>
-            <XCircle size={30} weight="bold" color={Color.IconColor} style={styles.buttonIcon} />
+            <XCircle size={30} weight="bold" color={ColorState?.IconColor} style={styles.buttonIcon} />
           </View>
         </TouchableOpacity>
 
         {settingsMode != TASK_SETTINGS_MODES.ADD_TASK &&
           <TouchableOpacity onPress={onDeletePress}>
             <View style={styles.deleteTaskButton}>
-              <Trash size={30} weight="bold" color={Color.IconColor} style={styles.buttonIcon} />
+              <Trash size={30} weight="bold" color={ColorState?.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
         }
@@ -289,11 +294,10 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
 
 export default TaskSettingsModal
 
-const styles = StyleSheet.create({
-
+const getDynamicStyles = (ColorState) => ({
   headingBox: {
     display: "flex",
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -305,12 +309,12 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: Color.TextColorOnBg,
+    color: ColorState?.TextColorOnBg,
     alignSelf: "center",
   },
 
   buttonText: {
-    color: Color.IconColor
+    color: ColorState?.IconColor
   },
   saveButtonIcon: {
     marginLeft: 5,
@@ -320,7 +324,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   saveTaskButton: {
-    backgroundColor: Color.GreenAccent,
+    backgroundColor: ColorState?.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -330,7 +334,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cancelTaskButton: {
-    backgroundColor: Color.Blue,
+    backgroundColor: ColorState?.BlueAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -339,7 +343,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteTaskButton: {
-    backgroundColor: Color.RedAccent,
+    backgroundColor: ColorState?.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -347,7 +351,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addTaskModalButtons: {
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     height: 90,
     marginBottom: 95,
     alignItems: "center",
@@ -368,8 +372,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   addTaskModal: {
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     // paddingHorizontal: 30,
   },
 
-})
+});
