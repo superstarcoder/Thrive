@@ -27,11 +27,10 @@ const StreaksCalendar = ({ habitStats, markedDates, title }) => {
 				theme={{
 					calendarBackground: ColorState?.GrayBlue,
 					textDayFontWeight: '500',
-					// dayTextColor: '#fff',
-					dayTextColor: "#666666",
+					dayTextColor: ColorState?.StreaksCalendar?.DefaultDayText,
 					textDisabledColor: '#707371',
-					monthTextColor: ColorState?.TextColor
-
+					monthTextColor: ColorState?.TextColor,
+					textSectionTitleColor: ColorState?.StreaksCalendar?.MonthTextColor
 				}}
 				// Mark specific dates as marked
 				markedDates={markedDates}

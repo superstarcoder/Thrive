@@ -224,7 +224,7 @@ const getDynamicStyles = (ColorState) => ({
   askAIButton: {
     alignSelf: "center",
     justifyContent: "center",
-    backgroundColor: ColorState?.LightBlue,
+    backgroundColor: ColorState?.AIPage?.AskAIButton,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,

@@ -25,6 +25,18 @@ export const thriveBlueTheme = {
 	CheckBoxColor: 'black',
 	DateTimeInfoContainer: 'hsl(0, 0%, 24%)',
 	PlaceholderTextColor: '#252B55',
+	TasksHeader: {
+		IconColor: '#6A80F7',
+	},
+	CancelButton: '#6A80F7',
+	StreaksCalendar: {
+		DefaultDayText: "#666666",
+		MonthTextColor: "#FFFFFF",
+	},
+	AIPage: {
+		AskAIButton: '#94A5FF',
+	},
+
 };
 
 export const skyBlueTheme = {
@@ -53,6 +65,18 @@ export const skyBlueTheme = {
 	CheckBoxColor: '#608AC9',
 	DateTimeInfoContainer: 'hsl(230, 100%, 83%)',
 	PlaceholderTextColor: '#a0a0a0',
+
+	TasksHeader: {
+		IconColor: '#4d6fa2',
+	},
+	CancelButton: '#94A5FF',
+	StreaksCalendar: {
+		DefaultDayText: "#666666",
+		MonthTextColor: "#293B46",
+	},
+	AIPage: {
+		AskAIButton: 'hsl(230, 100%, 83%)',
+	},
 
 
 
@@ -84,16 +108,25 @@ export const deepPurpleTheme = {
 	CheckBoxColor: '#231942',
 	DateTimeInfoContainer: 'hsl(0, 0%, 24%)',
 	PlaceholderTextColor: '#5E548E',
+
+	TasksHeader: {
+		IconColor: 'black',
+	},
+	CancelButton: '#94A5FF',
+	StreaksCalendar: {
+		DefaultDayText: "#1a1a1a",
+		MonthTextColor: "#ECD0DF",
+	},
+	AIPage: {
+		AskAIButton: '#9F86C0',
+	},
 };
 
 export const oceanMistTheme = {
-
-
-
 	DarkestBlue: '#7B81B7', // background
 	DarkBlue: '#34385F', // foreground (tasks, habits)
 	TextColor: '#DDE4FF', // regular text, small text
-	TextColorOnBg: '#34385F', // regular text, small text
+	TextColorOnBg: 'hsl(234, 29%, 20%)', // regular text, small text
 	TextColorOnGrayBlueBg: '#DDE4FF',
 	LightBlue: '#4d5eb0', // NavBar buttons, background of text
 	Blue: '#4d5eb0',
@@ -115,64 +148,20 @@ export const oceanMistTheme = {
 	CheckBoxColor: 'black',
 	DateTimeInfoContainer: 'hsl(0, 0%, 24%)',
 	PlaceholderTextColor: '#34385F',
+	TasksHeader: {
+		IconColor: '#94A5FF',
+	},
+	CancelButton: '#94A5FF',
+	StreaksCalendar: {
+		DefaultDayText: "#666666",
+		MonthTextColor: '#DDE4FF',
+	},
+	AIPage: {
+		AskAIButton: '#94A5FF',
+	},
 
 };
 
-export const cottonCandyTheme = {
-	DarkestBlue: 'hsl(320, 50%, 55%)',
-	DarkBlue: 'hsl(320, 47%, 75%)', // foreground (tasks, habits)
-	GrayBlue: '#D07CB5',
-	TextColor: '#462932', // regular text, small text
-	TextColorOnBg: '#462932', // regular text, small text
-	TextColorOnGrayBlueBg: '#462932',
-	LightBlue: '#EAC4DD', // NavBar buttons, background of text
-	Blue: '#a65ca0',
-	RedAccent: '#EF6B6B', // high priority task accent
-	BlueAccent: '#867ed9', // medium priority task accent
-	GreenAccent: '#629965', // low priority task accent
-	Gray: '#535353',
-	GrayOnBg: '#C8C8C8',
-	DarkGray: '#959595',
-	StreaksBarBg: '#959595',
-	Red: '#ff5e5e',
-	StreaksBar: '#b04d29',
-	ThemeAccent: '#c086bf',
-	IconColor: 'hsl(319, 49%, 35%)',
-	NavBarColor: 'hsl(320, 50%, 45%)',
-	NavBarButtonsColor: '#9e6aa5',
-	NavBarIconsColor: 'black',
-	CheckBoxColor: '#C960A7',
-	DateTimeInfoContainer: 'hsl(0, 0%, 24%)',
-	PlaceholderTextColor: '#D07CB5',
-};
-
-export const elegantGreenTheme = {
-	DarkestBlue: 'hsl(170, 49%, 48%)',
-	DarkBlue: '#C4EAE1', // foreground (tasks, habits)
-	GrayBlue: '#C4EAE1',
-	TextColor: '#294634', // regular text, small text
-	TextColorOnBg: '#294634', // regular text, small text
-	TextColorOnGrayBlueBg: '#294634',
-	LightBlue: '#C4EAE1', // background of text
-	Blue: '#499080',
-	RedAccent: '#f59292', // high priority task accent
-	BlueAccent: '#80ade0', // medium priority task accent
-	GreenAccent: '#61d68a', // low priority task accent
-	Gray: '#737373',
-	StreaksBarBg: '#b7b7b7',
-	GrayOnBg: '#646464',
-	DarkGray: '#b7b7b7',
-	Red: '#ff5e5e',
-	StreaksBar: '#dc8565',
-	ThemeAccent: 'hsl(170, 49%, 48%)',
-	IconColor: '#294634',
-	NavBarColor: 'hsl(170, 49%, 78%)',
-	NavBarButtonsColor: 'hsl(170, 49%, 48%)',
-	NavBarIconsColor: 'black',
-	CheckBoxColor: '#60C9B0',
-	DateTimeInfoContainer: 'hsl(0, 0%, 78%)',
-	PlaceholderTextColor: '#6c706f',
-};
 
 export const titleToTheme = {
 	"Thrive Blue": thriveBlueTheme,
@@ -180,3 +169,60 @@ export const titleToTheme = {
 	"Ocean Mist": oceanMistTheme,
 	"Sky Blue": skyBlueTheme,
 }
+
+
+// export const cottonCandyTheme = {
+// 	DarkestBlue: 'hsl(320, 50%, 55%)',
+// 	DarkBlue: 'hsl(320, 47%, 75%)', // foreground (tasks, habits)
+// 	GrayBlue: '#D07CB5',
+// 	TextColor: '#462932', // regular text, small text
+// 	TextColorOnBg: '#462932', // regular text, small text
+// 	TextColorOnGrayBlueBg: '#462932',
+// 	LightBlue: '#EAC4DD', // NavBar buttons, background of text
+// 	Blue: '#a65ca0',
+// 	RedAccent: '#EF6B6B', // high priority task accent
+// 	BlueAccent: '#867ed9', // medium priority task accent
+// 	GreenAccent: '#629965', // low priority task accent
+// 	Gray: '#535353',
+// 	GrayOnBg: '#C8C8C8',
+// 	DarkGray: '#959595',
+// 	StreaksBarBg: '#959595',
+// 	Red: '#ff5e5e',
+// 	StreaksBar: '#b04d29',
+// 	ThemeAccent: '#c086bf',
+// 	IconColor: 'hsl(319, 49%, 35%)',
+// 	NavBarColor: 'hsl(320, 50%, 45%)',
+// 	NavBarButtonsColor: '#9e6aa5',
+// 	NavBarIconsColor: 'black',
+// 	CheckBoxColor: '#C960A7',
+// 	DateTimeInfoContainer: 'hsl(0, 0%, 24%)',
+// 	PlaceholderTextColor: '#D07CB5',
+// };
+
+// export const elegantGreenTheme = {
+// 	DarkestBlue: 'hsl(170, 49%, 48%)',
+// 	DarkBlue: '#C4EAE1', // foreground (tasks, habits)
+// 	GrayBlue: '#C4EAE1',
+// 	TextColor: '#294634', // regular text, small text
+// 	TextColorOnBg: '#294634', // regular text, small text
+// 	TextColorOnGrayBlueBg: '#294634',
+// 	LightBlue: '#C4EAE1', // background of text
+// 	Blue: '#499080',
+// 	RedAccent: '#f59292', // high priority task accent
+// 	BlueAccent: '#80ade0', // medium priority task accent
+// 	GreenAccent: '#61d68a', // low priority task accent
+// 	Gray: '#737373',
+// 	StreaksBarBg: '#b7b7b7',
+// 	GrayOnBg: '#646464',
+// 	DarkGray: '#b7b7b7',
+// 	Red: '#ff5e5e',
+// 	StreaksBar: '#dc8565',
+// 	ThemeAccent: 'hsl(170, 49%, 48%)',
+// 	IconColor: '#294634',
+// 	NavBarColor: 'hsl(170, 49%, 78%)',
+// 	NavBarButtonsColor: 'hsl(170, 49%, 48%)',
+// 	NavBarIconsColor: 'black',
+// 	CheckBoxColor: '#60C9B0',
+// 	DateTimeInfoContainer: 'hsl(0, 0%, 78%)',
+// 	PlaceholderTextColor: '#6c706f',
+// };

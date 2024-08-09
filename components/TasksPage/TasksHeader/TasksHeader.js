@@ -43,11 +43,11 @@ const TaskHeader = ({
 
 	const viewButton =
 		<View style={styles.viewButton}>
-			<Eye size={30} weight="duotone" color={ColorState?.IconColor} />
+			<Eye size={30} weight="duotone" color={ColorState?.TasksHeader?.IconColor} />
 		</View>
 	const sortButton =
 		<View style={styles.sortButton}>
-			<ArrowsDownUp size={30} weight="duotone" color={ColorState?.IconColor} />
+			<ArrowsDownUp size={30} weight="duotone" color={ColorState?.TasksHeader?.IconColor} />
 		</View>
 	const onViewModeChanged = (selectedItem, index) => {
 		if (selectedItem == viewMode) return // if view mode didn't actually change

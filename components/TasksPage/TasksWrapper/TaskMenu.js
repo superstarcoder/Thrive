@@ -180,7 +180,7 @@ const getDynamicStyles = (ColorState) => ({
     flexDirection: "row",
   },
   cancelTaskButton: {
-    backgroundColor: ColorState?.BlueAccent,
+    backgroundColor: ColorState?.CancelButton,
     width: 45,
     height: 45,
     borderRadius: 12,
