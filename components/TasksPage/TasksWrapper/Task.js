@@ -326,7 +326,7 @@ const getDynamicStyles = (ColorState) => ({
   warningBox: {
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#a40000",
+    backgroundColor: ColorState?.Red,
     borderRadius: 8,
     alignItems: "center",
     alignSelf: 'flex-start',
@@ -341,7 +341,7 @@ const getDynamicStyles = (ColorState) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#8E8E8E",
+    backgroundColor: ColorState?.Task?.IgnoreButton,
     borderRadius: 8,
     borderWidth: 2,
     marginVertical: 1,
@@ -350,6 +350,7 @@ const getDynamicStyles = (ColorState) => ({
 
   },
   overdueText: {
+    color: ColorState?.Task?.OverdueText,
     marginHorizontal: 5,
   },
   ignoreText: {

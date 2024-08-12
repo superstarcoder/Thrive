@@ -36,49 +36,11 @@ export const thriveBlueTheme = {
 	AIPage: {
 		AskAIButton: '#94A5FF',
 	},
-
-};
-
-export const skyBlueTheme = {
-	DarkestBlue: 'hsl(216, 49%, 58%)', // background
-	DarkBlue: '#C4CAEA', // foreground (tasks, habits)
-	TextColor: '#293B46', // regular text, small text
-	TextColorOnBg: '#C4CAEA', // regular text, small text
-	TextColorOnGrayBlueBg: '#293B46',
-	LightBlue: 'hsl(230, 100%, 83%)', // NavBar buttons, background of text
-	Blue: '#94A5FF',
-	RedAccent: '#fa9898', // high priority task accent
-	BlueAccent: '#94A5FF', // medium priority task accent
-	GreenAccent: '#6ecb73', // low priority task accent
-	GrayBlue: '#C4CAEA',
-	Gray: '#646464',
-	GrayOnBg: '#3e3e3e',
-	DarkGray: '#6F6F6F',
-	StreaksBarBg: '#adadad',
-	Red: '#ffa2a2',
-	StreaksBar: '#e58a69',
-	ThemeAccent: 'hsl(216, 49%, 68%)',
-	IconColor: '#4d6fa2',
-	NavBarColor: '#C4CAEA',
-	NavBarButtonsColor: '#608AC9',
-	NavBarIconsColor: '#C4CAEA',
-	CheckBoxColor: '#608AC9',
-	DateTimeInfoContainer: 'hsl(230, 100%, 83%)',
-	PlaceholderTextColor: '#a0a0a0',
-
-	TasksHeader: {
-		IconColor: '#4d6fa2',
+	Task: {
+		IgnoreButton: "#8E8E8E",
+		IgnoreButtonText: "black",
+		OverdueText: '#FFFFFF'
 	},
-	CancelButton: '#94A5FF',
-	StreaksCalendar: {
-		DefaultDayText: "#666666",
-		MonthTextColor: "#293B46",
-	},
-	AIPage: {
-		AskAIButton: 'hsl(230, 100%, 83%)',
-	},
-
-
 
 };
 
@@ -120,6 +82,11 @@ export const deepPurpleTheme = {
 	AIPage: {
 		AskAIButton: '#9F86C0',
 	},
+	Task: {
+		IgnoreButton: "#8E8E8E",
+		IgnoreButtonText: "black",
+		OverdueText: "black"
+	},
 };
 
 export const oceanMistTheme = {
@@ -159,7 +126,57 @@ export const oceanMistTheme = {
 	AIPage: {
 		AskAIButton: '#94A5FF',
 	},
+	Task: {
+		IgnoreButton: "#8E8E8E",
+		IgnoreButtonText: "black",
+		OverdueText: '#DDE4FF'
+	},
 
+};
+
+export const skyBlueTheme = {
+	DarkestBlue: 'hsl(216, 49%, 58%)', // background
+	DarkBlue: '#C4CAEA', // foreground (tasks, habits)
+	TextColor: '#293B46', // regular text, small text
+	TextColorOnBg: '#C4CAEA', // regular text, small text
+	TextColorOnGrayBlueBg: '#293B46',
+	LightBlue: 'hsl(230, 100%, 83%)', // NavBar buttons, background of text
+	Blue: '#94A5FF',
+	RedAccent: '#fa9898', // high priority task accent
+	BlueAccent: '#94A5FF', // medium priority task accent
+	GreenAccent: '#6ecb73', // low priority task accent
+	GrayBlue: '#C4CAEA',
+	Gray: '#646464',
+	GrayOnBg: '#3e3e3e',
+	DarkGray: '#6F6F6F',
+	StreaksBarBg: '#adadad',
+	Red: '#ffa2a2',
+	StreaksBar: '#e58a69',
+	ThemeAccent: 'hsl(216, 49%, 68%)',
+	IconColor: '#4d6fa2',
+	NavBarColor: '#C4CAEA',
+	NavBarButtonsColor: '#608AC9',
+	NavBarIconsColor: '#C4CAEA',
+	CheckBoxColor: '#608AC9',
+	DateTimeInfoContainer: 'hsl(230, 100%, 83%)',
+	PlaceholderTextColor: '#a0a0a0',
+
+	TasksHeader: {
+		IconColor: '#4d6fa2',
+	},
+	CancelButton: '#94A5FF',
+	StreaksCalendar: {
+		DefaultDayText: "#666666",
+		MonthTextColor: "#293B46",
+	},
+	AIPage: {
+		AskAIButton: 'hsl(230, 100%, 83%)',
+	},
+	Task: {
+		IgnoreButton: "#b6b6b6",
+		IgnoreButtonText: "black",
+		OverdueText: "hsl(234, 29%, 20%)"
+	},
 };
 
 

@@ -22,57 +22,6 @@ import SettingsPage from './components/SettingsPage/SettingsPage';
 import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits } from './components/TasksPage/TasksPageSupabase';
 import { ColorsStateProvider } from './components/ColorContext';
 
-
-
-// email: danny@gmail.com
-// password: danny danny
-
-// when do we need to sync local states with 
-
-/**
- * alternate method:
- * each history item contains: habit's due date, whether habit is complete/incomplete/pending (values of "status")
- * eg:
- * 
- * 8/8/23 complete
- * 8/9/23 incomplete
- * 8/10/23 (today) pending
- * 
- * on log in / db update, update habit log:
- * 
- * * for all "pending" habits that were due before today, mark their status as: incomplete
- * 
- * * for day "myDay" between created_date and today:
- * * * if habit "repeatDays" conditions meet AND habit due on myDay has not been added to log:
- * * * add "incomplete" (if myDay is not today) or "pending" (if myDay is today) to log data
- * 
- * on completing habit before due date:
- * * update as "complete" in habit log
- * 
- * Note: "incomplete" habits cannot be completed
- * 
- */
-
-
-/**
- * simple solution:
- * 
- * habit entry:
- * 
- * Displaying habits on a page:
- * 
- * DISPLAY HABITS AFTER INIT (filter: habitInitDate <= selectedDate)
- * if habit_DAY == selected_DAY, then display (eg: "monday" == "monday")
- * 
- * EACH TIME A HABIT IS MARKED COMPLETE:
- *    add/modify entry into habitHistory as status:"complete" with "exactDueDate"
- * 
- * for all:
- * if there is an entry in habit's habitHistory where exactDueDate == selected_date:
- *      then display habit as complete
- * 
- */
-
 const Tab = createBottomTabNavigator();
 
 export default function App() {
