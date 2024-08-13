@@ -136,7 +136,7 @@ export const oceanMistTheme = {
 
 export const skyBlueTheme = {
 	DarkestBlue: 'hsl(216, 49%, 58%)', // background
-	DarkBlue: '#C4CAEA', // foreground (tasks, habits)
+	DarkBlue: 'hsl(231, 47%, 82%)', // foreground (tasks, habits)
 	TextColor: '#293B46', // regular text, small text
 	TextColorOnBg: '#C4CAEA', // regular text, small text
 	TextColorOnGrayBlueBg: '#293B46',
