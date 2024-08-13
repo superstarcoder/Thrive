@@ -6,6 +6,7 @@ import { CheckCircle } from 'phosphor-react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useColorsStateContext } from '../ColorContext';
 import { titleToTheme } from '../../assets/themes/ThemeColors';
+import { supabaseUpdateUserSettings } from '../Auth/AuthPageSupabase';
 
 const themeImageWidth = 131
 const themeImageHeight = 250
@@ -22,13 +23,13 @@ const data = [
 ]
 
 
-const EditThemeSection = ({selectedTheme, setSelectedTheme}) => {
+const EditThemeSection = ({userSettings, setUserSettings}) => {
   const rowsOfThemes = []
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState)
 
   const getSelectedStyle = (themeTitle) => {
-    if (selectedTheme == themeTitle) {
+    if (userSettings.selectedTheme == themeTitle) {
       return {
         borderWidth: selectedBorderWidth,
         borderColor: selectedColor,
@@ -38,12 +39,11 @@ const EditThemeSection = ({selectedTheme, setSelectedTheme}) => {
     return {}
   }
 
-  const onThemeOptionPressed = (themeTitle) => {
-    if (themeTitle == selectedTheme) return
-    setSelectedTheme(themeTitle)
+  const onThemeOptionPressed = async (themeTitle) => {
+    if (themeTitle == userSettings.selectedTheme) return
 
+    await supabaseUpdateUserSettings({updateDict: {selectedTheme: themeTitle}, userSettings, setUserSettings, setColorState})
 
-    setColorState(titleToTheme[themeTitle])
   }
 
   // Generate rows with items
@@ -53,7 +53,7 @@ const EditThemeSection = ({selectedTheme, setSelectedTheme}) => {
       <View key={i} style={styles.row}>
         {rowItems.map((item) => (
 
-          <TouchableOpacity key={item.id} style={styles.themeContainer} onPress={() => { onThemeOptionPressed(item.title) }}>
+          <TouchableOpacity key={item.id} style={styles.themeContainer} onPress={async () => { await onThemeOptionPressed(item.title) }}>
             <View style={styles.themeImageContainer}>
               <Image
                 source={item.imagePath}
@@ -61,7 +61,7 @@ const EditThemeSection = ({selectedTheme, setSelectedTheme}) => {
                 resizeMode="cover"
                 onError={() => console.log('Image failed to load.')}
               />
-              {selectedTheme == item.title &&
+              {userSettings.selectedTheme == item.title &&
                 <>
                   <CheckCircle size={35} weight="fill" color={ColorState?.GreenAccent} style={styles.checkIconStyle} />
                 </>

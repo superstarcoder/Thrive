@@ -19,11 +19,11 @@ const NavBarButtons = ({ label, onNavBarButtonPress, currentPage }) => {
 	if (label == currentPage) {
 		selectedStyle = {
 			// backgroundColor: Color.LightBlue
-			backgroundColor: Color.adjustBrightness(ColorState.NavBarButtonsColor, 0)
+			backgroundColor: Color.adjustBrightness(ColorState?.NavBarButtonsColor, 0)
 		}
 	} else {
 		selectedStyle = {
-			backgroundColor: ColorState.NavBarButtonsColor
+			backgroundColor: ColorState?.NavBarButtonsColor
 		}
 	}
 	if (label == "home") {

@@ -13,10 +13,10 @@ const TitleBox = ({ title, dispatch }) => {
 
   let titleComp;
   if (title == "") {
-    titleComp = <StyledH2 text={"Title"} style={{ color: ColorState.TextColorOnBg }} />
+    titleComp = <StyledH2 text={"Title"} style={{ color: ColorState?.TextColorOnBg }} />
   }
   else {
-    titleComp = <StyledH3 text={"Title"} style={{ color: ColorState.TextColorOnBg }} />
+    titleComp = <StyledH3 text={"Title"} style={{ color: ColorState?.TextColorOnBg }} />
   }
 
   return (
@@ -33,7 +33,7 @@ export default TitleBox
 
 const getDynamicStyles = (ColorState) => ({
   titleBox: {
-    backgroundColor: ColorState.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
     borderRadius: 12,
     paddingHorizontal: 27,
     paddingVertical: 22,

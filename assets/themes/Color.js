@@ -1,4 +1,5 @@
 function adjustBrightness(hex, percent) {
+	if (hex == undefined) return
     // Remove the hash at the start if it's there
     hex = hex.replace(/^#/, '');
     

@@ -6,7 +6,7 @@ import EditThemeSection from './EditThemeSection'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useColorsStateContext } from '../ColorContext';
 
-const SettingsPage = ({ signOutUser, selectedTheme, setSelectedTheme }) => {
+const SettingsPage = ({ signOutUser, selectedTheme, setSelectedTheme, userSettings, setUserSettings }) => {
 
 
   const { ColorState, setColorState } = useColorsStateContext();
@@ -15,7 +15,7 @@ const SettingsPage = ({ signOutUser, selectedTheme, setSelectedTheme }) => {
   return (
 
     <View style={styles.container}>
-      <EditThemeSection selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />
+      <EditThemeSection selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} userSettings={userSettings} setUserSettings={setUserSettings} />
       <TouchableOpacity style={styles.signOutButton} onPress={signOutUser}>
         <StyledH2 text={"Sign Out"} style={styles.buttonText} />
       </TouchableOpacity>

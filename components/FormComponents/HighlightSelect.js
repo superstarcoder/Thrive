@@ -19,7 +19,7 @@ const HighlightSelect = ({ text, selected, onChange }) => {
 
   let hText;
   if (selected) {
-    hText = <View style={[styles.highlighted, { backgroundColor: ColorState.LightBlue }]}>
+    hText = <View style={[styles.highlighted, { backgroundColor: ColorState?.LightBlue }]}>
       <StyledH3 text={text} style={styles.textHighlighted} />
     </View>
   }
