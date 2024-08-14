@@ -7,14 +7,14 @@ import { supabase } from '../../lib/supabase'
 import { Button, Input } from 'react-native-elements'
 import { makeRedirectUri } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import Color from "../../assets/themes/Color";
+// import Color from "../../assets/themes/Color";
+import { thriveBlueTheme as Color } from "../../assets/themes/ThemeColors";
 import { StyledH1, StyledH3, StyledH4, fontStyles } from "../text/StyledText";
 import { useFonts } from 'expo-font'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DiscordLogo, GithubLogo } from "phosphor-react-native";
 import { FacebookSocialButton, GoogleSocialButton, } from "react-native-social-buttons";
 import { redirectToPasswordResetForm } from "./PasswordResetForm";
-
 
 const SignInForm = ({ signInWithEmail, signUpWithEmail, signInWithGithub, resetPassword }) => {
 
@@ -51,7 +51,7 @@ const SignInForm = ({ signInWithEmail, signUpWithEmail, signInWithGithub, resetP
         placeholder="Email"
         autoCapitalize={'none'}
         style={[styles.myInputBox, fontStyles.styledH3]}
-        placeholderTextColor={"#5d5d77"}
+        placeholderTextColor={Color.Gray}
       />
       <View>
 
@@ -62,7 +62,7 @@ const SignInForm = ({ signInWithEmail, signUpWithEmail, signInWithGithub, resetP
           placeholder="Password"
           style={[styles.myInputBox, fontStyles.styledH3]}
           autoCapitalize={'none'}
-          placeholderTextColor={"#5d5d77"}
+          placeholderTextColor={Color.Gray}
         />
         <TouchableOpacity onPress={resetPassword}>
           <StyledH4 text={"Forgot password?"} style={styles.forgotPasswordText} />

@@ -20,61 +20,14 @@ import StatsPage from './components/StatsPage/StatsPage';
 import AIPage from './components/AIPage/AIPage';
 import SettingsPage from './components/SettingsPage/SettingsPage';
 import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits } from './components/TasksPage/TasksPageSupabase';
+import { ColorsStateProvider } from './components/ColorContext';
+import { supabaseLoadUserSettings } from './components/Auth/AuthPageSupabase'
+import { useColorsStateContext } from './components/ColorContext';
+import { USER_INIT_SETTINGS } from './utils/AppConstants';
 
+// const Tab = createBottomTabNavigator();
 
-
-// email: danny@gmail.com
-// password: danny danny
-
-// when do we need to sync local states with 
-
-/**
- * alternate method:
- * each history item contains: habit's due date, whether habit is complete/incomplete/pending (values of "status")
- * eg:
- * 
- * 8/8/23 complete
- * 8/9/23 incomplete
- * 8/10/23 (today) pending
- * 
- * on log in / db update, update habit log:
- * 
- * * for all "pending" habits that were due before today, mark their status as: incomplete
- * 
- * * for day "myDay" between created_date and today:
- * * * if habit "repeatDays" conditions meet AND habit due on myDay has not been added to log:
- * * * add "incomplete" (if myDay is not today) or "pending" (if myDay is today) to log data
- * 
- * on completing habit before due date:
- * * update as "complete" in habit log
- * 
- * Note: "incomplete" habits cannot be completed
- * 
- */
-
-
-/**
- * simple solution:
- * 
- * habit entry:
- * 
- * Displaying habits on a page:
- * 
- * DISPLAY HABITS AFTER INIT (filter: habitInitDate <= selectedDate)
- * if habit_DAY == selected_DAY, then display (eg: "monday" == "monday")
- * 
- * EACH TIME A HABIT IS MARKED COMPLETE:
- *    add/modify entry into habitHistory as status:"complete" with "exactDueDate"
- * 
- * for all:
- * if there is an entry in habit's habitHistory where exactDueDate == selected_date:
- *      then display habit as complete
- * 
- */
-
-const Tab = createBottomTabNavigator();
-
-export default function App() {
+function MainApp() {
   // const [task, setTask] = useState(null);
 
   const [session, setSession] = useState(null)
@@ -83,6 +36,11 @@ export default function App() {
   const [habitHistory, setHabitHistory] = useState({})
   const [habitStats, setHabitStats] = useState({})
   const [lastAnalyzedTime, setLastAnalyzedTime] = useState(null)
+  const [selectedTheme, setSelectedTheme] = useState("Thrive Blue")
+  const [userSettings, setUserSettings] = useState(USER_INIT_SETTINGS)
+  const { ColorState, setColorState } = useColorsStateContext();
+  // const [ColorState, setColorState] = useState('Hello from Context!');
+
   // const [dataIsFetched, setDataIsFetched] = useState(true)
   const tasksPageRef = useRef();
   // authorize user into session
@@ -96,6 +54,7 @@ export default function App() {
         if (session && session.user) {
           console.log("user logged in!")
           console.log("fetching data for " + session.user.email)
+          await supabaseLoadUserSettings({ "user": session.user, setUserSettings, setColorState })
           const newData = await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
           console.log("synced")
           // this only needs to be run on new days! will fix later to increase efficiency
@@ -109,7 +68,7 @@ export default function App() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
-      console.info("onAuthStateChange: "+event)
+      console.info("onAuthStateChange: " + event)
       await updateSession()
 
       if (event == "SIGNED_IN") {
@@ -164,10 +123,7 @@ export default function App() {
   var myNavBar = <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
   return (
-
-    // <NavigationContainer style={{margin: 0}}>
-    <GestureHandlerRootView style={styles.gestureHandler}>
-      {/* <BackgroundImg /> */}
+    <>
       {session && session.user ? (
         <>
 
@@ -189,7 +145,7 @@ export default function App() {
           }
           {currentPage == "settings" &&
             <>
-              <SettingsPage signOutUser={signOutUser} />
+              <SettingsPage signOutUser={signOutUser} userSettings={userSettings} setUserSettings={setUserSettings}  selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} />
             </>
 
           }
@@ -218,9 +174,17 @@ export default function App() {
           <Auth setCurrentPage={setCurrentPage} />
         )
       }
+    </>
+  );
+}
 
+export default function App() {
+  return (
+    <GestureHandlerRootView style={styles.gestureHandler}>
+      <ColorsStateProvider>
+        <MainApp />
+      </ColorsStateProvider>
     </GestureHandlerRootView>
-    // </NavigationContainer>
 
   );
 }

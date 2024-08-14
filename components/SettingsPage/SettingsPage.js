@@ -2,12 +2,22 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Color from '../../assets/themes/Color'
 import React from 'react'
 import { StyledH2 } from '../text/StyledText'
+import EditThemeSection from './EditThemeSection'
+import { ScrollView } from 'react-native-gesture-handler'
+import { useColorsStateContext } from '../ColorContext';
 
-const SettingsPage = ({signOutUser}) => {
+const SettingsPage = ({ signOutUser, selectedTheme, setSelectedTheme, userSettings, setUserSettings }) => {
+
+
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
+
   return (
+
     <View style={styles.container}>
+      <EditThemeSection selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} userSettings={userSettings} setUserSettings={setUserSettings} />
       <TouchableOpacity style={styles.signOutButton} onPress={signOutUser}>
-        <StyledH2 text={"Sign Out"} style={styles.buttonText}/>
+        <StyledH2 text={"Sign Out"} style={styles.buttonText} />
       </TouchableOpacity>
     </View>
   )
@@ -15,17 +25,19 @@ const SettingsPage = ({signOutUser}) => {
 
 export default SettingsPage
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   container: {
     flex: 1,
-    backgroundColor: Color.DarkestBlue,
-    paddingTop: 100,
+    backgroundColor: ColorState?.DarkestBlue,
+    paddingTop: 70,
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    gap: 10,
   },
   signOutButton: {
     display: "flex",
-    backgroundColor: Color.RedAccent,
+    backgroundColor: ColorState?.RedAccent,
     alignItems: "center",
     justifyContent: "center",
     width: 180,
@@ -35,4 +47,4 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "black"
   }
-})
+});

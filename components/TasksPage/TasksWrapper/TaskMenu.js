@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
-import Color from '../../../assets/themes/Color';
 import React, { useEffect } from 'react'
 import BottomSheet from '../../FormComponents/BottomSheet';
 import { forwardRef, useRef, useImperativeHandle, useState } from 'react';
@@ -8,9 +7,12 @@ import { Trash, XCircle, CheckCircle } from 'phosphor-react-native';
 import { fontStyles } from '../../text/StyledText';
 import { Square, CheckSquare, XSquare, Placeholder, PencilSimpleLine } from 'phosphor-react-native';
 import { supabaseDeleteTask } from '../TasksPageSupabase';
+import { useColorsStateContext } from '../../ColorContext';
 
 
 const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, setHabitHistory, setHabitStats }, ref) => {
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   const heightPercent = 0.8
   useEffect(() => {
@@ -72,26 +74,26 @@ const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, 
     <BottomSheet ref={bottomSheetRef} customStyle={styles.taskMenuModal} clamps={[0, heightPercent]} scrollingEnabled={true}>
 
       <View style={styles.taskMenuContainer}>
-        <Text style={[fontStyles.styledH1, { color: "#CFD6FC", }]}>Mark As:</Text>
+        <Text style={[fontStyles.styledH1, { color: ColorState?.TextColorOnGrayBlueBg, }]}>Mark As:</Text>
 
         <TouchableOpacity onPress={onMarkAsCompletePressed}>
           <View style={styles.markAsButton}>
             <Text style={[fontStyles.styledH1, styles.buttonText2]}>Complete</Text>
-            <CheckSquare size={38} weight="fill" color={Color.GreenAccent} style={styles.checkBoxIcon} />
+            <CheckSquare size={38} weight="fill" color={ColorState?.GreenAccent} style={styles.checkBoxIcon} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onMarkAsIncompletePressed}>
           <View style={styles.markAsButton}>
             <Text style={[fontStyles.styledH1, styles.buttonText2]}>Incomplete</Text>
-            <XSquare size={38} weight="fill" color={Color.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+            <XSquare size={38} weight="fill" color={ColorState?.RedAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onMarkAsExemptPressed}>
           <View style={styles.markAsButton}>
             <Text style={[fontStyles.styledH1, styles.buttonText2]}>Exempt</Text>
-            <Placeholder size={38} weight="fill" color={Color.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
+            <Placeholder size={38} weight="fill" color={ColorState?.BlueAccent} style={[styles.checkBoxIcon, { borderColor: "black" }]} />
           </View>
         </TouchableOpacity>
 
@@ -100,19 +102,19 @@ const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, 
           <TouchableOpacity onPress={onEditPressedWrapper}>
             <View style={styles.editTaskButton}>
               <Text style={[fontStyles.styledH1, styles.buttonText]}>Edit</Text>
-              <PencilSimpleLine size={25} weight="bold" color={"black"} />
+              <PencilSimpleLine size={25} weight="bold" color={ColorState?.IconColor} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onCancelPress}>
             <View style={styles.cancelTaskButton}>
-              <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              <XCircle size={30} weight="bold" color={ColorState?.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onDeletePress}>
             <View style={styles.deleteTaskButton}>
-              <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              <Trash size={30} weight="bold" color={ColorState?.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
         </View>
@@ -123,9 +125,10 @@ const TaskMenu = forwardRef(({ supabase, taskItems, setTaskItems, habitHistory, 
 
 export default TaskMenu
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   taskMenuModal: {
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.74,
@@ -155,7 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 70,
     width: 250,
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
   },
   cancelButton: {
 
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   editTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    backgroundColor: ColorState?.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cancelTaskButton: {
-    backgroundColor: Color.Blue,
+    backgroundColor: ColorState?.CancelButton,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
+    backgroundColor: ColorState?.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -194,10 +197,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: "#000"
+    color: ColorState?.IconColor
   },
   buttonText2: {
-    color: "#CFD6FC",
+    color: ColorState?.TextColorOnBg,
     marginRight: "auto",
   }
-})
+});

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View, TextInput, Text } from 'react-native'
 import { makeRedirectUri } from "expo-auth-session";
-import Color from "../../assets/themes/Color";
+// import Color from "../../assets/themes/Color";
+import { thriveBlueTheme as Color } from "../../assets/themes/ThemeColors";
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from "../text/StyledText";
 import { useFonts } from 'expo-font'
 import { TouchableOpacity } from "react-native-gesture-handler";

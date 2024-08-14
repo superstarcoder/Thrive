@@ -3,11 +3,11 @@ import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { CaretRight, CaretLeft, Eye, Funnel, ArrowsDownUp } from 'phosphor-react-native';
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Color from '../../../assets/themes/Color'
-import AddTasksButton from "./AddTasksButton";
+// import AddTasksButton from "./AddTasksButton";
 import DropDown from "../../FormComponents/DropDown";
 import { TASKS_PAGE_SORT_MODES, TASKS_PAGE_VIEW_MODES } from "../../../utils/AppConstants";
 import { Switch } from "react-native-elements/dist/switch/switch";
+import { useColorsStateContext } from '../../ColorContext';
 
 
 /**
@@ -38,14 +38,16 @@ const TaskHeader = ({
 	const [loadingItemIndex, setLoadingItemIndex] = useState()
 	const [isAscending, setIsAscending] = useState(false)
 	const sortButtonRef = useRef()
+	const { ColorState, setColorState } = useColorsStateContext();
+	const styles = getDynamicStyles(ColorState)
 
 	const viewButton =
 		<View style={styles.viewButton}>
-			<Eye size={30} weight="duotone" />
+			<Eye size={30} weight="duotone" color={ColorState?.TasksHeader?.IconColor} />
 		</View>
 	const sortButton =
 		<View style={styles.sortButton}>
-			<ArrowsDownUp size={30} weight="duotone" />
+			<ArrowsDownUp size={30} weight="duotone" color={ColorState?.TasksHeader?.IconColor} />
 		</View>
 	const onViewModeChanged = (selectedItem, index) => {
 		if (selectedItem == viewMode) return // if view mode didn't actually change
@@ -56,7 +58,7 @@ const TaskHeader = ({
 		let sortMode = getCurrSortMode(selectedItem)
 		let myIndex = TASKS_PAGE_SORT_MODES.indexOf(sortMode[0])
 		sortButtonRef?.current?.selectIndex(myIndex)
-		
+
 		setIsAscending(sortMode[1])
 	}
 	const onSortModeChanged = (selectedItem, index) => {
@@ -85,7 +87,7 @@ const TaskHeader = ({
 	const getCurrSortMode = (myViewMode) => {
 
 		console.log("getting default value!!!")
-		console.log({myViewMode})
+		console.log({ myViewMode })
 		if (myViewMode == "Journal View (Default)") {
 			console.log(sortModeJournalView[0])
 			return sortModeJournalView
@@ -109,7 +111,7 @@ const TaskHeader = ({
 					style={styles.ascendingSwitch}
 					onValueChange={isAscendingChanged}
 					value={isAscending}
-					trackColor={{ false: '#767577', true: '#81b0ff' }}
+					trackColor={{ false: ColorState?.GrayOnBg, true: ColorState?.DarkBlue }}
 				/>
 			</View>
 			<Text style={[fontStyles.styledH4, styles.dropDownHeadingTextStyle]}>Sort By: </Text>
@@ -131,23 +133,34 @@ const TaskHeader = ({
 						defaultValue={"Journal View (Default)"}
 					/>
 
-					<View style={styles.currentDateContainer}>
 
-						<TouchableOpacity style={styles.caretLeftContainer} onPress={goToPreviousDay}>
-							<CaretLeft size={25} weight="fill" color={Color.Blue} style={styles.caretLeft} />
-						</TouchableOpacity>
+					{viewMode == "Journal View (Default)" &&
+						<>
+							<View style={styles.currentDateContainer}>
+								<TouchableOpacity style={styles.caretLeftContainer} onPress={goToPreviousDay}>
+									<CaretLeft size={25} weight="fill" color={ColorState?.Blue} style={styles.caretLeft} />
+								</TouchableOpacity>
 
-						<TouchableOpacity onPress={showDatePicker}>
-							<StyledH2 text={dateText} style={styles.currentDate} />
-						</TouchableOpacity>
+								<TouchableOpacity onPress={showDatePicker}>
+									<StyledH2 text={dateText} style={styles.currentDate} />
+								</TouchableOpacity>
 
-						<TouchableOpacity style={styles.caretRightContainer} onPress={goToNextDay}>
-							<CaretRight size={25} weight="fill" color={Color.Blue} style={styles.caretRight} />
-						</TouchableOpacity>
+								<TouchableOpacity style={styles.caretRightContainer} onPress={goToNextDay}>
+									<CaretRight size={25} weight="fill" color={ColorState?.Blue} style={styles.caretRight} />
+								</TouchableOpacity>
 
-						<DateTimePickerModal isVisible={isDatePickerVisible} mode="date" display='inline' onConfirm={handleConfirm} onCancel={hideDatePicker} date={selectedDate} />
+								<DateTimePickerModal isVisible={isDatePickerVisible} mode="date" display='inline' onConfirm={handleConfirm} onCancel={hideDatePicker} date={selectedDate} />
 
-					</View>
+							</View>
+						</>
+					}
+
+					{viewMode == "All Tasks View" &&
+						<View style={styles.pageViewHeadingContainer}>
+							<StyledH2 text={"All Tasks"} style={styles.currentDate} />
+						</View>
+					}
+
 					<DropDown
 						headingComponent={sortByHeadingComponent}
 						buttonComponent={sortButton}
@@ -174,14 +187,14 @@ const TaskHeader = ({
 	)
 }
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
 	ascendingSwitch: {
 		transform: [{ scaleX: .8 }, { scaleY: .8 }]
 
 	},
 	ascendingSwitchText: {
 		fontSize: 15,
-		color: "gray"
+		color: ColorState?.GrayOnBg,
 	},
 	ascendingSwitchContainer: {
 		flexDirection: "row",
@@ -190,24 +203,24 @@ const styles = StyleSheet.create({
 	},
 	dropDownHeadingTextStyle: {
 		fontSize: 18,
-		color: 'gray',
+		color: ColorState?.GrayOnBg,
 	},
 	dropDownHeadingStyle: {
-		backgroundColor: Color.DarkestBlue,
+		backgroundColor: ColorState?.DarkestBlue,
 		flexDirection: 'column',
 		paddingHorizontal: 12,
 		paddingVertical: 8,
 		borderWidth: 0.5,
 	},
 	viewButton: {
-		backgroundColor: Color.DarkBlue,
+		backgroundColor: ColorState?.DarkBlue,
 		borderRadius: 5,
 		alignItems: "center",
 		justifyContent: "center",
 		padding: 2,
 	},
 	sortButton: {
-		backgroundColor: Color.DarkBlue,
+		backgroundColor: ColorState?.DarkBlue,
 		borderRadius: 5,
 		alignItems: "center",
 		justifyContent: "center",
@@ -217,7 +230,7 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		alignItems: "center",
 		justifyContent: "center",
-		backgroundColor: "#252F68",
+		backgroundColor: ColorState?.DarkBlue,
 		borderRadius: 20,
 		paddingVertical: 7,
 		paddingHorizontal: 25,
@@ -254,22 +267,32 @@ const styles = StyleSheet.create({
 		top: 0,
 		// height: 110,
 		width: "100%",
-		backgroundColor: Color.DarkestBlue,
+		backgroundColor: ColorState?.DarkestBlue,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		shadowColor: "black",
-		shadowOpacity: 1,
-		shadowRadius: 8,
+		shadowOpacity: 0.3,
+		shadowRadius: 5,
+		shadowOffset: { width: 0, height: 5 },
+		borderBottomColor: "black",
 	},
 	currentDateContainer: {
 		flexDirection: "row",
-		backgroundColor: "#101326",
+		backgroundColor: ColorState?.DarkBlue,
 		borderRadius: 8,
 		paddingHorizontal: 0,
 		alignItems: "center"
 	},
+	pageViewHeadingContainer: {
+		flexDirection: "row",
+		backgroundColor: ColorState?.DarkBlue,
+		borderRadius: 8,
+		paddingHorizontal: 35,
+		paddingVertical: 4,
+		alignItems: "center"
 
-})
+	}
+});
 
 export default TaskHeader;

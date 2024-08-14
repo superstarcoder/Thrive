@@ -4,11 +4,12 @@ import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
 import React from 'react'
 import { StyledH1, StyledH2, StyledH3 } from '../text/StyledText';
-import Color from '../../assets/themes/Color';
 import { getTasksForMonthString } from '../TasksPage/TasksPageSupabase';
 import Markdown from 'react-native-markdown-display';
 // import { OPENAI_API_KEY } from '@env';
 import OpenAI from "openai";
+import { useColorsStateContext } from '../ColorContext';
+// import { Color } from '../../assets/themes/Color';
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -113,6 +114,52 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
   const [analsysisText, setAnalysisText] = useState(``)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
+
+
+  const markdownStyles = {
+
+    body: {
+      color: ColorState?.GrayOnBg,
+      fontFamily: "MPlusRegular",
+      fontSize: 18,
+    },
+    heading2: {
+      fontSize: 40,
+      color: ColorState?.TextColorOnBg,
+    },
+    heading3: {
+      fontSize: 25,
+      // marginBottom: 20,
+      color: ColorState?.TextColorOnBg,
+      fontFamily: "MPlusMedium",
+      // backgroundColor: "black"
+    },
+    heading4: {
+      fontSize: 22,
+      marginBottom: 5,
+      marginTop: 25,
+      color: ColorState?.Blue,
+      fontFamily: "MPlusMedium",
+    },
+    heading5: {
+      fontSize: 13,
+      color: '#FFFFFF',
+    },
+    heading6: {
+      fontSize: 11,
+      color: '#FFFFFF',
+    },
+    strong: {
+      fontFamily: "MPlusMedium",
+      fontSize: 19,
+      color: ColorState?.Blue
+    },
+    list_item: {
+      marginVertical: 7.5,
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -145,11 +192,10 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
 
 export default AIPage
 
-
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
   infoBox: {
     display: "flex",
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -158,17 +204,17 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: Color.BlueAccent,
+    color: ColorState?.TextColorOnGrayBlueBg,
     fontSize: 13,
   },
   errorText: {
-    color: Color.RedAccent
+    color: ColorState?.RedAccent
   },
   body: {
-    color: "white"
+    color: ColorState?.TextColor
   },
   heading: {
-    color: "white"
+    color: ColorState?.TextColor
   },
   scrollView: {
     display: "flex",
@@ -178,7 +224,7 @@ const styles = StyleSheet.create({
   askAIButton: {
     alignSelf: "center",
     justifyContent: "center",
-    backgroundColor: Color.LightBlue,
+    backgroundColor: ColorState?.AIPage?.AskAIButton,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -197,55 +243,12 @@ const styles = StyleSheet.create({
     paddingBottom: 200,
   },
   sectionHeading: {
-    alignSelf: "center"
+    alignSelf: "center",
+    color: ColorState?.TextColorOnBg
   },
   container: {
     flex: 1,
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
   },
 
 })
-
-const markdownStyles = StyleSheet.create({
-
-  body: {
-    color: Color.Gray,
-    fontFamily: "MPlusRegular",
-    fontSize: 18,
-  },
-  heading2: {
-    fontSize: 40,
-    color: '#FFFFFF',
-  },
-  heading3: {
-    fontSize: 25,
-    // marginBottom: 20,
-    color: '#FFFFFF',
-    fontFamily: "MPlusMedium",
-    // backgroundColor: "black"
-  },
-  heading4: {
-    fontSize: 22,
-    marginBottom: 5,
-    marginTop: 25,
-    color: Color.LightBlue,
-    fontFamily: "MPlusMedium",
-  },
-  heading5: {
-    fontSize: 13,
-    color: '#FFFFFF',
-  },
-  heading6: {
-    fontSize: 11,
-    color: '#FFFFFF',
-  },
-  strong: {
-    fontFamily: "MPlusMedium",
-    fontSize: 19,
-    color: Color.Blue
-  },
-  list_item: {
-    marginVertical: 7.5,
-  }
-});
-

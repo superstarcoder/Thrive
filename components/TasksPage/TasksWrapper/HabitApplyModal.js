@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
-import Color from '../../../assets/themes/Color';
 import React, { useEffect } from 'react'
 import BottomSheet from '../../FormComponents/BottomSheet';
 import { forwardRef, useRef, useImperativeHandle, useState } from 'react';
@@ -8,6 +7,7 @@ import { Trash, XCircle, CheckCircle, Check, Circle } from 'phosphor-react-nativ
 import { StyledH2, fontStyles } from '../../text/StyledText';
 import { Square, CheckSquare, XSquare, Placeholder, PencilSimpleLine } from 'phosphor-react-native';
 import { supabaseDeleteTask } from '../TasksPageSupabase';
+import { useColorsStateContext } from '../../ColorContext';
 
 
 const HabitApplyModal = forwardRef(({ }, ref) => {
@@ -25,6 +25,9 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
   const [isLoading, setIsLoading] = useState(false)
   const [scrollingEnabled, setScrollingEnabled] = useState(true)
   const [loadingString, setLoadingString] = useState("")
+  const { ColorState, setColorState } = useColorsStateContext();
+const styles = getDynamicStyles(ColorState)
+
 
   useImperativeHandle(ref, () => ({
     showHabitApplyModal(onConfirmEditsCompleteArg, taskSettingsEditedArg) {
@@ -60,8 +63,8 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
 
       <View style={styles.taskMenuContainer}>
         <View style={styles.myTitle}>
-          <Text style={[fontStyles.styledH1, { color: "#CFD6FC" }]}>Apply Edits For:</Text>
-          <Text style={[fontStyles.styledH2, { color: Color.BlueAccent }]}>(Habit Name: Sleep 7.5+ hours)</Text>
+          <Text style={[fontStyles.styledH1, { color: ColorState?.TextColorOnGrayBlueBg }]}>Apply Edits For:</Text>
+          <Text style={[fontStyles.styledH2, { color: ColorState?.BlueAccent }]}>({taskSettingsEdited?.title})</Text>
         </View>
 
 
@@ -70,7 +73,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
             <View style={styles.markAsButton}>
 
               {optionSelected == "edit_selected_habit" ? (
-                <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
+                <CheckCircle size={30} weight="fill" color={ColorState?.GreenAccent} style={styles.buttonIcon} />
               ) : (
                 <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
               )}
@@ -82,7 +85,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
           <TouchableOpacity onPress={() => setOptionSelected("edit_selected_and_upcoming")}>
             <View style={styles.markAsButton}>
               {optionSelected == "edit_selected_and_upcoming" ? (
-                <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
+                <CheckCircle size={30} weight="fill" color={ColorState?.GreenAccent} style={styles.buttonIcon} />
               ) : (
                 <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
               )}
@@ -94,7 +97,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
           <TouchableOpacity onPress={() => setOptionSelected("edit_all")}>
             <View style={styles.markAsButton}>
               {optionSelected == "edit_all" ? (
-                <CheckCircle size={30} weight="fill" color={Color.GreenAccent} style={styles.buttonIcon} />
+                <CheckCircle size={30} weight="fill" color={ColorState?.GreenAccent} style={styles.buttonIcon} />
               ) : (
                 <Circle size={30} weight="fill" color={"white"} style={styles.buttonIcon} />
               )}
@@ -117,7 +120,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
             <View style={styles.saveButton}>
               <Text style={[fontStyles.styledH1, styles.buttonText]}>Save</Text>
               {isLoading &&
-                <ActivityIndicator size="large" color={Color.DarkestBlue} />
+                <ActivityIndicator size="large" color={ColorState?.DarkestBlue} />
               }
               {/* <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} /> */}
             </View>
@@ -135,7 +138,8 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
 
 export default HabitApplyModal
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   myTitle: {
     display: "flex",
     alignItems: "center",
@@ -150,11 +154,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingStringText: {
-    color: "white"
+    color: ColorState?.TextColor
 
   },
   taskMenuModal: {
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.74,
@@ -189,7 +193,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
   },
   cancelButton: {
 
@@ -201,7 +205,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   editTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    backgroundColor: ColorState?.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: Color.Blue,
+    backgroundColor: ColorState?.Blue,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -225,14 +229,14 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: Color.GreenAccent,
+    backgroundColor: ColorState?.GreenAccent,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
 
   },
   deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
+    backgroundColor: ColorState?.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -246,4 +250,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#CFD6FC",
   }
-})
+});

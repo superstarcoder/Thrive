@@ -16,11 +16,11 @@ import { v4 as uuidv4 } from 'uuid';
 import BottomSheet from '../../FormComponents/BottomSheet';
 import { ACTIONS, TASK_SETTINGS_MODES } from '../../../utils/Actions_TaskSettingsModal';
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
-import Color from '../../../assets/themes/Color'
 import { getDateFromDatetime, onlyDatesAreSame, getEndOfDay } from '../../../utils/DateHelper';
 import { supabaseDeleteTask, supabaseInsertTask, supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry, editSelectedHabitOn_ConfirmEdit, editSelectedAndUpcoming_OnConfirmEdit, editAll_OnConfirmEdit } from '../TasksPageSupabase';
 import { HABIT_HISTORY_COLUMNS, HABIT_TASKS_TABLE_COLUMNS } from '../../../utils/AppConstants';
 import { deepCopyObject, getHabitHistoryUpdateDict, getHabitTasksTableUpdateDict, objIsEmpty } from '../../../utils/OtherHelpers';
+import { useColorsStateContext } from '../../ColorContext';
 
 // finds the next due date after "initialDate" based on repeatDays
 const findHabitNextDueDate = (initialDate, repeatDays, dueTime) => {
@@ -122,6 +122,9 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
   const [settingsMode, setSettingsMode] = useState(TASK_SETTINGS_MODES.INACTIVE)
   const [initialHabitHistoryEntry, setInitialHabitHistoryEntry] = useState()
   const [initialHabitSettings, setInitialHabitSettings] = useState()
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
+
 
   const getInitSettings = (selectedDate = new Date()) => {
     var endOfDayObj = getEndOfDay(selectedDate)
@@ -216,7 +219,7 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
 
 
     // console.log(optionSelected)
-    const habitHistoryUpdateDict = getHabitHistoryUpdateDict({initialHabitSettings, habitSettingsEdited})
+    const habitHistoryUpdateDict = getHabitHistoryUpdateDict({ initialHabitSettings, habitSettingsEdited })
     // console.log(JSON.stringify(taskSettingsEdited, null, 2 ))
 
     // edit specific habitHistory entry (based on id and habit_due_date) with correct settings
@@ -348,12 +351,12 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
       </View>
       <ScrollView style={[styles.addTaskModalSettings]} ref={scrollViewRef}>
         <TitleBox title={habitSettings.title} dispatch={dispatch} />
+        <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
         <DurationBox duration={habitSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
         <ImportanceBox importance={habitSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
         {/* <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} /> */}
         <RepeatBox dispatch={dispatch} repeatDays={habitSettings.repeatDays} isHabit={habitSettings.isHabit} showNote={settingsMode == TASK_SETTINGS_MODES.EDIT_TASK} />
         <DueDatePickerBox dispatch={dispatch} dateTime={habitSettings.dueDate} isHabit={habitSettings.isHabit} />
-        <DescriptionBox description={habitSettings.description} dispatch={dispatch} />
       </ScrollView>
 
       <View style={styles.addTaskModalButtons}>
@@ -365,14 +368,14 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
 
         <TouchableOpacity onPress={onCancelPress}>
           <View style={styles.cancelTaskButton}>
-            <XCircle size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+            <XCircle size={30} weight="bold" color={ColorState?.IconColor} style={styles.buttonIcon} />
           </View>
         </TouchableOpacity>
 
         {settingsMode != TASK_SETTINGS_MODES.ADD_TASK &&
           <TouchableOpacity onPress={onDeletePress}>
             <View style={styles.deleteTaskButton}>
-              <Trash size={30} weight="bold" color={"black"} style={styles.buttonIcon} />
+              <Trash size={30} weight="bold" color={ColorState?.IconColor} style={styles.buttonIcon} />
             </View>
           </TouchableOpacity>
         }
@@ -384,10 +387,11 @@ const HabitSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, tas
 
 export default HabitSettingsModal
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   headingBox: {
     display: "flex",
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -399,17 +403,17 @@ const styles = StyleSheet.create({
   },
   infoText: {
     alignSelf: "center",
-    color: "white",
+    color: ColorState?.TextColorOnBg,
     alignSelf: "center",
   },
   buttonText: {
-    color: "#000"
+    color: ColorState?.IconColor
   },
   saveButtonIcon: {
     marginLeft: 5,
   },
   saveTaskButton: {
-    backgroundColor: "hsla(114, 100%, 36%, 1)",
+    backgroundColor: ColorState?.GreenAccent,
     width: 100,
     height: 45,
     borderRadius: 12,
@@ -419,7 +423,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cancelTaskButton: {
-    backgroundColor: Color.Blue,
+    backgroundColor: ColorState?.CancelButton,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -428,7 +432,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteTaskButton: {
-    backgroundColor: "hsl(0, 81%, 50%)",
+    backgroundColor: ColorState?.RedAccent,
     width: 45,
     height: 45,
     borderRadius: 12,
@@ -436,7 +440,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addTaskModalButtons: {
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     height: 90,
     marginBottom: 95,
     alignItems: "center",
@@ -457,8 +461,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   addTaskModal: {
-    backgroundColor: Color.GrayBlue,
+    backgroundColor: ColorState?.GrayBlue,
     // paddingHorizontal: 30,
   },
-
-})
+});

@@ -4,8 +4,12 @@ import { useState } from 'react';
 import React from 'react'
 import Color from '../../assets/themes/Color';
 import { ACTIONS } from '../../utils/Actions_TaskSettingsModal';
+import { useColorsStateContext } from '../ColorContext';
 
-const ScrollSelect = ({dataArray, selectedIndex, setSelectedIndex, dispatch}) => {
+const ScrollSelect = ({ dataArray, selectedIndex, setSelectedIndex, dispatch }) => {
+
+	const { ColorState, setColorState } = useColorsStateContext();
+	const styles = getDynamicStyles(ColorState)
 
 	const onChange = (index) => {
 		setSelectedIndex(index)
@@ -21,7 +25,7 @@ const ScrollSelect = ({dataArray, selectedIndex, setSelectedIndex, dispatch}) =>
 			itemHeight={40}
 			selectedIndicatorStyle={styles.selectedIndicatorStyle}
 			itemTextStyle={styles.itemTextStyle}
-			scaleFunction={(x) => 1 - (1/5)**x }
+			scaleFunction={(x) => 1 - (1 / 5) ** x}
 			decelerationRate={"fast"}
 		/>
 	);
@@ -29,11 +33,11 @@ const ScrollSelect = ({dataArray, selectedIndex, setSelectedIndex, dispatch}) =>
 
 export default ScrollSelect
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
 	selectedIndicatorStyle: {
-		backgroundColor: Color.DarkBlue
+		backgroundColor: ColorState?.DarkBlue
 	},
 	itemTextStyle: {
-		color: "white"
+		color: ColorState?.TextColor
 	}
-})
+});

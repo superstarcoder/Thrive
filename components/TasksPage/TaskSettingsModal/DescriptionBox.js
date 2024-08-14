@@ -2,9 +2,10 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Keyboard, Dime
 import { useFonts } from 'expo-font'
 import React, { useEffect, useRef, useState } from 'react'
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts } from '../../text/StyledText';
-import Color from '../../../assets/themes/Color'
 import MyTextInput from '../../FormComponents/MyTextInput';
 import { ACTIONS } from '../../../utils/Actions_TaskSettingsModal';
+import { useColorsStateContext } from '../../ColorContext';
+
 
 const DescriptionBox = ({ description, dispatch }) => {
 
@@ -12,6 +13,8 @@ const DescriptionBox = ({ description, dispatch }) => {
   const [keyboardHeight, setKeyboardHeight] = useState();
   const [isHidden, setIsHidden] = useState(false);
   const [onFocus, setOnFocus] = useState(true);
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -34,31 +37,31 @@ const DescriptionBox = ({ description, dispatch }) => {
   }, [])
 
   const checkIfHiddenAndOnFocus = (keyboardHeight) => {
-      if (!onFocus) {
-        // console.log("setting is hidden to false")
-        setIsHidden(false)
-        return
-      }
+    if (!onFocus) {
+      // console.log("setting is hidden to false")
+      setIsHidden(false)
+      return
+    }
 
-      inputRef?.current?.measure((x, y, width, height, pageX, pageY) => {
-        const screenHeight = Dimensions.get('screen').height;
-        const isHiddenByKeyboard = pageY + height > screenHeight - keyboardHeight;
-        setIsHidden(isHiddenByKeyboard);
+    inputRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+      const screenHeight = Dimensions.get('screen').height;
+      const isHiddenByKeyboard = pageY + height > screenHeight - keyboardHeight;
+      setIsHidden(isHiddenByKeyboard);
 
-        // console.log('Is hidden by keyboard:', isHiddenByKeyboard);
-        // console.log({ y, pageY, height, screenHeight, keyboardHeight })
+      // console.log('Is hidden by keyboard:', isHiddenByKeyboard);
+      // console.log({ y, pageY, height, screenHeight, keyboardHeight })
 
-        const yOffset = (pageY + height) - (screenHeight - keyboardHeight)
-        
-      });
+      const yOffset = (pageY + height) - (screenHeight - keyboardHeight)
+
+    });
   };
 
   let title;
   if (description == "") {
-    title = <StyledH2 text={"Description"} />
+    title = <StyledH2 text={"Description"} style={{ color: ColorState?.TextColorOnBg }} />
   }
   else {
-    title = <StyledH3 text={"Description"} style={{ color: Color.Gray }} />
+    title = <StyledH3 text={"Description"} style={{ color: ColorState?.TextColorOnBg }} />
   }
 
   return (
@@ -71,13 +74,13 @@ const DescriptionBox = ({ description, dispatch }) => {
 
 export default DescriptionBox
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
   titleBox: {
     display: "flex",
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
     borderRadius: 12,
     paddingHorizontal: 27,
     paddingVertical: 20,
     marginBottom: 25,
   },
-})
+});

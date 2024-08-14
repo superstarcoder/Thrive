@@ -2,10 +2,10 @@ import { StyleSheet, Text, View, TextInput, KeyboardAvoidingView, Keyboard } fro
 import { useFonts } from 'expo-font'
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Clock, Pencil, PencilSimple, PencilSimpleLine } from 'phosphor-react-native';
-import Color from '../../../assets/themes/Color'
 import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles, loadFonts } from '../../text/StyledText';
 // import ScrollSelect from '../../FormComponents/ScrollSelect';
 import ScrollSelect from '../../FormComponents/ScrollSelect';
+import { useColorsStateContext } from '../../ColorContext';
 
 const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
 
@@ -16,6 +16,9 @@ const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
   }
 
   const [selectedIndex, setSelectedIndex] = useState(dataArray.indexOf(duration));
+  const { ColorState, setColorState } = useColorsStateContext();
+  const styles = getDynamicStyles(ColorState)
+
 
   const scrollSelectRef = useRef()
 
@@ -47,11 +50,11 @@ const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
     <View style={styles.inputBox}>
       <View style={styles.inputBoxLeft}>
         <Text style={styles.boxTitleContainer}>
-          <StyledH2 text={"Duration "} />
-          <StyledH4 text={"(estimate)"} style={{ color: Color.Gray }} />
+          <StyledH2 text={"Duration "} style={{ color: ColorState?.TextColorOnBg }} />
+          <StyledH4 text={"(estimate)"} style={{ color: ColorState?.GrayOnBg }} />
         </Text>
         <View style={styles.timeText}>
-          <Clock size={20} weight="fill" color={Color.RedAccent} style={styles.clockIcon} />
+          <Clock size={20} weight="fill" color={ColorState?.RedAccent} style={styles.clockIcon} />
           {/* <View style={styles.durationContainer}> */}
           <StyledH4 text={dataArray[selectedIndex] + " hours "} style={styles.durationText} />
           {/* </View> */}
@@ -70,9 +73,10 @@ const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
 
 export default DurationBox
 
-const styles = StyleSheet.create({
+
+const getDynamicStyles = (ColorState) => ({
   inputBox: {
-    backgroundColor: Color.DarkestBlue,
+    backgroundColor: ColorState?.DarkestBlue,
     borderRadius: 12,
     paddingHorizontal: 27,
     paddingVertical: 35,
@@ -80,18 +84,19 @@ const styles = StyleSheet.create({
     marginBottom: 22,
   },
   durationContainer: {
-    backgroundColor: Color.DarkBlue,
+    backgroundColor: ColorState?.DarkBlue,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     padding: 2,
   },
   durationText: {
+    color: ColorState?.TextColorOnBg,
     textAlign: "center"
   },
   editButton: {
     marginLeft: 10,
-    backgroundColor: Color.LightBlue,
+    backgroundColor: ColorState?.LightBlue,
     padding: 3,
     borderRadius: 10,
     flexDirection: "row",
@@ -126,5 +131,4 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     marginBottom: 7,
   }
-
-})
+});

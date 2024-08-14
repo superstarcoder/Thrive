@@ -14,3 +14,7 @@ export const TASKS_PAGE_SORT_MODES = [
   "Due Date/Time",
   "None"
 ]
+
+export const USER_INIT_SETTINGS = {
+  "selectedTheme": "Thrive Blue"
+}

@@ -1,15 +1,18 @@
 import { LineChart } from "react-native-gifted-charts"
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Color from '../../assets/themes/Color'
 import { StyledH1, StyledH2, StyledH3, fontStyles } from '../text/StyledText';
 import { BarChart } from 'react-native-gifted-charts';
+import { useColorsStateContext } from '../ColorContext';
 
 
 const HoursGraph = ({ taskItems, habitHistory }) => {
 
     const [hoursData, setHoursData] = useState()
     const [maxHoursGraph, setMaxHoursGraph] = useState(5)
+
+    const { ColorState, setColorState } = useColorsStateContext();
+    const styles = getDynamicStyles(ColorState)
 
     // Function to format date as month/day/year
     function formatDate(date) {
@@ -115,9 +118,9 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
 
             my_bar = { stacks: [], label: dateText.slice(0, -5) }
 
-            my_bar.stacks.push({ value: hours_data["complete_hours"], color: Color.GreenAccent })
-            my_bar.stacks.push({ value: hours_data["exempt_todo_hours"], color: Color.BlueAccent })
-            my_bar.stacks.push({ value: hours_data["incomplete_ignored_hours"], color: Color.RedAccent })
+            my_bar.stacks.push({ value: hours_data["complete_hours"], color: ColorState?.GreenAccent })
+            my_bar.stacks.push({ value: hours_data["exempt_todo_hours"], color: ColorState?.BlueAccent })
+            my_bar.stacks.push({ value: hours_data["incomplete_ignored_hours"], color: ColorState?.RedAccent })
 
             hours = hours_data["complete_hours"] + hours_data["exempt_todo_hours"] + hours_data["incomplete_ignored_hours"]
             if (hours > maxHours) {
@@ -186,10 +189,10 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
                         noOfSections={5}
                         barBorderRadius={6}
                         stackData={hoursData}
-                        xAxisColor={Color.Blue}
-                        yAxisColor={Color.Blue}
-                        xAxisLabelTextStyle={{ color: "white", fontSize: 10 }}
-                        yAxisTextStyle={{ color: "white", fontSize: 10 }}
+                        xAxisColor={ColorState?.Blue}
+                        yAxisColor={ColorState?.Blue}
+                        xAxisLabelTextStyle={{ color: ColorState?.TextColor, fontSize: 10 }}
+                        yAxisTextStyle={{ color: ColorState?.TextColor, fontSize: 10 }}
                         maxValue={maxHoursGraph}
                     // labelTextStyle={{color: 'gray'}}
                     />
@@ -202,16 +205,16 @@ const HoursGraph = ({ taskItems, habitHistory }) => {
 export default HoursGraph
 
 
-const styles = StyleSheet.create({
+const getDynamicStyles = (ColorState) => ({
     hoursGraphContainer: {
         margin: 12,
         padding: 16,
         borderRadius: 20,
         // backgroundColor: '#232B5D',
-        backgroundColor: Color.GrayBlue,
+        backgroundColor: ColorState?.GrayBlue,
     },
     titleText: {
-        color: 'white',
+        color: ColorState?.TextColor,
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
@@ -228,24 +231,24 @@ const styles = StyleSheet.create({
         height: 12,
         width: 12,
         borderRadius: 6,
-        backgroundColor: Color.GreenAccent,
+        backgroundColor: ColorState?.GreenAccent,
         marginRight: 8,
     },
     blueDot: {
         height: 12,
         width: 12,
         borderRadius: 6,
-        backgroundColor: Color.BlueAccent,
+        backgroundColor: ColorState?.BlueAccent,
         marginRight: 8,
     },
     redDot: {
         height: 12,
         width: 12,
         borderRadius: 6,
-        backgroundColor: Color.RedAccent,
+        backgroundColor: ColorState?.RedAccent,
         marginRight: 8,
     },
-    labelLegendText: { color: "lightgray" },
+    labelLegendText: { color: ColorState?.TextColor },
     barChartContainer: {
         padding: 10,
         alignItems: 'center'
@@ -263,4 +266,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         transform: [{ rotate: '-90deg' }],
     }
-})
+});
