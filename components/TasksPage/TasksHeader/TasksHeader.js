@@ -133,23 +133,34 @@ const TaskHeader = ({
 						defaultValue={"Journal View (Default)"}
 					/>
 
-					<View style={styles.currentDateContainer}>
 
-						<TouchableOpacity style={styles.caretLeftContainer} onPress={goToPreviousDay}>
-							<CaretLeft size={25} weight="fill" color={ColorState?.Blue} style={styles.caretLeft} />
-						</TouchableOpacity>
+					{viewMode == "Journal View (Default)" &&
+						<>
+							<View style={styles.currentDateContainer}>
+								<TouchableOpacity style={styles.caretLeftContainer} onPress={goToPreviousDay}>
+									<CaretLeft size={25} weight="fill" color={ColorState?.Blue} style={styles.caretLeft} />
+								</TouchableOpacity>
 
-						<TouchableOpacity onPress={showDatePicker}>
-							<StyledH2 text={dateText} style={styles.currentDate} />
-						</TouchableOpacity>
+								<TouchableOpacity onPress={showDatePicker}>
+									<StyledH2 text={dateText} style={styles.currentDate} />
+								</TouchableOpacity>
 
-						<TouchableOpacity style={styles.caretRightContainer} onPress={goToNextDay}>
-							<CaretRight size={25} weight="fill" color={ColorState?.Blue} style={styles.caretRight} />
-						</TouchableOpacity>
+								<TouchableOpacity style={styles.caretRightContainer} onPress={goToNextDay}>
+									<CaretRight size={25} weight="fill" color={ColorState?.Blue} style={styles.caretRight} />
+								</TouchableOpacity>
 
-						<DateTimePickerModal isVisible={isDatePickerVisible} mode="date" display='inline' onConfirm={handleConfirm} onCancel={hideDatePicker} date={selectedDate} />
+								<DateTimePickerModal isVisible={isDatePickerVisible} mode="date" display='inline' onConfirm={handleConfirm} onCancel={hideDatePicker} date={selectedDate} />
 
-					</View>
+							</View>
+						</>
+					}
+
+					{viewMode == "All Tasks View" &&
+						<View style={styles.pageViewHeadingContainer}>
+							<StyledH2 text={"All Tasks"} style={styles.currentDate} />
+						</View>
+					}
+
 					<DropDown
 						headingComponent={sortByHeadingComponent}
 						buttonComponent={sortButton}
@@ -273,6 +284,15 @@ const getDynamicStyles = (ColorState) => ({
 		paddingHorizontal: 0,
 		alignItems: "center"
 	},
+	pageViewHeadingContainer: {
+		flexDirection: "row",
+		backgroundColor: ColorState?.DarkBlue,
+		borderRadius: 8,
+		paddingHorizontal: 35,
+		paddingVertical: 4,
+		alignItems: "center"
+
+	}
 });
 
 export default TaskHeader;

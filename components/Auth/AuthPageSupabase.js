@@ -38,7 +38,7 @@ export const supabaseLoadUserSettings = async ({ user, setUserSettings, setColor
 		userSettingsToApply = existingUserSettings
 	} else {
 		// If the user's UID does not exist, insert a new row
-		const userInitSettings = USER_INIT_SETTINGS
+		const userInitSettings = {...USER_INIT_SETTINGS}
 		userInitSettings["user_uid"] = uid
 		const { data: newUserSettings, error: insertError } = await supabase
 			.from('UserSettings')
@@ -50,7 +50,9 @@ export const supabaseLoadUserSettings = async ({ user, setUserSettings, setColor
 			return null;
 		}
 
-		userSettingsToApply = newUserSettings;
+		userSettingsToApply = userInitSettings;
+		console.log("inserted new user settings in table")
+		console.log({userSettingsToApply})
 	}
 
 	// apply 
