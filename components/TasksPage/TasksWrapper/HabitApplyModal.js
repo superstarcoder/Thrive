@@ -64,7 +64,7 @@ const styles = getDynamicStyles(ColorState)
       <View style={styles.taskMenuContainer}>
         <View style={styles.myTitle}>
           <Text style={[fontStyles.styledH1, { color: ColorState?.TextColorOnGrayBlueBg }]}>Apply Edits For:</Text>
-          <Text style={[fontStyles.styledH2, { color: ColorState?.BlueAccent }]}>(Habit Name: Sleep 7.5+ hours)</Text>
+          <Text style={[fontStyles.styledH2, { color: ColorState?.BlueAccent }]}>({taskSettingsEdited?.title})</Text>
         </View>
 
 
