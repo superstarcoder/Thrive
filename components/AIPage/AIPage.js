@@ -9,14 +9,83 @@ import Markdown from 'react-native-markdown-display';
 // import { OPENAI_API_KEY } from '@env';
 import OpenAI from "openai";
 import { useColorsStateContext } from '../ColorContext';
+// import RNFetchBlob from 'react-native-blob-util';
 // import { Color } from '../../assets/themes/Color';
+// import Replicate from "replicate";
+
+
+// const replicateInput = {
+//   top_k: 0,
+//   top_p: 0.9,
+//   prompt: "Paper title: A proof that drinking coffee causes supernovas\n\nIn this essay, I will",
+//   max_tokens: 512,
+//   min_tokens: 0,
+//   temperature: 0.6,
+//   length_penalty: 1,
+//   stop_sequences: "<|end_of_text|>",
+//   prompt_template: "{prompt}",
+//   presence_penalty: 1.15,
+//   log_performance_metrics: false
+// };
+
+
+// Function to make the request
+
+const fetchPrediction = async () => {
+  const apiToken = process.env.REPLICATE_API_TOKEN;
+  const apiUrl = 'https://api.replicate.com/v1/models/meta/meta-llama-3-70b/predictions';
+  const body = JSON.stringify({
+    stream: true,
+    input: {
+      top_p: 0.9,
+      prompt: 'Paper title: A proof that drinking coffee causes supernovas\n\nIn this essay, I will',
+      min_tokens: 0,
+      temperature: 0.6,
+      presence_penalty: 1.15
+    }
+  });
+
+  try {
+    // Make the initial request
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiToken}`,
+        'Content-Type': 'application/json'
+      },
+      body
+    });
+
+    const prediction = await response.json();
+    console.log(prediction)
+    const streamUrl = prediction.urls.stream;
+
+    // Fetch the stream data
+    const streamResponse = await fetch(streamUrl, {
+      headers: {
+        'Accept': 'text/event-stream',
+        'Cache-Control': 'no-store'
+      }
+    });
+
+    const result = await streamResponse.text();
+    // const result = prediction
+    // Handle the result here
+
+    return result;
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
-const APISecondsTimeout = 60
+const APISecondsTimeout = 2
 const myMonth = (new Date()).getMonth() + 1 // NOT zero indexed
 const myYear = (new Date()).getFullYear()
 const monthName = monthNames[myMonth - 1];
@@ -76,7 +145,12 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
     // console.log("component mounted")
   }, [])
 
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  // const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  // const replicate = new Replicate({
+  //   auth: process.env.REPLICATE_API_TOKEN,
+  // });
+
 
   const askAIButtonPressed = async (myMonth, myYear, taskItems) => {
 
@@ -99,13 +173,27 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
     let completePrompt = basePrompt + taskData + promptFooter
     console.log(completePrompt)
 
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: completePrompt }],
-      model: "gpt-3.5-turbo",
+    // const completion = await openai.chat.completions.create({
+    //   messages: [{ role: "user", content: completePrompt }],
+    //   model: "gpt-3.5-turbo",
+    // });
+
+    // replicateInput.prompt = completePrompt
+
+    fetchPrediction().then(result => {
+      console.log(result);
     });
 
+    // for await (const event of replicate.stream("meta/meta-llama-3-70b", { input })) {
+    //   process.stdout.write(`${event}`)
+
+    //   console.log(`${event}`)
+    // };
+
     setIsLoading(false)
-    setAnalysisText(completion.choices[0].message.content)
+    // don't delete:
+    // setAnalysisText(completion.choices[0].message.content)
+    setAnalysisText("finished processing")
     setLastAnalyzedTime(new Date())
   }
 
