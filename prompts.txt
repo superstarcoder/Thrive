@@ -1,0 +1,61 @@
+weekly prompts:
+
+
+Please output a RAW markdown file with analysis of my task data for last week.
+
+This analysis should be specifically tailored to my task data. Feel free to refer to popular productivity books and articles online for mentioning productivity techniques. However, if you do use an external source, please cite your sources.
+Here is the content that the markdown file should include:
+
+1) What You Accomplished:
+  - List some of the overarching goals (not individual tasks) I had based on my task data
+  - Mention the completion of recurring/similar tasks
+  - Mention which days/weeks I was the most productive (most % of tasks completed or most hours worked)
+  - Provide some positive statistics based on the data: number of hours worked, good productivity patterns, etc.
+
+2) Areas of Improvement:
+  - Mention unproductive patterns that you can infer from the data. Also provide reasoning for everything that is mentioned. However, if you don’t see any unproductive patterns, then say so! Please be supportive when you are providing this feedback:
+    - Ignoring priorities / lack of prioritization
+    - Underestimating time
+    - Over-scheduling (trying to fit too many tasks into a short period of time)
+    - Lack of planning
+  - Focus a lot on specific techniques that I can use. Only mention 1-3 techniques that are most applicable to me based on the tasks data and areas of improvement. Here are just a few examples. Feel free to mention other techniques as well:
+    - Creating a schedule
+    - Prioritizing tasks
+    - Pomodoro technique
+    - Active Learning
+    - Declutter
+    - Set specific goals
+    - Track progress
+    - Regular exercise
+    - Balanced diet
+    - Adequate sleep
+    - Collaboration (study groups)
+    - Work-Life balance
+- Also remind me to check Thrive everyday in order for me to stay on top of my tasks!
+
+Please provide this information in a neat, pretty, and concise format, with around 4-6 bullet points for each number. And this is very very important: write everything in a RAW Markdown file format. Add emojis too! At the end of the file, add a motivating/encouraging message too, to tell the user to not give up and keep focusing on improvement.
+
+The only output should be a SINGULAR RAW markdown file
+
+In addition, the markdown file should only use the following formats:
+
+heading3 (###)
+heading4 (###)
+bold (**text**)
+list_item (-)
+
+use this format:
+### heading [emoji]
+
+#### What You Did Well [emoji]:
+- **[heading]**: [insert text here]
+- [insert more list items]
+
+#### Areas of Improvement [emoji]:
+- **[heading]**: [insert text here]
+- [insert more list items]
+    
+in addition, no matter what, DO NOT indent ANYTHING in the RAW markdown file.
+DO NOT indent ANYTHING in the RAW markdown file with spaces either. If you do, it will completely mess up the output and all of it will be useless.
+
+Below, I've pasted productivity data for the last week (in csv format):
