@@ -1,13 +1,15 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, ScrollView, FlatList, } from 'react-native';
 import Task from './Task';
-import { StyledH1, StyledH2, StyledH4, fontStyles } from '../../text/StyledText';
+import { StyledH1, StyledH2, StyledH3, StyledH4, fontStyles } from '../../text/StyledText';
 import { useFonts } from 'expo-font'
 import { supabase } from '../../../lib/supabase'
 import { getEndOfDay, getStartOfDay, getTimeFromDatetime, onlyDatesAreSame, toDateOnly } from '../../../utils/DateHelper';
 import TaskMenu from './TaskMenu';
 import { supabaseUpdateTaskSettings, supabaseUpdateHabitHistoryEntry } from '../TasksPageSupabase';
 import { useColorsStateContext } from '../../ColorContext';
+import { color } from 'react-native-elements/dist/helpers';
+import { Sparkle } from 'phosphor-react-native';
 
 
 const TasksWrapper = ({
@@ -111,15 +113,36 @@ const TasksWrapper = ({
         tasksToDisplay.push(task)
       }
     }
+
+    const TasksSectionHeader =
+    <>
+      <View style={styles.tasksSectionHeader}>
+        <StyledH2 style={styles.sectionTitle} text={"Tasks"} />
+        <View style={styles.taskRecommendationsButton}>
+          <Sparkle size={20} weight='duotone' color='white'/>
+          <StyledH3 style={styles.taskRecommendationsButtonText} text={"Recommend Tasks"} /> 
+        </View>
+      </View>
+    </>
+    
     // return if there's no tasks to display
     if (tasksToDisplay.length == 0) {
-      return
+      return (
+        <View style={styles.tasksSectionHeaderBig}>
+          <StyledH2 style={styles.sectionTitle} text={"Tasks"} />
+          <View style={styles.taskRecommendationsButtonBig}>
+            <Sparkle size={20} weight='duotone' color='white'/>
+            <StyledH3 style={styles.taskRecommendationsButtonTextBig} text={"Get Task Recommendations from Thrive AI"} /> 
+          </View>
+        </View>
+      );
     }
 
     sortTasks(tasksToDisplay, sortModeJournalView)
 
     return (
       <View>
+        {TasksSectionHeader}
         <View style={styles.items}>
           {
             tasksToDisplay.map((task, index) => {
@@ -203,7 +226,7 @@ const TasksWrapper = ({
 
     return (
       <View>
-        <StyledH2 style={styles.sectionTitle} text={"Habits"} />
+        <StyledH2 style={styles.habitsSectionTitle} text={"Habits"} />
         <View style={styles.items}>
           {
             tasksToDisplay.map((habit, index) => {
@@ -557,6 +580,49 @@ export default TasksWrapper
 
 
 const getDynamicStyles = (ColorState) => ({
+  tasksSectionHeaderBig: {
+    flexDirection: "column",
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  tasksSectionHeader: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  taskRecommendationsButtonText: {
+    // color: ColorState?.DarkestBlue,
+    alignSelf: "center",
+    fontSize: 13,
+  },
+  taskRecommendationsButtonTextBig: {
+    // color: ColorState?.DarkestBlue,
+    alignSelf: "center",
+    fontSize: 13,
+  },
+  taskRecommendationsButton: {
+    display: "flex",
+    backgroundColor: ColorState?.DarkBlue,
+    borderRadius: 12,
+    alignSelf: "center",
+    textAlign: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    flexDirection: "row",
+    gap: 6,
+  },
+  taskRecommendationsButtonBig: {
+    display: "flex",
+    backgroundColor: ColorState?.DarkBlue,
+    borderRadius: 12,
+    alignSelf: "flex-start",
+    textAlign: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    flexDirection: "row",
+    gap: 6,
+  },
   subtitle: {
     color: ColorState?.LightBlue
   },
@@ -569,6 +635,11 @@ const getDynamicStyles = (ColorState) => ({
   sectionTitle: {
     color: ColorState?.TextColorOnBg,
     marginVertical: 5,
+  },
+  habitsSectionTitle: {
+    color: ColorState?.TextColorOnBg,
+    marginVertical: 5,
+    marginTop: 10,
   },
   flatListContainerStyle: {
     flexGrow: 1,

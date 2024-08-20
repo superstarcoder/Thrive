@@ -328,7 +328,7 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.scrollViewContainer}>
-          <StyledH1 text={"Ask Daisy AI"} style={styles.sectionHeading} />
+          <StyledH1 text={"Ask Thrive AI"} style={styles.sectionHeading} />
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
             <StyledH3 text={`Click me to analyze ${monthName}! 📊📈`} style={styles.buttonTitle} />
             {errorMessage &&
@@ -337,7 +337,7 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
           </TouchableOpacity>
 
           <View style={styles.infoBox}>
-            <StyledH3 text={"Daisy is an AI bot designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks & habits you add, the better Daisy becomes at offering tailored advice!"} style={styles.infoText} />
+            <StyledH3 text={"Thrive AI is designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks you add, the better Thrive AI becomes at offering tailored advice!"} style={styles.infoText} />
           </View>
           {isLoading &&
             <ActivityIndicator size="large" />
