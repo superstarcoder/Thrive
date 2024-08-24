@@ -523,7 +523,8 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
  * @param {taskItems} taskItems
  * @returns a string in csv format with task data needed for the LLM for monthly summaries
  */
-export const getTasksForMonthString = ({month, year, taskItems}) => {
+export const getTasksForMonthString = ({myMonth, myYear, taskItems}) => {
+  console.log("running getTasksForMonthString")
   let selectedTasks = taskItems.filter(item => {
     // Parse dueDate to extract month and year
     let dueDate = new Date(item.dueDate);
@@ -531,7 +532,8 @@ export const getTasksForMonthString = ({month, year, taskItems}) => {
     let dueYear = dueDate.getFullYear();
 
     // Check if month is February (2) and year is 2024
-    return dueMonth === month && dueYear === year && item.isHabit == false;
+    console.log({dueMonth, myMonth, dueYear, myYear, isHabit: item.isHabit})
+    return dueMonth === myMonth && dueYear === myYear && item.isHabit == false;
   })
     .map(item => {
       return [
@@ -542,6 +544,10 @@ export const getTasksForMonthString = ({month, year, taskItems}) => {
         item.status
       ];
     });
+  
+  console.log({selectedTasks})
+
+  if (selectedTasks.length == 0) return null
 
   let result = selectedTasks.map(subList => `"` + subList.join('","') + `"`).join('\n');
   result = "dueDate, title, duration, importance, status\n" + result

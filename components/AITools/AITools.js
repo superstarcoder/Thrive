@@ -89,17 +89,23 @@ const fetchPrediction = async ({ modelParams }) => {
  * @param {taskItems} taskItems
  */
 export const AIAnalyzeMonth = async ({ myMonth, myYear, taskItems }) => {
+
+  console.log({myMonth, myYear })
   
   // get modelParams ready (including prompt string)
   let taskDataString = getTasksForMonthString({myMonth, myYear, taskItems});
 
-  let monthName = getMonthNameString(new Date().setMonth(myMonth))
+  if (taskDataString == null) return "You need to add more tasks on the app to use this feature!"
+
+  let monthName = getMonthNameString((new Date()).setMonth(myMonth - 1))
+  // console.log(monthName)
   let promptHeader = monthAnalysisPrompt.promptHeader.replace(
     /\$\{monthName\}/g,
     monthName
   );
   let promptFooter = monthAnalysisPrompt.promptFooter
   let completePrompt = promptHeader + taskDataString + promptFooter;
+  // console.log({completePrompt})
 
   let modelParams = { ...baseModelParams };
   modelParams.prompt = completePrompt;

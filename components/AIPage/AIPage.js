@@ -17,7 +17,7 @@ const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
-const APISecondsTimeout = 2
+const APISecondsTimeout = 60
 const myMonth = (new Date()).getMonth() + 1 // NOT zero indexed
 const myYear = (new Date()).getFullYear()
 const monthName = monthNames[myMonth - 1];

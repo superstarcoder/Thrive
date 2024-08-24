@@ -99,4 +99,6 @@ export function getMonthNameString(date) {
 
 	  const myMonth = (new Date(date)).getMonth() + 1 // NOT zero indexed
 	  const monthName = monthNames[myMonth - 1];
+
+	  return monthName
 }
