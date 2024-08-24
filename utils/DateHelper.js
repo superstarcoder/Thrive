@@ -77,3 +77,26 @@ export function getStartOfDay(datetime) {
 		datetime.getDate(),
 		0, 0, 0)
 }
+
+/**
+ * converts to standard date format. eg: 2/4/24
+ * @param {*} date 
+ * @returns 
+ */
+export function getStandardDateString(date) {
+	const month = date.getMonth() + 1; // Months are zero-indexed
+	const day = date.getDate();
+	const year = date.getFullYear().toString().slice(-2); // Get last two digits of the year
+	
+	return `${month}/${day}/${year}`;
+  }
+
+export function getMonthNameString(date) {
+	const monthNames = [
+		"January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December"
+	  ];
+
+	  const myMonth = (new Date(date)).getMonth() + 1 // NOT zero indexed
+	  const monthName = monthNames[myMonth - 1];
+}

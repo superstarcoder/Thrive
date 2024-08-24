@@ -14,7 +14,6 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
 
   const heightPercent = 0.8
   useEffect(() => {
-    // supposed to be 0
     bottomSheetRef?.current?.scrollTo(0)
   }, [])
   const bottomSheetRef = useRef(null)
@@ -26,7 +25,7 @@ const HabitApplyModal = forwardRef(({ }, ref) => {
   const [scrollingEnabled, setScrollingEnabled] = useState(true)
   const [loadingString, setLoadingString] = useState("")
   const { ColorState, setColorState } = useColorsStateContext();
-const styles = getDynamicStyles(ColorState)
+  const styles = getDynamicStyles(ColorState)
 
 
   useImperativeHandle(ref, () => ({
@@ -46,7 +45,6 @@ const styles = getDynamicStyles(ColorState)
   const hideModal = () => {
     bottomSheetRef?.current?.scrollTo(0)
   }
-
 
   const onSavePress = async () => {
     setIsLoading(true)
