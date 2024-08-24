@@ -39,7 +39,11 @@ export const thriveBlueTheme = {
 	Task: {
 		IgnoreButton: "#8E8E8E",
 		IgnoreButtonText: "black",
-		OverdueText: '#FFFFFF'
+		OverdueText: '#FFFFFF',
+		TaskRecBackgroundColor: '#252F68'
+	},
+	TaskRecsModal: {
+		BgColor: '#151934'
 	},
 
 };
@@ -85,7 +89,11 @@ export const deepPurpleTheme = {
 	Task: {
 		IgnoreButton: "#8E8E8E",
 		IgnoreButtonText: "black",
-		OverdueText: "black"
+		OverdueText: "black",
+		TaskRecBackgroundColor: "#554C80"
+	},
+	TaskRecsModal: {
+		BgColor: '#231942'
 	},
 };
 
@@ -129,7 +137,12 @@ export const oceanMistTheme = {
 	Task: {
 		IgnoreButton: "#8E8E8E",
 		IgnoreButtonText: "black",
-		OverdueText: '#DDE4FF'
+		OverdueText: '#DDE4FF',
+		TaskRecBackgroundColor: "#34385F"
+
+	},
+	TaskRecsModal: {
+		BgColor: '#7B81B7'
 	},
 
 };
@@ -175,7 +188,11 @@ export const skyBlueTheme = {
 	Task: {
 		IgnoreButton: "#b6b6b6",
 		IgnoreButtonText: "black",
-		OverdueText: "hsl(234, 29%, 20%)"
+		OverdueText: "hsl(234, 29%, 20%)",
+		TaskRecBackgroundColor: "hsl(231, 47%, 82%)"
+	},
+	TaskRecsModal: {
+		BgColor: 'hsl(216, 49%, 58%)'
 	},
 };
 

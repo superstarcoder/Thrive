@@ -55,7 +55,7 @@ const Task = ({
 
   if (isRecommendation && !isRecAdded) {
     taskConditionalStyle = {
-      backgroundColor: ColorState?.DarkBlue,
+      backgroundColor: ColorState?.Task?.TaskRecBackgroundColor,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.4,
       shadowRadius: 10,
@@ -63,7 +63,7 @@ const Task = ({
     }
   } else if (isRecommendation && isRecAdded) {
     taskConditionalStyle = {
-      backgroundColor: ColorState?.DarkBlue,
+      backgroundColor: ColorState?.Task?.TaskRecBackgroundColor,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.4,
       shadowRadius: 10,

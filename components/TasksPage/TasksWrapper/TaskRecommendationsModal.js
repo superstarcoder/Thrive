@@ -27,10 +27,10 @@ const TaskRecommendationsModal = forwardRef(({session, setTaskItems, taskItems},
   const styles = getDynamicStyles(ColorState);
   scrollingEnabled = true;
 
-  // to uncomment:
-  useEffect(() => {
-    hideModal()
-  }, []);
+  // comment for debugging:
+  // useEffect(() => {
+  //   hideModal()
+  // }, []);
 
   useImperativeHandle(ref, () => ({
     showRecommendationsModal({ taskRecommendationsArg, selectedDateArg }) {
@@ -135,7 +135,7 @@ const TaskRecommendationsModal = forwardRef(({session, setTaskItems, taskItems},
               color={ColorState?.IconColor}
               style={styles.buttonIcon}
             />
-            <StyledH2 text={"Cancel"} style={styles.cancelButtonText} />
+            <StyledH2 text={"Close"} style={styles.cancelButtonText} />
           </TouchableOpacity>
         </View>
       </View>
@@ -158,7 +158,7 @@ const getDynamicStyles = (ColorState) => ({
     marginBottom: 160,
   },
   taskMenuModal: {
-    backgroundColor: ColorState?.GrayBlue,
+    backgroundColor: ColorState?.TaskRecsModal.BgColor,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.74,
@@ -195,13 +195,13 @@ const getDynamicStyles = (ColorState) => ({
     paddingHorizontal: 8,
   },
   recsTitle: {
-    color: ColorState?.TextColor,
+    color: ColorState?.TextColorOnBg,
   },
   recsSubtitle: {
-    color: ColorState?.TextColor,
+    color: ColorState?.TextColorOnBg,
   },
   cancelButtonText: {
-    color: "black",
+    color: ColorState?.IconColor,
     textAlignVertical: "center",
   },
 });
