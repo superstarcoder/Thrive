@@ -1,6 +1,6 @@
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import React from 'react'
-import { Gear, House, ChartBar, Sparkle } from 'phosphor-react-native';
+import { Gear, House, ChartBar, Sparkle, UsersThree } from 'phosphor-react-native';
 import Color from '../assets/themes/Color';
 import { useColorsStateContext } from './ColorContext';
 
@@ -37,12 +37,14 @@ const NavBarButtons = ({ label, onNavBarButtonPress, currentPage }) => {
 			if (label == "home") return <House size={35} weight="fill" color={ColorState?.DarkBlue} style={styles.homeIcon} />
 			if (label == "stats") return <ChartBar size={30} weight="fill" color={ColorState?.DarkBlue} style={[styles.buttonIcon]} />
 			if (label == "AI") return <Sparkle size={30} weight="fill" color={ColorState?.DarkBlue} style={[styles.buttonIcon]} />
+			if (label == "community") return <UsersThree size={30} weight="fill" color={ColorState?.DarkBlue} style={[styles.buttonIcon]} />
 		}
 		else {
 			if (label == "settings") return <Gear size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
 			if (label == "home") return <House size={35} weight="regular" color={ColorState?.NavBarIconsColor} style={styles.buttonIcon} />
 			if (label == "stats") return <ChartBar size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
 			if (label == "AI") return <Sparkle size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
+			if (label == "community") return <UsersThree size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
 		}
 	}
 

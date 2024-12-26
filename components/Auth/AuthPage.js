@@ -1,20 +1,30 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from 'react'
-import { Alert, StyleSheet, View, TextInput, Text } from 'react-native'
+import React, { useState } from "react";
+import { Alert, StyleSheet, View, TextInput, Text } from "react-native";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as Linking from "expo-linking";
-import { supabase } from '../../lib/supabase'
-import { Button, Input } from 'react-native-elements'
+import { supabase } from "../../lib/supabase";
+import { Button, Input } from "react-native-elements";
 import { makeRedirectUri } from "expo-auth-session";
-import * as WebBrowser from "expo-web-browser";
+// import * as WebBrowser from "expo-web-browser";
 import { thriveBlueTheme as Color } from "../../assets/themes/ThemeColors";
 import { StyledH1, StyledH3, StyledH4, fontStyles } from "../text/StyledText";
-import { useFonts } from 'expo-font'
+import { useFonts } from "expo-font";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DiscordLogo, GithubLogo } from "phosphor-react-native";
-import { FacebookSocialButton, GoogleSocialButton, } from "react-native-social-buttons";
-import PasswordResetForm, { redirectToPasswordResetForm } from "./PasswordResetForm";
+import {
+  FacebookSocialButton,
+  GoogleSocialButton,
+} from "react-native-social-buttons";
+import PasswordResetForm, {
+  redirectToPasswordResetForm,
+} from "./PasswordResetForm";
 import SignInForm from "./SignInForm";
+// import * as Linking from 'expo-linking';
+import * as AuthSession from "expo-auth-session";
+import SignUpForm from "./SignUpForm";
+
+// WebBrowser.maybeCompleteAuthSession();
 
 const redirectTo = makeRedirectUri();
 // console.log({ redirectTo })
@@ -36,84 +46,114 @@ const createSessionFromUrl = async (url) => {
 };
 
 const signInWithGithub = async () => {
+  const redirectUrl = Linking.createURL("auth-callback");
+  console.log(redirectUrl);
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo,
-      skipBrowserRedirect: true,
+      redirectTo: redirectUrl,
     },
   });
+
   if (error) throw error;
 
-  const res = await WebBrowser.openAuthSessionAsync(
-    data?.url ?? "",
-    redirectTo
-  );
-
-  if (res.type === "success") {
-    const { url } = res;
-    await createSessionFromUrl(url);
+  if (data?.url) {
+    Linking.openURL(data.url); // Explicitly open the URL
+  } else {
+    console.error("No URL returned from OAuth sign-in");
   }
 };
 
+const signInWithDiscord = async () => {
+  const redirectUrl = Linking.createURL("auth-callback");
+  console.log(redirectUrl);
 
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "discord",
+    options: {
+      redirectTo: redirectUrl,
+    },
+  });
 
+  if (error) throw error;
 
+  if (data?.url) {
+    Linking.openURL(data.url); // Explicitly open the URL
+  } else {
+    console.error("No URL returned from OAuth sign-in");
+  }
+};
+
+const signInWithGoogle = async () => {
+  const redirectUrl = Linking.createURL("auth-callback");
+  console.log(redirectUrl);
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "discord",
+    options: {
+      redirectTo: redirectUrl,
+    },
+  });
+
+  if (error) throw error;
+
+  if (data?.url) {
+    Linking.openURL(data.url); // Explicitly open the URL
+  } else {
+    console.error("No URL returned from OAuth sign-in");
+  }
+};
 
 export default function Auth({ setCurrentPage }) {
-
   // load fonts
   var [fontsLoaded] = useFonts({
-    "MPlusRegular": require("../../assets/fonts/mplusRegular.ttf"),
-    "MPlusMedium": require("../../assets/fonts/mplusMedium.ttf")
-  })
+    MPlusRegular: require("../../assets/fonts/mplusRegular.ttf"),
+    MPlusMedium: require("../../assets/fonts/mplusMedium.ttf"),
+  });
   if (!fontsLoaded) {
-    return null
+    return null;
   }
 
   // const [email, setEmail] = useState('')
   // const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [authPageScreen, setAuthPageScreen] = useState("sign_in")
-
+  const [loading, setLoading] = useState(false);
+  const [authPageScreen, setAuthPageScreen] = useState("sign_in");
 
   async function signInWithEmail(email, password) {
-    setLoading(true)
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-    })
+    });
 
     if (error) {
-      Alert.alert(error.message)
-    }
-    else {
-      setCurrentPage("home")
+      Alert.alert(error.message);
+    } else {
+      setCurrentPage("home");
     }
     // console.log({ email, password })
-    setLoading(false)
+    setLoading(false);
   }
 
   async function signUpWithEmail(email, password) {
-    setLoading(true)
+    setLoading(true);
     const { error } = await supabase.auth.signUp({
       email: email,
       password: password,
-    }, )
+    });
 
     if (error) {
-      console.log(error.message)
-      Alert.alert(error.message)
+      console.log(error.message);
+      Alert.alert(error.message);
+    } else {
+      setCurrentPage("home");
     }
-    else {
-      setCurrentPage("home")
-
-    }
-    setLoading(false)
+    setLoading(false);
   }
 
   const resetPassword = async () => {
-    setAuthPageScreen("password_reset")
+    setAuthPageScreen("password_reset");
   };
 
   const url = Linking.useURL();
@@ -121,14 +161,36 @@ export default function Auth({ setCurrentPage }) {
 
   return (
     <>
-      {authPageScreen == "sign_in" &&
-        <SignInForm resetPassword={resetPassword} signInWithEmail={signInWithEmail} signUpWithEmail={signUpWithEmail} signInWithGithub={signInWithGithub} />
-      }
-      {authPageScreen == "password_reset" &&
-        <PasswordResetForm setAuthPageScreen={setAuthPageScreen} setCurrentPage={setCurrentPage} />
-      }
+      {authPageScreen == "sign_in" && (
+        <SignInForm
+          resetPassword={resetPassword}
+          signInWithEmail={signInWithEmail}
+          signUpWithEmail={signUpWithEmail}
+          signInWithGithub={signInWithGithub}
+          signInWithDiscord={signInWithDiscord}
+          signInWithGoogle={signInWithGoogle}
+          setAuthPageScreen={setAuthPageScreen}
+        />
+      )}
+      {authPageScreen == "sign_up" && (
+        <SignUpForm
+        resetPassword={resetPassword}
+        signInWithEmail={signInWithEmail}
+        signUpWithEmail={signUpWithEmail}
+        signInWithGithub={signInWithGithub}
+        signInWithDiscord={signInWithDiscord}
+        signInWithGoogle={signInWithGoogle}
+        setAuthPageScreen={setAuthPageScreen}
+        />
+      )}
+      {authPageScreen == "password_reset" && (
+        <PasswordResetForm
+          setAuthPageScreen={setAuthPageScreen}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -144,7 +206,7 @@ const styles = StyleSheet.create({
   },
   headingText: {
     alignSelf: "center",
-    marginVertical: 20
+    marginVertical: 20,
   },
   myInputBox: {
     backgroundColor: Color.GrayBlue,
@@ -167,16 +229,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   buttonText: {
-    color: "black"
+    color: "black",
   },
   agreementText: {
     textAlign: "center",
-    color: "#727272"
+    color: "#727272",
   },
   agreementTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   separator: {
     marginVertical: 5,
@@ -224,6 +286,5 @@ const styles = StyleSheet.create({
   googleButtonText: {
     fontFamily: "MPlusMedium",
     fontSize: 16,
-  }
-
-})
+  },
+});

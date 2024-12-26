@@ -18,3 +18,5 @@ export const TASKS_PAGE_SORT_MODES = [
 export const USER_INIT_SETTINGS = {
   "selectedTheme": "Thrive Blue"
 }
+
+export const DISCORD_COMMUNITY_LINK = "https://discord.com/invite/NsutRKEevd"

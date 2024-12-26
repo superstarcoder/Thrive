@@ -1,6 +1,6 @@
 
 import { supabase } from "../../lib/supabase"
-import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat } from "../../utils/DateHelper"
+import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat, getStandardDateString, getEndOfDay } from "../../utils/DateHelper"
 import { HABIT_HISTORY_COLUMNS } from "../../utils/AppConstants"
 import { getHabitHistoryUpdateDict } from "../../utils/OtherHelpers"
 
@@ -515,8 +515,16 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
 }
 
-// outputs a string in csv format with important info needed for the LLM
-export const getTasksForMonthString = (month, year, taskItems) => {
+/**
+ * Used to get task data for monthly summaries
+ * 
+ * @param {Date.month} month 
+ * @param {Date.year} year 
+ * @param {taskItems} taskItems
+ * @returns a string in csv format with task data needed for the LLM for monthly summaries
+ */
+export const getTasksForMonthString = ({myMonth, myYear, taskItems}) => {
+  console.log("running getTasksForMonthString")
   let selectedTasks = taskItems.filter(item => {
     // Parse dueDate to extract month and year
     let dueDate = new Date(item.dueDate);
@@ -524,7 +532,8 @@ export const getTasksForMonthString = (month, year, taskItems) => {
     let dueYear = dueDate.getFullYear();
 
     // Check if month is February (2) and year is 2024
-    return dueMonth === month && dueYear === year && item.isHabit == false;
+    console.log({dueMonth, myMonth, dueYear, myYear, isHabit: item.isHabit})
+    return dueMonth === myMonth && dueYear === myYear && item.isHabit == false;
   })
     .map(item => {
       return [
@@ -535,12 +544,59 @@ export const getTasksForMonthString = (month, year, taskItems) => {
         item.status
       ];
     });
+  
+  console.log({selectedTasks})
+
+  if (selectedTasks.length == 0) return null
 
   let result = selectedTasks.map(subList => `"` + subList.join('","') + `"`).join('\n');
   result = "dueDate, title, duration, importance, status\n" + result
   return result
 
 }
+
+/**
+ * This function gets the recent tasks (on and before the selectedDate).
+ * Recent tasks include a minimum number of tasks such that two conditions are met
+ * 1) tasks are 7 days or more before selectedDate
+ * 2) the number of tasks are at least 10
+ * 
+ * @param {Date} selectedDate
+ * @param {taskItems} taskItems
+ * @returns a string in csv format with recent task data
+ */
+export const getRecentTasksString = ({selectedDate, taskItems}) => {
+
+  let selectedCount = 0
+  let selectedTasks = taskItems.filter(task => {
+    const taskDueDate = new Date(task.dueDate);
+    const timeDifference = selectedDate - taskDueDate;
+    const daysDifference = timeDifference / (1000 * 3600 * 24);
+    selectedCount += 1
+    // when the two conditions are eventually met, we just ignore the task
+    return !(daysDifference >= 7 && selectedCount >= 10) && (task.isHabit == false);
+  })
+    .map(item => {
+      return [
+        getStandardDateString(new Date(item.dueDate)),
+        item.title,
+        item.duration,
+        item.importance,
+        item.status
+      ];
+    });
+
+    
+  let result = selectedTasks.map(subList => `"` + subList.join('","') + `"`).join('\n');
+  result = "dueDate, title, duration, importance, status\n" + result
+
+  if ((result.split("\n")).length <= 2 ) {
+    result = "dueDate, title, duration, importance, status\n"
+    + `"${getStandardDateString(getEndOfDay(selectedDate))}", "Exercise and meditate", "0.5", "7", "incomplete"`
+  } 
+  return result
+}
+
 
 export const getAllTasks = async (session) => {
   const { data, error } = await supabase

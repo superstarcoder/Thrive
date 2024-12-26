@@ -14,6 +14,7 @@ import TasksWrapper from './TasksWrapper/TasksWrapper';
 import { subscribeToChangesTasksTable, supabaseSyncLocalWithDb } from './TasksPageSupabase';
 import TaskMenu from './TasksWrapper/TaskMenu';
 import HabitApplyModal from './TasksWrapper/HabitApplyModal';
+import TaskRecommendationsModal from './TasksWrapper/TaskRecommendationsModal';
 import { TASKS_PAGE_SORT_MODES, TASKS_PAGE_VIEW_MODES } from '../../utils/AppConstants';
 // import BackgroundImg from './components/BackgroundImage';
 import { useColorsStateContext } from '../ColorContext';
@@ -66,12 +67,13 @@ const TasksPage = forwardRef(({
   const [sortModeAllTasksView, setSortModeAllTasksView] = useState([TASKS_PAGE_SORT_MODES[3], false])
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState)
+  const [allDaysTaskRecs, setAllDaysTaskRecs] = useState({}) // selectedDate : taskRecommendations
 
   const taskSettingsRef = useRef();
   const habitSettingsRef = useRef();
   const taskMenuRef = useRef();
   const habitApplyModalRef = useRef();
-
+  const taskRecommendationsModalRef = useRef();
 
   const goToPreviousDay = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -169,6 +171,9 @@ const TasksPage = forwardRef(({
       taskMenuRef={taskMenuRef}
       habitSettingsRef={habitSettingsRef}
       taskSettingsRef={taskSettingsRef}
+      taskRecommendationsModalRef={taskRecommendationsModalRef}
+      allDaysTaskRecs={allDaysTaskRecs}
+      setAllDaysTaskRecs={setAllDaysTaskRecs}
       selectedDate={selectedDate}
       taskItems={taskItems}
       setTaskItems={setTaskItems}
@@ -205,6 +210,7 @@ const TasksPage = forwardRef(({
 
     <TaskMenu ref={taskMenuRef} supabase={supabase} taskItems={taskItems} setTaskItems={setTaskItems} habitHistory={habitHistory} setHabitHistory={setHabitHistory} setHabitStats={setHabitStats} />
     <HabitApplyModal ref={habitApplyModalRef} />
+    <TaskRecommendationsModal ref={taskRecommendationsModalRef} session={session} setTaskItems={setTaskItems} taskItems={taskItems}/>
 
 
 

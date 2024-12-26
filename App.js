@@ -27,6 +27,7 @@ import { USER_INIT_SETTINGS } from './utils/AppConstants';
 
 // const Tab = createBottomTabNavigator();
 
+
 function MainApp() {
   // const [task, setTask] = useState(null);
 
@@ -171,7 +172,9 @@ function MainApp() {
 
       ) :
         (
-          <Auth setCurrentPage={setCurrentPage} />
+          <>
+            <Auth setCurrentPage={setCurrentPage}/>
+          </>
         )
       }
     </>

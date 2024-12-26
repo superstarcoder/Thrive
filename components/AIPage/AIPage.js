@@ -9,57 +9,19 @@ import Markdown from 'react-native-markdown-display';
 // import { OPENAI_API_KEY } from '@env';
 import OpenAI from "openai";
 import { useColorsStateContext } from '../ColorContext';
-// import { Color } from '../../assets/themes/Color';
+import { AIAnalyzeMonth } from '../AITools/AITools';
+
+// Function to make the request
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
-
 const APISecondsTimeout = 60
 const myMonth = (new Date()).getMonth() + 1 // NOT zero indexed
 const myYear = (new Date()).getFullYear()
 const monthName = monthNames[myMonth - 1];
-const basePrompt = `
-Please output a RAW markdown file with analysis of my task data for the month of ${monthName}. It would be great if you could provide:
 
-1) What You Did Well: this section should talk about what goals I have, what significant things I achieved, how many hours of work I put in for each kind of task, days/weeks where I was very productive etc. Please talk about all the good things I have done, and be specific to my tasks. Don't be too general.
-
-2) Areas of Improvement: in this section, please talk about some flaws in my productivity patterns and specific techniques I can use to improve my productivity (eg: pomodoro, time blocking, etc). For example, am I being realistic about my goals? Do I have too many incomplete tasks? Give me exact and accurate information regarding this. Give insight that is specific to my tasks. Don't be too general.
-
-Please provide this information in a neat, pretty, and concise format, with around 4-6 bullet points for each number. And this is very very important: write everything in a RAW Markdown file format. Add emojis too! At the end of the file, add a motivating/encouraging message such as "Keep up the good work and focus on these areas for continued improvement! 💪"
-
-Please do not include anything in your output other than a SINGULAR RAW markdown file. The RAW markdown file should be the only output.
-
-The only output should be a SINGULAR RAW markdown file
-
-In addition, the markdown file should only use the following formats:
-
-heading3 (###)
-heading4 (###)
-bold (**text**)
-list_item (-)
-
-use this format:
-### heading [emoji]
-
-#### What You Did Well [emoji]:
-- **[heading]**: [insert text here]
-- [insert more list items]
-
-#### Areas of Improvement [emoji]:
-- **[heading]**: [insert text here]
-- [insert more list items]
-    
-in addition, no matter what, DO NOT indent ANYTHING in the RAW markdown file.
-DO NOT indent ANYTHING in the RAW markdown file with spaces either. If you do, it will completely mess up the output and all of it will be useless.
-
-Below, I've pasted productivity data for the month of ${monthName}
-
-`
-const promptFooter = `
-
-As a reminder, please output a RAW markdown file only.`
 const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
 
 
@@ -73,10 +35,7 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
   }
 
   useEffect(() => {
-    // console.log("component mounted")
   }, [])
-
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const askAIButtonPressed = async (myMonth, myYear, taskItems) => {
 
@@ -93,20 +52,11 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
     setErrorMessage(null)
     setIsLoading(true)
 
-    let taskData = getTasksForMonthString(myMonth, myYear, taskItems)
-
-
-    let completePrompt = basePrompt + taskData + promptFooter
-    console.log(completePrompt)
-
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: completePrompt }],
-      model: "gpt-3.5-turbo",
+    await AIAnalyzeMonth({myMonth, myYear, taskItems}).then(result => {
+      setAnalysisText(result)
+      setIsLoading(false)
+      setLastAnalyzedTime(new Date())
     });
-
-    setIsLoading(false)
-    setAnalysisText(completion.choices[0].message.content)
-    setLastAnalyzedTime(new Date())
   }
 
   // Keep up the good work and focus on these areas for continued improvement! 💪
@@ -165,7 +115,7 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.scrollViewContainer}>
-          <StyledH1 text={"Ask Daisy AI"} style={styles.sectionHeading} />
+          <StyledH1 text={"Ask Thrive AI"} style={styles.sectionHeading} />
           <TouchableOpacity style={styles.askAIButton} onPress={() => askAIButtonPressed(myMonth, myYear, taskItems)}>
             <StyledH3 text={`Click me to analyze ${monthName}! 📊📈`} style={styles.buttonTitle} />
             {errorMessage &&
@@ -174,7 +124,7 @@ const AIPage = ({ taskItems, lastAnalyzedTime, setLastAnalyzedTime }) => {
           </TouchableOpacity>
 
           <View style={styles.infoBox}>
-            <StyledH3 text={"Daisy is an AI bot designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks & habits you add, the better Daisy becomes at offering tailored advice!"} style={styles.infoText} />
+            <StyledH3 text={"Thrive AI is designed to analyze your monthly productivity and provide personalized improvement tips. The more tasks you add, the better Thrive AI becomes at offering tailored advice!"} style={styles.infoText} />
           </View>
           {isLoading &&
             <ActivityIndicator size="large" />
