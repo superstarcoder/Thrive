@@ -614,39 +614,43 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 };
 
 /**
- * Purpose of this function is to loop through taskItems and habitHistory and create a dictionary called trophyStats where the key is the date and the value is
- * a dictionary with a "max trophies" and "earned trophies" values. The max trophies is calculated by finding the sqrt((duration*importance) + importance)
+ * 
  *
- * setTrophy stats in this function
- * @param {*} trophyStats
+ * this function updates the ember stats based on task items and habit history (for all tasks and habits)
+ * 
+ * format of ember stats:
+ * key: date (without time information)
+ * value: {max: int, earned: int}
+ * 
+ * @param {*} setEmberStats
  * @param {*} taskItems
  * @param {*} habitHistory
  */
-export const updateEmberStats = (setTrophyStats, taskItems, habitHistory) => {
-  const trophyFormula = (duration, importance) => {
+export const updateEmberStats = (setEmberStats, taskItems, habitHistory) => {
+  const embersFormula = (duration, importance) => {
     return Math.floor(Math.sqrt(duration * importance + importance + duration));
   };
 
-  let newTrophyStats = {};
+  let newEmberStats = {};
 
   for (const [habitId, habitEntriesArray] of Object.entries(habitHistory)) {
     for (const historyEntry of habitEntriesArray) {
       let dateKey = toDateOnly(historyEntry.habit_due_date);
-      if (!newTrophyStats[dateKey]) {
-        newTrophyStats[dateKey] = {
+      if (!newEmberStats[dateKey]) {
+        newEmberStats[dateKey] = {
           max: 0,
           earned: 0,
         };
       }
 
       if (historyEntry.status != "exempt")
-        newTrophyStats[dateKey].max += trophyFormula(
+        newEmberStats[dateKey].max += embersFormula(
           historyEntry.duration,
           historyEntry.importance
         );
 
       if (historyEntry.status == "complete")
-        newTrophyStats[dateKey].earned += trophyFormula(
+        newEmberStats[dateKey].earned += embersFormula(
           historyEntry.duration,
           historyEntry.importance
         );
@@ -656,21 +660,21 @@ export const updateEmberStats = (setTrophyStats, taskItems, habitHistory) => {
   for (const task of taskItems) {
     if (!task.isHabit) {
       let dateKey = toDateOnly(task.dueDate);
-      if (!newTrophyStats[dateKey]) {
-        newTrophyStats[dateKey] = {
+      if (!newEmberStats[dateKey]) {
+        newEmberStats[dateKey] = {
           max: 0,
           earned: 0,
         };
       }
 
       if (task.status != "exempt")
-        newTrophyStats[dateKey].max += trophyFormula(
+        newEmberStats[dateKey].max += embersFormula(
           task.duration,
           task.importance
         );
 
       if (task.status == "complete")
-        newTrophyStats[dateKey].earned += trophyFormula(
+        newEmberStats[dateKey].earned += embersFormula(
           task.duration,
           task.importance
         );
@@ -679,7 +683,7 @@ export const updateEmberStats = (setTrophyStats, taskItems, habitHistory) => {
 
   // console.log(JSON.stringify(newTrophyStats[toDateOnly(new Date())], null, 4));
   // console.log(newTrophyStats);
-  setTrophyStats(newTrophyStats);
+  setEmberStats(newEmberStats);
 };
 
 /**
