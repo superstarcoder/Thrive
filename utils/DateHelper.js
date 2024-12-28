@@ -22,10 +22,9 @@ export function onlyDatesAreSame(date1, date2) {
 
 }
 
-
-
 export function getDateFromDatetime(datetime) {
-	return new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate())
+	let datetimeNew = new Date(datetime) 
+	return new Date(datetimeNew.getFullYear(), datetimeNew.getMonth(), datetimeNew.getDate())
 }
 
 export function getTimeFromDatetime(datetime) {

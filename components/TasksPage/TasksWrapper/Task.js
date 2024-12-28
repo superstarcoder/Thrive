@@ -359,6 +359,7 @@ const getDynamicStyles = (ColorState) => ({
   fireIcon: {
     position: "absolute",
     right: -10,
+    top: -8,
   },
   title: {
     flex: 1,

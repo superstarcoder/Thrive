@@ -50,6 +50,7 @@
     "react-native-select-dropdown": "^4.0.1",
     "react-native-social-buttons": "^1.4.2",
     "react-native-svg": "15.8.0",
+    "react-native-svg-transformer": "^1.5.0",
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.13",

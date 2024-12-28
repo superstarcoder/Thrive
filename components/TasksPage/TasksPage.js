@@ -30,6 +30,7 @@ const TasksPage = forwardRef(({
   setHabitHistory,
   habitStats,
   setHabitStats,
+  emberStats,
 }, ref) => {
 
 
@@ -162,6 +163,7 @@ const TasksPage = forwardRef(({
       setSortModeJournalView={setSortModeJournalView}
       sortModeAllTasksView={sortModeAllTasksView}
       setSortModeAllTasksView={setSortModeAllTasksView}
+      emberStats={emberStats}
     />
     {
       /* display tasks */

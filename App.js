@@ -19,11 +19,12 @@ import EnterNewPasswordForm from './components/Auth/EnterNewPasswordForm';
 import StatsPage from './components/StatsPage/StatsPage';
 import AIPage from './components/AIPage/AIPage';
 import SettingsPage from './components/SettingsPage/SettingsPage';
-import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits } from './components/TasksPage/TasksPageSupabase';
+import { supabaseSyncLocalWithDb, supabaseFixHistoryAllHabits, updateEmberStats } from './components/TasksPage/TasksPageSupabase';
 import { ColorsStateProvider } from './components/ColorContext';
 import { supabaseLoadUserSettings } from './components/Auth/AuthPageSupabase'
 import { useColorsStateContext } from './components/ColorContext';
 import { USER_INIT_SETTINGS } from './utils/AppConstants';
+
 
 // const Tab = createBottomTabNavigator();
 
@@ -36,6 +37,7 @@ function MainApp() {
   const [taskItems, setTaskItems] = useState([]);
   const [habitHistory, setHabitHistory] = useState({})
   const [habitStats, setHabitStats] = useState({})
+  const [embersStats, setEmberStats] = useState({})
   const [lastAnalyzedTime, setLastAnalyzedTime] = useState(null)
   const [selectedTheme, setSelectedTheme] = useState("Thrive Blue")
   const [userSettings, setUserSettings] = useState(USER_INIT_SETTINGS)
@@ -87,6 +89,11 @@ function MainApp() {
   }, []) // empty dependency array simulates componentDidMount
 
 
+  useEffect(() => {
+    updateEmberStats(setEmberStats, taskItems, habitHistory);
+  }, [taskItems, habitHistory])
+
+
   const signOutUser = async () => {
     if (session.user && session) {
       console.log("signing out the user")
@@ -110,16 +117,19 @@ function MainApp() {
   })
 
 
+  
+
+
   if (!fontsLoaded) {
     return null
   }
 
-  var MySettingsPage = () => {
-    return (
-      <View style={{ backgroundColor: Color.DarkestBlue, width: "100%", height: "100%" }}>
-      </View>
-    );
-  }
+  // var MySettingsPage = () => {
+  //   return (
+  //     <View style={{ backgroundColor: Color.DarkestBlue, width: "100%", height: "100%" }}>
+  //     </View>
+  //   );
+  // }
 
   var myNavBar = <NavBar currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
@@ -141,6 +151,7 @@ function MainApp() {
                 setHabitHistory={setHabitHistory}
                 habitStats={habitStats}
                 setHabitStats={setHabitStats}
+                emberStats={embersStats}
               />
             </>
           }
