@@ -90,7 +90,7 @@ function MainApp() {
 
 
   useEffect(() => {
-    updateEmberStats(setEmberStats, taskItems, habitHistory);
+    updateEmberStats(setEmberStats, taskItems, habitHistory, habitStats);
   }, [taskItems, habitHistory])
 
 

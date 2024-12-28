@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import {
   CaretRight,
@@ -60,6 +60,8 @@ const TaskHeader = ({
   const sortButtonRef = useRef();
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState);
+  const [earnedEmbers, setEarnedEmbers] = useState();
+  const [maxEmbers, setMaxEmbers] = useState();
 
   const viewButton = (
     <View style={styles.viewButton}>
@@ -167,18 +169,20 @@ const TaskHeader = ({
 
   // console.log(toDateOnly(selectedDate))
 
-  let earned_embers = 0;
-  let max_embers = 5;
 
-  if (emberStats[toDateOnly(selectedDate)]) {
-    earned_embers = emberStats[toDateOnly(selectedDate)].earned;
-    max_embers = emberStats[toDateOnly(selectedDate)].max;
-    console.log("embers stats:");
-    console.log(earned_embers);
-    console.log(max_embers);
-  }
+  // let earnedEmbers = 0;
+  // let maxEmbers = 5;
+  useEffect(() => {
+    if (emberStats[toDateOnly(selectedDate)]) {
+      setEarnedEmbers(emberStats[toDateOnly(selectedDate)].earned)
+      setMaxEmbers(emberStats[toDateOnly(selectedDate)].max)
+      // console.log("embers stats:");
+      // console.log(earnedEmbers);
+      // console.log(maxEmbers);
+    }    
+  }, [emberStats, selectedDate])
 
-  let progressBarWidth = (earned_embers / max_embers) * progressBarMaxWidth;
+  let progressBarWidth = (earnedEmbers / maxEmbers) * progressBarMaxWidth;
   if (progressBarWidth == 0) {
     progressBarWidth = 10;
   }
@@ -290,7 +294,7 @@ const TaskHeader = ({
         </View>
         <View style={styles.embersTextContainer}>
           <Text style={styles.embersText}>
-            {earned_embers} / {max_embers} embers
+            {earnedEmbers} / {maxEmbers} embers
           </Text>
         </View>
       </View>

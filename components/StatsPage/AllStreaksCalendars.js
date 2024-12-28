@@ -32,7 +32,7 @@ const AllStreaksCalendars = ({ habitStats, taskItems, habitHistory, setHabitStat
 				continue;
 			}
 
-			for (let i = 0; i < historyLength; i++) {
+			for (let i = historyLength - 1; i >= 0; i--) {
 				let dueDateRaw = allHistories[historyLength - i - 1]
 				let status = myStat.history[dueDateRaw]
 				let dueDate = toYMDFormat(dueDateRaw)

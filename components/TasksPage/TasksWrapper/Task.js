@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { StyledH1, StyledH2, StyledH3, StyledH4 } from "../../text/StyledText";
-import { Clock, WarningCircle, Fire, Repeat, PlusCircle, PlusSquare, Checks } from "phosphor-react-native";
+import {
+  Clock,
+  WarningCircle,
+  Fire,
+  Repeat,
+  PlusCircle,
+  PlusSquare,
+  Checks,
+} from "phosphor-react-native";
 import TaskCheckBox from "./TaskCheckBox";
 import { BlurView } from "expo-blur";
-import { onlyDatesAreSame } from "../../../utils/DateHelper";
+import { onlyDatesAreSame, toDateOnly } from "../../../utils/DateHelper";
 import { useColorsStateContext } from "../../ColorContext";
+import FlameIcon from "../../../assets/flame_icon.svg"
 
 const Task = ({
   isRecAdded = false,
   isRecommendation = false,
   isOverdue = false,
   disabled = false,
-  onAddTaskRec=undefined,
+  onAddTaskRec = undefined,
   dueTimeOverride,
   habitStatsEntry,
   selectedDate,
@@ -60,7 +69,7 @@ const Task = ({
       shadowOpacity: 0.4,
       shadowRadius: 10,
       elevation: 8, // For Android
-    }
+    };
   } else if (isRecommendation && isRecAdded) {
     taskConditionalStyle = {
       backgroundColor: ColorState?.Task?.TaskRecBackgroundColor,
@@ -69,7 +78,7 @@ const Task = ({
       shadowRadius: 10,
       elevation: 8, // For Android
       opacity: 0.55,
-    }
+    };
   } else if (
     status == "complete" ||
     (status == "incomplete" && isHabit) ||
@@ -165,6 +174,25 @@ const Task = ({
       width: progressBarWidth,
     };
 
+    let streaksNum;
+    let dateKey = toDateOnly(habitHistoryEntry?.habit_due_date);
+    if (habitHistoryEntry == undefined) streaksNum = 0;
+
+    streaksNum = habitStatsEntry?.cumulative_streak_history[dateKey];
+    if (!streaksNum) streaksNum = 0;
+
+    bonusEmbersText = <View></View>
+
+    if (streaksNum != 0) {
+      bonusEmbersText = (
+        <View style={styles.bonusEmbersTextContainer}>
+          <StyledH4 text={"+"+streaksNum+" streak embers "} style={styles.bonusEmbersTextStyle}/>
+          <FlameIcon height={20} width={20}/>
+        </View>
+      );
+    }
+
+
     habitBar = (
       <View style={styles.progressBar}>
         <View style={[styles.progressBarFilled, conditionalStyling]}>
@@ -221,6 +249,7 @@ const Task = ({
     habitBar = <View></View>;
     habitInfoText = <View></View>;
     repeatDetail = <View></View>;
+    bonusEmbersText = <View></View>;
   }
 
   return (
@@ -288,20 +317,34 @@ const Task = ({
           {repeatDetail}
         </View>
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
+
+        {bonusEmbersText}
       </View>
       <View style={styles.checkBoxSection}>
-        {(isRecommendation && !isRecAdded) &&
-        
-        <TouchableOpacity style={styles.addRecIcon} onPress={() => {onAddTaskRec(taskId)}}>
-          <PlusSquare size={45} color={ColorState?.GreenAccent} weight="fill" />
-        </TouchableOpacity>
-        }
+        {isRecommendation && !isRecAdded && (
+          <TouchableOpacity
+            style={styles.addRecIcon}
+            onPress={() => {
+              onAddTaskRec(taskId);
+            }}
+          >
+            <PlusSquare
+              size={45}
+              color={ColorState?.GreenAccent}
+              weight="fill"
+            />
+          </TouchableOpacity>
+        )}
 
-      {(isRecommendation && isRecAdded) &&
-        <TouchableOpacity style={styles.addRecIcon}>
-          <Checks size={45} color={ColorState?.GreenAccent} weight="regular" />
-        </TouchableOpacity>
-        }
+        {isRecommendation && isRecAdded && (
+          <TouchableOpacity style={styles.addRecIcon}>
+            <Checks
+              size={45}
+              color={ColorState?.GreenAccent}
+              weight="regular"
+            />
+          </TouchableOpacity>
+        )}
 
         {!isRecommendation && (
           <TaskCheckBox
@@ -320,9 +363,21 @@ const Task = ({
 };
 
 const getDynamicStyles = (ColorState) => ({
-  addRecIcon: {
-
+  bonusEmbersTextStyle: {
+    color: "black"
   },
+  bonusEmbersTextContainer: {
+    backgroundColor: "#c7911a",
+    flexDirection: "row",
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+    padding: 2,
+    alignSelf: "flex-start",
+    marginTop: 8,
+  },
+  addRecIcon: {},
   habitInfoText: {
     flexDirection: "row",
     marginTop: 10,

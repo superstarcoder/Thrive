@@ -586,26 +586,25 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
   for (const [habitId, habitEntriesArray] of Object.entries(newHabitHistory)) {
     habitEntriesArray.sort(
-      (a, b) => new Date(b.habit_due_date) - new Date(a.habit_due_date)
+      (b, a) => new Date(b.habit_due_date) - new Date(a.habit_due_date)
     );
 
     let streak = 0;
     let history = {};
+    let cumulative_streak_history = {};
     let datesDue = [];
 
-    // get latest streak count
+    // get latest streak count while also updating history & cumulative streak dictionaries
     for (const historyEntry of habitEntriesArray) {
-      if (historyEntry.status == "incomplete") break;
+      cumulative_streak_history[toDateOnly(historyEntry.habit_due_date)] = streak;
+      if (historyEntry.status == "incomplete") streak = 0;
       else if (historyEntry.status == "complete") streak += 1;
-    }
 
-    // update history array
-    for (const historyEntry of habitEntriesArray) {
       history[historyEntry.habit_due_date] = historyEntry.status;
     }
 
     // update streak count
-    newHabitStats[habitId] = { streak: streak, history: history };
+    newHabitStats[habitId] = { streak: streak, history: history, cumulative_streak_history: cumulative_streak_history };
   }
 
   // console.log(JSON.stringify(newHabitStats, null, 2))
@@ -626,9 +625,15 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
  * @param {*} taskItems
  * @param {*} habitHistory
  */
-export const updateEmberStats = (setEmberStats, taskItems, habitHistory) => {
-  const embersFormula = (duration, importance) => {
-    return Math.floor(Math.sqrt(duration * importance + importance + duration));
+export const updateEmberStats = (setEmberStats, taskItems, habitHistory, habitStats) => {
+  const embersFormula = (duration, importance, streakNum=0) => {
+    // sqrt(streakNum / 2) is the "bonus score" term
+
+    if (streakNum != 0) {
+      console.log(streakNum)
+      console.log("bonus score: "+ Math.sqrt(streakNum))
+    }
+    return Math.ceil(Math.sqrt(duration * importance + importance + duration) + Math.sqrt(streakNum) );
   };
 
   let newEmberStats = {};
@@ -643,16 +648,21 @@ export const updateEmberStats = (setEmberStats, taskItems, habitHistory) => {
         };
       }
 
+      let streaksNum = habitStats[historyEntry.id].cumulative_streak_history[dateKey]
+      if (!streaksNum) streaksNum = 0;
+
       if (historyEntry.status != "exempt")
         newEmberStats[dateKey].max += embersFormula(
           historyEntry.duration,
-          historyEntry.importance
+          historyEntry.importance,
+          streaksNum
         );
 
       if (historyEntry.status == "complete")
         newEmberStats[dateKey].earned += embersFormula(
           historyEntry.duration,
-          historyEntry.importance
+          historyEntry.importance,
+          streaksNum
         );
     }
   }
