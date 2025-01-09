@@ -14,7 +14,12 @@ import TaskCheckBox from "./TaskCheckBox";
 import { BlurView } from "expo-blur";
 import { onlyDatesAreSame, toDateOnly } from "../../../utils/DateHelper";
 import { useColorsStateContext } from "../../ColorContext";
-import FlameIcon from "../../../assets/flame_icon.svg"
+import FlameIcon from "../../../assets/flame_icon.svg";
+import {
+  calculateEmbersForHabit,
+  calculateEmbersForTask,
+} from "../TasksPageSupabase";
+import { getImportanceString } from "../../../utils/OtherHelpers";
 
 const Task = ({
   isRecAdded = false,
@@ -45,17 +50,17 @@ const Task = ({
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState);
 
-  if (priority <= 4) {
+  if (getImportanceString(priority) == "low_importance") {
     accent = <View style={styles.lowPriorityAccent}></View>;
     importanceText = (
       <StyledH4 text={"low importance"} style={styles.importanceText} />
     );
-  } else if (priority <= 7) {
+  } else if (getImportanceString(priority) == "medium_importance") {
     accent = <View style={styles.mediumPriorityAccent}></View>;
     importanceText = (
       <StyledH4 text={"medium importance"} style={styles.importanceText} />
     );
-  } else if (priority <= 10) {
+  } else if (getImportanceString(priority) == "high_importance") {
     accent = <View style={styles.highPriorityAccent}></View>;
     importanceText = (
       <StyledH4 text={"high importance"} style={styles.importanceText} />
@@ -136,6 +141,8 @@ const Task = ({
     dueDateTimeInfo = <View></View>;
   }
 
+
+  let embersToEarnText = <View></View>
   if (isHabit) {
     // UPDATE UI FOR HABIT
     // console.log({habitStatsEntry})
@@ -174,24 +181,30 @@ const Task = ({
       width: progressBarWidth,
     };
 
-    let streaksNum;
-    let dateKey = toDateOnly(habitHistoryEntry?.habit_due_date);
-    if (habitHistoryEntry == undefined) streaksNum = 0;
+    let emberStatMax = 0;
+    if (
+      habitHistoryEntry != undefined ||
+      habitHistoryEntry.habit_due_date != undefined
+    ) {
+      emberStatMax = calculateEmbersForHabit(
+        habitHistoryEntry,
+        habitStatsEntry
+      ).max;
+    }
 
-    streaksNum = habitStatsEntry?.cumulative_streak_history[dateKey];
-    if (!streaksNum) streaksNum = 0;
+    embersToEarnText = <View></View>;
 
-    bonusEmbersText = <View></View>
-
-    if (streaksNum != 0) {
-      bonusEmbersText = (
+    if (emberStatMax != 0) {
+      embersToEarnText = (
         <View style={styles.bonusEmbersTextContainer}>
-          <StyledH4 text={"+"+streaksNum+" streak embers "} style={styles.bonusEmbersTextStyle}/>
-          <FlameIcon height={20} width={20}/>
+          <StyledH4
+            text={"+" + emberStatMax}
+            style={styles.bonusEmbersTextStyle}
+          />
+          <FlameIcon height={20} width={20} />
         </View>
       );
     }
-
 
     habitBar = (
       <View style={styles.progressBar}>
@@ -249,7 +262,28 @@ const Task = ({
     habitBar = <View></View>;
     habitInfoText = <View></View>;
     repeatDetail = <View></View>;
-    bonusEmbersText = <View></View>;
+
+    let emberStatMax = 0;
+    if (duration != undefined && priority != undefined) {
+      emberStatMax = calculateEmbersForTask({
+        duration: duration,
+        importance: priority,
+      }).max;
+    }
+
+    embersToEarnText = <View></View>;
+
+    if (emberStatMax != 0) {
+      embersToEarnText = (
+        <View style={styles.bonusEmbersTextContainer}>
+          <StyledH4
+            text={"+" + emberStatMax}
+            style={styles.bonusEmbersTextStyle}
+          />
+          <FlameIcon height={20} width={20} />
+        </View>
+      );
+    }
   }
 
   return (
@@ -315,10 +349,10 @@ const Task = ({
         <View style={styles.timeInfo}>
           {dueDateTimeInfo}
           {repeatDetail}
+          {embersToEarnText}
         </View>
         {/* <StyledH4 text={"+"+points+" points"} style={styles.pointsText}/> */}
 
-        {bonusEmbersText}
       </View>
       <View style={styles.checkBoxSection}>
         {isRecommendation && !isRecAdded && (
@@ -364,7 +398,7 @@ const Task = ({
 
 const getDynamicStyles = (ColorState) => ({
   bonusEmbersTextStyle: {
-    color: "black"
+    color: "black",
   },
   bonusEmbersTextContainer: {
     backgroundColor: "#c7911a",
@@ -383,6 +417,7 @@ const getDynamicStyles = (ColorState) => ({
     marginTop: 10,
   },
   timeInfo: {
+    gap: 8,
     flexDirection: "row",
   },
   repeatIcon: {
@@ -505,7 +540,7 @@ const getDynamicStyles = (ColorState) => ({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    // marginRight: 8,
     padding: 2,
     alignSelf: "flex-start",
     marginTop: 8,

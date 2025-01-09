@@ -25,10 +25,6 @@ import { supabaseLoadUserSettings } from './components/Auth/AuthPageSupabase'
 import { useColorsStateContext } from './components/ColorContext';
 import { USER_INIT_SETTINGS } from './utils/AppConstants';
 
-
-// const Tab = createBottomTabNavigator();
-
-
 function MainApp() {
   // const [task, setTask] = useState(null);
 

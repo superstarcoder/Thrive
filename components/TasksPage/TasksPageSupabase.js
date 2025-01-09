@@ -596,7 +596,8 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
     // get latest streak count while also updating history & cumulative streak dictionaries
     for (const historyEntry of habitEntriesArray) {
-      cumulative_streak_history[toDateOnly(historyEntry.habit_due_date)] = streak;
+      cumulative_streak_history[toDateOnly(historyEntry.habit_due_date)] =
+        streak;
       if (historyEntry.status == "incomplete") streak = 0;
       else if (historyEntry.status == "complete") streak += 1;
 
@@ -604,7 +605,11 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
     }
 
     // update streak count
-    newHabitStats[habitId] = { streak: streak, history: history, cumulative_streak_history: cumulative_streak_history };
+    newHabitStats[habitId] = {
+      streak: streak,
+      history: history,
+      cumulative_streak_history: cumulative_streak_history,
+    };
   }
 
   // console.log(JSON.stringify(newHabitStats, null, 2))
@@ -612,58 +617,102 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
   return newHabitStats;
 };
 
+export const calculateEmbersForHabit = (historyEntry, habitStatsEntry) => {
+  let dateKey = toDateOnly(historyEntry.habit_due_date);
+
+  let streaksNum = habitStatsEntry.cumulative_streak_history[dateKey];
+  if (!streaksNum) streaksNum = 0;
+
+  let emberStat = { max: 0, earned: 0 };
+
+  if (historyEntry.status != "exempt")
+    emberStat.max += embersFormula(
+      historyEntry.duration,
+      historyEntry.importance,
+      streaksNum
+    );
+
+  if (historyEntry.status == "complete")
+    emberStat.earned += embersFormula(
+      historyEntry.duration,
+      historyEntry.importance,
+      streaksNum
+    );
+
+  return emberStat;
+};
+
+export const calculateEmbersForTask = (task) => {
+  let emberStat = { max: 0, earned: 0 };
+
+  if (task.status != "exempt")
+    emberStat.max += embersFormula(task.duration, task.importance);
+
+  if (task.status == "complete")
+    emberStat.earned += embersFormula(task.duration, task.importance);
+  return emberStat;
+};
+
+// sqrt(streakNum / 2) is the "bonus score" term
+
+// if (streakNum != 0) {
+//   console.log(streakNum);
+//   console.log("bonus score: " + Math.sqrt(streakNum));
+// }
+
+// let embers = Math.ceil(
+//   Math.sqrt(duration * importance + importance + duration) +
+//     Math.sqrt(streakNum))
+
+// if (embers < 1) embers = 1
+
+// return embers
+
+const embersFormula = (duration, importance, streakNum = 0) => {
+  let embers = 1;
+  if (getImportanceString(importance) == "medium_importance") {
+    embers = 2;
+  }
+  if (getImportanceString(importance) == "high_importance") {
+    embers = 3;
+  }
+  return embers;
+};
+
 /**
- * 
+ *
  *
  * this function updates the ember stats based on task items and habit history (for all tasks and habits)
- * 
+ *
  * format of ember stats:
  * key: date (without time information)
  * value: {max: int, earned: int}
- * 
+ *
  * @param {*} setEmberStats
  * @param {*} taskItems
  * @param {*} habitHistory
  */
-export const updateEmberStats = (setEmberStats, taskItems, habitHistory, habitStats) => {
-  const embersFormula = (duration, importance, streakNum=0) => {
-    // sqrt(streakNum / 2) is the "bonus score" term
-
-    if (streakNum != 0) {
-      console.log(streakNum)
-      console.log("bonus score: "+ Math.sqrt(streakNum))
-    }
-    return Math.ceil(Math.sqrt(duration * importance + importance + duration) + Math.sqrt(streakNum) );
-  };
-
+export const updateEmberStats = (
+  setEmberStats,
+  taskItems,
+  habitHistory,
+  habitStats
+) => {
   let newEmberStats = {};
 
   for (const [habitId, habitEntriesArray] of Object.entries(habitHistory)) {
     for (const historyEntry of habitEntriesArray) {
       let dateKey = toDateOnly(historyEntry.habit_due_date);
       if (!newEmberStats[dateKey]) {
-        newEmberStats[dateKey] = {
-          max: 0,
-          earned: 0,
-        };
+        newEmberStats[dateKey] = { max: 0, earned: 0 };
       }
 
-      let streaksNum = habitStats[historyEntry.id].cumulative_streak_history[dateKey]
-      if (!streaksNum) streaksNum = 0;
-
-      if (historyEntry.status != "exempt")
-        newEmberStats[dateKey].max += embersFormula(
-          historyEntry.duration,
-          historyEntry.importance,
-          streaksNum
-        );
-
-      if (historyEntry.status == "complete")
-        newEmberStats[dateKey].earned += embersFormula(
-          historyEntry.duration,
-          historyEntry.importance,
-          streaksNum
-        );
+      let emberStat = calculateEmbersForHabit(
+        historyEntry,
+        habitStats[historyEntry.id]
+      );
+      newEmberStats[dateKey].earned += emberStat.earned;
+      newEmberStats[dateKey].max += emberStat.max;
     }
   }
 
@@ -671,28 +720,15 @@ export const updateEmberStats = (setEmberStats, taskItems, habitHistory, habitSt
     if (!task.isHabit) {
       let dateKey = toDateOnly(task.dueDate);
       if (!newEmberStats[dateKey]) {
-        newEmberStats[dateKey] = {
-          max: 0,
-          earned: 0,
-        };
+        newEmberStats[dateKey] = { max: 0, earned: 0 };
       }
 
-      if (task.status != "exempt")
-        newEmberStats[dateKey].max += embersFormula(
-          task.duration,
-          task.importance
-        );
-
-      if (task.status == "complete")
-        newEmberStats[dateKey].earned += embersFormula(
-          task.duration,
-          task.importance
-        );
+      let emberStat = calculateEmbersForTask(task);
+      newEmberStats[dateKey].earned += emberStat.earned;
+      newEmberStats[dateKey].max += emberStat.max;
     }
   }
 
-  // console.log(JSON.stringify(newTrophyStats[toDateOnly(new Date())], null, 4));
-  // console.log(newTrophyStats);
   setEmberStats(newEmberStats);
 };
 
