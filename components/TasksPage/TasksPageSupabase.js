@@ -8,7 +8,10 @@ import {
   toDateOnly,
 } from "../../utils/DateHelper";
 import { HABIT_HISTORY_COLUMNS } from "../../utils/AppConstants";
-import { getHabitHistoryUpdateDict } from "../../utils/OtherHelpers";
+import {
+  getHabitHistoryUpdateDict,
+  getImportanceString,
+} from "../../utils/OtherHelpers";
 
 // local AND supabase changes
 export const supabaseUpdateTaskSettings = async (
@@ -702,6 +705,7 @@ export const updateEmberStats = (
 
   for (const [habitId, habitEntriesArray] of Object.entries(habitHistory)) {
     for (const historyEntry of habitEntriesArray) {
+      if (!historyEntry) continue;
       let dateKey = toDateOnly(historyEntry.habit_due_date);
       if (!newEmberStats[dateKey]) {
         newEmberStats[dateKey] = { max: 0, earned: 0 };

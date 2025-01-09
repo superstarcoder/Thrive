@@ -183,7 +183,7 @@ const Task = ({
 
     let emberStatMax = 0;
     if (
-      habitHistoryEntry != undefined ||
+      habitHistoryEntry != undefined &&
       habitHistoryEntry.habit_due_date != undefined
     ) {
       emberStatMax = calculateEmbersForHabit(
