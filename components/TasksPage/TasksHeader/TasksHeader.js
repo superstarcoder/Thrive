@@ -27,9 +27,10 @@ import { Switch } from "react-native-elements/dist/switch/switch";
 import { useColorsStateContext } from "../../ColorContext";
 import { color } from "react-native-elements/dist/helpers";
 import { toDateOnly } from "../../../utils/DateHelper";
-import Svg, { Circle, Rect } from 'react-native-svg';
+import Svg, { Circle, Rect } from "react-native-svg";
 
-import FlameIcon from "../../../assets/flame_icon.svg"
+import FlameIcon from "../../../assets/flame_icon.svg";
+import { getTotalEmberCount } from "../TasksPageSupabase";
 /**
  *
  * @param {ReactState} viewMode
@@ -164,23 +165,22 @@ const TaskHeader = ({
     </View>
   );
 
-  const progressBarMaxWidth = 170;
+  const progressBarMaxWidth = 140;
   const fireIconSize = 35;
 
   // console.log(toDateOnly(selectedDate))
-
 
   // let earnedEmbers = 0;
   // let maxEmbers = 5;
   useEffect(() => {
     if (emberStats[toDateOnly(selectedDate)]) {
-      setEarnedEmbers(emberStats[toDateOnly(selectedDate)].earned)
-      setMaxEmbers(emberStats[toDateOnly(selectedDate)].max)
+      setEarnedEmbers(emberStats[toDateOnly(selectedDate)].earned);
+      setMaxEmbers(emberStats[toDateOnly(selectedDate)].max);
       // console.log("embers stats:");
       // console.log(earnedEmbers);
       // console.log(maxEmbers);
-    }    
-  }, [emberStats, selectedDate])
+    }
+  }, [emberStats, selectedDate]);
 
   let progressBarWidth = (earnedEmbers / maxEmbers) * progressBarMaxWidth;
   if (progressBarWidth == 0) {
@@ -192,6 +192,8 @@ const TaskHeader = ({
   const progressBarWidthStyle = {
     width: progressBarWidth,
   };
+
+  const totalEmberCount = getTotalEmberCount(emberStats);
 
   return (
     <View>
@@ -289,7 +291,11 @@ const TaskHeader = ({
               style={styles.fireIcon}
             /> */}
 
-          <FlameIcon width={fireIconSize} height={fireIconSize} style={styles.fireIcon}/>
+            <FlameIcon
+              width={fireIconSize}
+              height={fireIconSize}
+              style={styles.fireIcon}
+            />
           </View>
         </View>
         <View style={styles.embersTextContainer}>
@@ -297,12 +303,31 @@ const TaskHeader = ({
             {earnedEmbers} / {maxEmbers} embers
           </Text>
         </View>
+
+        <View style={styles.totalEmbersDisplay}>
+          <StyledH4 text={totalEmberCount} style={styles.totalEmbersText} />
+          <FlameIcon height={20} width={20} />
+        </View>
       </View>
     </View>
   );
 };
 
 const getDynamicStyles = (ColorState) => ({
+  totalEmbersDisplay: {
+    backgroundColor: "#c7911a",
+    flexDirection: "row",
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+    padding: 2,
+    alignSelf: "flex-start",
+    marginTop: 10,
+  },
+  totalEmbersText: {
+    color: "black",
+  },
   fireIcon: {
     position: "absolute",
     right: -10,
@@ -329,7 +354,7 @@ const getDynamicStyles = (ColorState) => ({
   },
   progressBar: {
     height: 24,
-    width: 170,
+    width: 140,
     backgroundColor: ColorState?.StreaksBarBg,
     // marginTop: 12,
     borderRadius: 30,

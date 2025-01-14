@@ -621,12 +621,14 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 };
 
 export const calculateEmbersForHabit = (historyEntry, habitStatsEntry) => {
+  let emberStat = { max: 0, earned: 0 };
+
+  if (!historyEntry || !habitStatsEntry) return emberStat;
+
   let dateKey = toDateOnly(historyEntry.habit_due_date);
 
   let streaksNum = habitStatsEntry.cumulative_streak_history[dateKey];
   if (!streaksNum) streaksNum = 0;
-
-  let emberStat = { max: 0, earned: 0 };
 
   if (historyEntry.status != "exempt")
     emberStat.max += embersFormula(
@@ -734,6 +736,14 @@ export const updateEmberStats = (
   }
 
   setEmberStats(newEmberStats);
+};
+
+export const getTotalEmberCount = (emberStats) => {
+  let totalEarned = 0;
+  for (const [dateKey, emberStat] of Object.entries(emberStats)) {
+    totalEarned += emberStat.earned;
+  }
+  return totalEarned;
 };
 
 /**
