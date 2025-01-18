@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 import Color from "../assets/themes/Color";
-import NavBarButtons from "./NavBarButtons";
+import NavBarButton from "./NavBarButton";
 import { useColorsStateContext } from "./ColorContext";
 import { DISCORD_COMMUNITY_LINK } from "../utils/AppConstants";
 
@@ -31,7 +31,7 @@ const NavBar = ({ currentPage, setCurrentPage }) => {
   const onNavBarButtonPress = async (pageName) => {
     // temporary community button (links to discord)
     if (pageName == "community") {
-		openLink(DISCORD_COMMUNITY_LINK)
+      openLink(DISCORD_COMMUNITY_LINK);
       return;
     }
 
@@ -43,27 +43,32 @@ const NavBar = ({ currentPage, setCurrentPage }) => {
   return (
     <View style={styles.navbarContainer}>
       <View style={styles.navbar}>
-        <NavBarButtons
+        <NavBarButton
           label={"settings"}
           onNavBarButtonPress={onNavBarButtonPress}
           currentPage={currentPage}
         />
-        <NavBarButtons
+        {/* <NavBarButton
           label={"community"}
           onNavBarButtonPress={onNavBarButtonPress}
           currentPage={currentPage}
+        /> */}
+        <NavBarButton
+          label={"rewards"}
+          onNavBarButtonPress={onNavBarButtonPress}
+          currentPage={currentPage}
         />
-        <NavBarButtons
+        <NavBarButton
           label={"home"}
           onNavBarButtonPress={onNavBarButtonPress}
           currentPage={currentPage}
         />
-        <NavBarButtons
+        <NavBarButton
           label={"stats"}
           onNavBarButtonPress={onNavBarButtonPress}
           currentPage={currentPage}
         />
-        <NavBarButtons
+        <NavBarButton
           label={"AI"}
           onNavBarButtonPress={onNavBarButtonPress}
           currentPage={currentPage}

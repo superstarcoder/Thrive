@@ -3,13 +3,13 @@ import React from 'react'
 import { Gear, House, ChartBar, Sparkle, UsersThree } from 'phosphor-react-native';
 import Color from '../assets/themes/Color';
 import { useColorsStateContext } from './ColorContext';
-
+import FlameIcon from "../assets/flame_icon.svg"
 /**
  * represents a single button in the navbar
  * @param {string} label settings/home/stats/AI 
  * @returns 
  */
-const NavBarButtons = ({ label, onNavBarButtonPress, currentPage }) => {
+const NavBarButton = ({ label, onNavBarButtonPress, currentPage }) => {
 
 	const { ColorState, setColorState } = useColorsStateContext();
 	const styles = getDynamicStyles(ColorState)
@@ -38,6 +38,7 @@ const NavBarButtons = ({ label, onNavBarButtonPress, currentPage }) => {
 			if (label == "stats") return <ChartBar size={30} weight="fill" color={ColorState?.DarkBlue} style={[styles.buttonIcon]} />
 			if (label == "AI") return <Sparkle size={30} weight="fill" color={ColorState?.DarkBlue} style={[styles.buttonIcon]} />
 			if (label == "community") return <UsersThree size={30} weight="fill" color={ColorState?.DarkBlue} style={[styles.buttonIcon]} />
+			if (label == "rewards") return <FlameIcon height={30} width={30} />
 		}
 		else {
 			if (label == "settings") return <Gear size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
@@ -45,6 +46,7 @@ const NavBarButtons = ({ label, onNavBarButtonPress, currentPage }) => {
 			if (label == "stats") return <ChartBar size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
 			if (label == "AI") return <Sparkle size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
 			if (label == "community") return <UsersThree size={30} weight="regular" color={ColorState?.NavBarIconsColor} style={[styles.buttonIcon]} />
+			if (label == "rewards") return <FlameIcon height={30} width={30} opacity={0.5}/>
 		}
 	}
 
@@ -57,7 +59,7 @@ const NavBarButtons = ({ label, onNavBarButtonPress, currentPage }) => {
 	)
 }
 
-export default NavBarButtons
+export default NavBarButton
 
 
 const getDynamicStyles = (ColorState) => ({

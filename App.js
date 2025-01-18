@@ -24,6 +24,7 @@ import { ColorsStateProvider } from './components/ColorContext';
 import { supabaseLoadUserSettings } from './components/Auth/AuthPageSupabase'
 import { useColorsStateContext } from './components/ColorContext';
 import { USER_INIT_SETTINGS } from './utils/AppConstants';
+import RewardsPage from './components/RewardsPage/RewardsPage';
 
 function MainApp() {
   // const [task, setTask] = useState(null);
@@ -165,6 +166,11 @@ function MainApp() {
           {currentPage == "AI" &&
             <>
               <AIPage taskItems={taskItems} lastAnalyzedTime={lastAnalyzedTime} setLastAnalyzedTime={setLastAnalyzedTime} />
+            </>
+          }
+          {currentPage == "rewards" &&
+            <>
+              <RewardsPage/>
             </>
           }
           {currentPage == "enter_new_password_form" &&
