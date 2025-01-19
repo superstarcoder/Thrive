@@ -31,7 +31,9 @@ const TasksPage = forwardRef(({
   habitStats,
   setHabitStats,
   emberStats,
-  setRewardItems
+  setRewardItems,
+  syncLocalWithDb,
+  userSettings,
 }, ref) => {
 
 
@@ -54,10 +56,10 @@ const TasksPage = forwardRef(({
 
 
 
-  useImperativeHandle(ref, () => ({
-    syncLocalWithDb: syncLocalWithDb
+  // useImperativeHandle(ref, () => ({
+  //   syncLocalWithDb: syncLocalWithDb
 
-  }));
+  // }));
 
 
 
@@ -135,11 +137,6 @@ const TasksPage = forwardRef(({
       dateText = selectedDate.toLocaleDateString();
   }
 
-
-  const syncLocalWithDb = async () => {
-    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory, setRewardItems)
-  }
-
   useEffect(() => {
 
   }, []); // Empty dependency array simulates componentDidMount
@@ -165,6 +162,7 @@ const TasksPage = forwardRef(({
       sortModeAllTasksView={sortModeAllTasksView}
       setSortModeAllTasksView={setSortModeAllTasksView}
       emberStats={emberStats}
+      userSettings={userSettings}
     />
     {
       /* display tasks */

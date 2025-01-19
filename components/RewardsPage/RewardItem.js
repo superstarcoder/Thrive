@@ -3,9 +3,11 @@ import React from "react";
 import FlameIcon from "../../assets/flame_icon.svg";
 import { StyledH1, StyledH2, StyledH3, StyledH4 } from "../text/StyledText";
 import { useColorsStateContext } from "../ColorContext";
-import { Trash } from "phosphor-react-native";
+import { Repeat, Trash } from "phosphor-react-native";
+import { supabaseAddReward, supabaseDeleteReward, supabaseUpdateReward } from "./RewardsPageSupabase";
+import { supabaseUpdateUserSettings } from "../Auth/AuthPageSupabase";
 
-const RewardItem = ({ title, embers_cost, recurring, canClaim }) => {
+const RewardItem = ({ title, embers_cost, recurring, canClaim, rewardId, user_uid, setRewardItems, claimed, userSettings, setUserSettings }) => {
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState);
 
@@ -15,7 +17,32 @@ const RewardItem = ({ title, embers_cost, recurring, canClaim }) => {
     goldenBorderColor = { borderColor: "#C7911A" };
   }
 
-  const onDeletePress = () => {};
+  if (claimed) {
+    goldenBorderColor = { borderColor: ColorState?.GreenAccent };
+  }
+
+  const onDeletePress = async () => {
+    console.log("attempting to delete");
+    await supabaseDeleteReward({ rewardId, setRewardItems, user_uid });
+  };
+
+  const onClaimRewardPress = async () => {
+    // make it claimed
+    await supabaseUpdateReward({ updateDict: { claimed: true }, rewardId, user_uid, setRewardItems });
+    // add a duplicate of current reward if it is recurring
+    if (recurring) {
+      console.log("is recurring, creating duplicate");
+      await supabaseAddReward({ newRewardSettings: { title: title, embers_cost: embers_cost, recurring: true }, user_uid, setRewardItems });
+    }
+
+    console.log("hello!!")
+    console.log({"total_spent_embers": userSettings.total_spent_embers})
+
+    if (canClaim) {
+      console.log("trying to update user settings")
+      await supabaseUpdateUserSettings({updateDict: {total_spent_embers: userSettings.total_spent_embers + embers_cost}, userSettings, setUserSettings})
+    }
+  };
   return (
     <View style={[styles.rewardContainer, goldenBorderColor]}>
       <StyledH2 text={title} style={styles.rewardTitle} />
@@ -28,7 +55,7 @@ const RewardItem = ({ title, embers_cost, recurring, canClaim }) => {
           </View>
         </View>
         {canClaim && (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onClaimRewardPress}>
             <View style={styles.claimButton}>
               <StyledH2 text={"Claim Reward"} style={styles.claimButtonText} />
             </View>
@@ -40,6 +67,12 @@ const RewardItem = ({ title, embers_cost, recurring, canClaim }) => {
           </View>
         </TouchableOpacity>
       </View>
+      {recurring && (
+        <View style={styles.repeatDetail}>
+          <Repeat size={20} weight="fill" color={ColorState?.Blue} style={styles.repeatIcon} />
+          <StyledH4 text={"is recurring"} style={{ color: ColorState?.Gray }} />
+        </View>
+      )}
     </View>
   );
 };
@@ -47,6 +80,17 @@ const RewardItem = ({ title, embers_cost, recurring, canClaim }) => {
 export default RewardItem;
 
 const getDynamicStyles = (ColorState) => ({
+  // recurring detail
+  repeatDetail: {
+    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  repeatIcon: {
+    // marginRight: 6,
+  },
+
   rewardContainer: {
     flexDirection: "column",
     backgroundColor: ColorState?.DarkBlue,
@@ -114,6 +158,5 @@ const getDynamicStyles = (ColorState) => ({
 });
 
 const testStyles = StyleSheet.create({
-  test: {
-  },
+  test: {},
 });

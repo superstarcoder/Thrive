@@ -55,6 +55,7 @@ const TaskHeader = ({
   sortModeAllTasksView,
   setSortModeAllTasksView,
   emberStats,
+  userSettings
 }) => {
   const [loadingItemIndex, setLoadingItemIndex] = useState();
   const [isAscending, setIsAscending] = useState(false);
@@ -193,7 +194,7 @@ const TaskHeader = ({
     width: progressBarWidth,
   };
 
-  const totalEmberCount = getTotalEmberCount(emberStats);
+  const totalEmberCount = getTotalEmberCount(emberStats, userSettings);
 
   return (
     <View>

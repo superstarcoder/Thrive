@@ -10,7 +10,7 @@ import CheckBox from "../FormComponents/CheckBox";
 import { isIntegerInRange } from "../../utils/OtherHelpers";
 import { supabaseAddReward } from "./RewardsPageSupabase";
 
-const RewardSettingsModal = forwardRef(({ rewardItems, user }, ref) => {
+const RewardSettingsModal = forwardRef(({ rewardItems, setRewardItems, user }, ref) => {
   const bottomSheetRef = useRef(null);
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState);
@@ -36,7 +36,7 @@ const RewardSettingsModal = forwardRef(({ rewardItems, user }, ref) => {
       setFormError("Please enter a valid embers cost (any integer within the range from 10 to 1000)");
       return;
     }
-    await supabaseAddReward({newRewardSettings: rewardSettings, user_uid: user?.id})
+    await supabaseAddReward({ newRewardSettings: rewardSettings, user_uid: user?.id, setRewardItems, rewardItems: rewardItems });
     bottomSheetRef?.current?.scrollTo(0);
   };
   const onCancelPress = () => {

@@ -2,6 +2,7 @@ import { supabase } from "../../lib/supabase";
 import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat, getStandardDateString, getEndOfDay, toDateOnly } from "../../utils/DateHelper";
 import { HABIT_HISTORY_COLUMNS } from "../../utils/AppConstants";
 import { getHabitHistoryUpdateDict, getImportanceString } from "../../utils/OtherHelpers";
+import { supabaseGetAllRewards } from "../RewardsPage/RewardsPageSupabase";
 
 // local AND supabase changes
 export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, setTaskItems, taskItems, setHabitStats, habitHistory) => {
@@ -302,17 +303,7 @@ export const supabaseSyncLocalWithDb = async (session, setTaskItems, setHabitSta
   var newHabitStats = updateHabitStats(setHabitStats, newHabitHistory);
 
   // update reward items state
-  console.log({"user_id": session.user?.id})
-  const { data: rewardsSupabase, error } = await supabase.from("Rewards").select("*").eq("user_id", session.user?.id);
-  console.log({error})
-  console.log("REWARDS!!");
-  console.log(rewardsSupabase);
-
-  setRewardItems(rewardsSupabase);
-
-  if (error) {
-    throw error;
-  }
+  await supabaseGetAllRewards({setRewardItems, user_uid: session.user?.id})
 
   console.log("syncing complete!");
 
@@ -611,12 +602,12 @@ export const updateEmberStats = (setEmberStats, taskItems, habitHistory, habitSt
   setEmberStats(newEmberStats);
 };
 
-export const getTotalEmberCount = (emberStats) => {
+export const getTotalEmberCount = (emberStats, userSettings) => {
   let totalEarned = 0;
   for (const [dateKey, emberStat] of Object.entries(emberStats)) {
     totalEarned += emberStat.earned;
   }
-  return totalEarned;
+  return totalEarned - userSettings.total_spent_embers;
 };
 
 /**

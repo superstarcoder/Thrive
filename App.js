@@ -42,6 +42,10 @@ function MainApp() {
   const { ColorState, setColorState } = useColorsStateContext();
   // const [ColorState, setColorState] = useState('Hello from Context!');
 
+  const syncLocalWithDb = async () => {
+    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory, setRewardItems);
+  };
+
   // const [dataIsFetched, setDataIsFetched] = useState(true)
   const tasksPageRef = useRef();
   // authorize user into session
@@ -141,6 +145,8 @@ function MainApp() {
                 setHabitStats={setHabitStats}
                 emberStats={embersStats}
                 setRewardItems={setRewardItems}
+                syncLocalWithDb={syncLocalWithDb}
+                userSettings={userSettings}
               />
             </>
           )}
@@ -167,7 +173,14 @@ function MainApp() {
           )}
           {currentPage == "rewards" && (
             <>
-              <RewardsPage user={session.user} rewardItems={rewardItems} setRewardItems={setRewardItems} emberStats={embersStats} />
+              <RewardsPage
+                user={session.user}
+                rewardItems={rewardItems}
+                setRewardItems={setRewardItems}
+                emberStats={embersStats}
+                userSettings={userSettings}
+                setUserSettings={setUserSettings}
+              />
             </>
           )}
           {currentPage == "enter_new_password_form" && <EnterNewPasswordForm setCurrentPage={setCurrentPage} />}

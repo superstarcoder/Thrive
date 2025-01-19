@@ -7,12 +7,15 @@ import RewardSettingsModal from "./RewardSettingsModal";
 import RewardItem from "./RewardItem";
 import { getTotalEmberCount } from "../TasksPage/TasksPageSupabase";
 
-const RewardsPage = ({ user, rewardItems, setRewardItems, emberStats }) => {
+const RewardsPage = ({ user, rewardItems, setRewardItems, emberStats, userSettings, setUserSettings }) => {
   const { ColorState, setColorState } = useColorsStateContext();
   const styles = getDynamicStyles(ColorState);
   const rewardSettingsModalRef = useRef();
 
-  const totalEmberCount = getTotalEmberCount(emberStats);
+  const totalEmberCount = getTotalEmberCount(emberStats, userSettings);
+
+  const unClaimedRewards = rewardItems.filter((reward) => reward.claimed === false);
+  const claimedRewards = rewardItems.filter((reward) => reward.claimed === true);
 
   return (
     <View style={styles.container}>
@@ -45,13 +48,53 @@ const RewardsPage = ({ user, rewardItems, setRewardItems, emberStats }) => {
       </ScrollView> */}
 
       <ScrollView>
-        <View style={styles.rewardItemsList}>
-          {rewardItems?.map((item, index) => (
-            <RewardItem title={item.title} embers_cost={item.embers_cost} canClaim={true} key={index} />
-          ))}
-        </View>
+        {unClaimedRewards.length != 0 && (
+          <>
+            <StyledH2 text={"Unclaimed Rewards"} style={styles.listHeading} />
+            <View style={styles.rewardItemsList}>
+              {unClaimedRewards?.map((item, index) => (
+                <RewardItem
+                  title={item.title}
+                  embers_cost={item.embers_cost}
+                  canClaim={totalEmberCount >= item.embers_cost}
+                  key={index}
+                  rewardId={item.id}
+                  user_uid={user?.id}
+                  setRewardItems={setRewardItems}
+                  recurring={item.recurring}
+                  claimed={item.claimed}
+                  userSettings={userSettings}
+                  setUserSettings={setUserSettings}
+                />
+              ))}
+            </View>
+          </>
+        )}
+
+        {claimedRewards.length != 0 && (
+          <>
+            <StyledH2 text={"Claimed Rewards"} style={styles.listHeading} />
+            <View style={styles.rewardItemsList}>
+              {claimedRewards?.map((item, index) => (
+                <RewardItem
+                  title={item.title}
+                  embers_cost={item.embers_cost}
+                  canClaim={false}
+                  key={index}
+                  rewardId={item.id}
+                  user_uid={user?.id}
+                  setRewardItems={setRewardItems}
+                  recurring={item.recurring}
+                  claimed={item.claimed}
+                  userSettings={userSettings}
+                  setUserSettings={setUserSettings}
+                />
+              ))}
+            </View>
+          </>
+        )}
       </ScrollView>
-      <RewardSettingsModal ref={rewardSettingsModalRef} user={user} />
+      <RewardSettingsModal ref={rewardSettingsModalRef} user={user} setRewardItems={setRewardItems} />
     </View>
   );
 };
@@ -59,6 +102,10 @@ const RewardsPage = ({ user, rewardItems, setRewardItems, emberStats }) => {
 export default RewardsPage;
 
 const getDynamicStyles = (ColorState) => ({
+  listHeading: {
+    alignSelf: "center",
+    marginVertical: 10,
+  },
   embersCostText: {
     fontSize: 18,
     color: "black",
@@ -80,7 +127,7 @@ const getDynamicStyles = (ColorState) => ({
   container: {
     flex: 1,
     backgroundColor: ColorState?.DarkestBlue,
-    paddingVertical: 60,
+    paddingTop: 60,
     gap: 10,
   },
   // reward items list
@@ -88,6 +135,7 @@ const getDynamicStyles = (ColorState) => ({
     marginTop: 5,
     paddingHorizontal: 15,
     gap: 13,
+    flexGrow: 1,
   },
   // reward button
   addRewardButton: {
