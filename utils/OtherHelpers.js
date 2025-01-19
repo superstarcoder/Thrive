@@ -1,7 +1,12 @@
-import {
-  HABIT_HISTORY_COLUMNS,
-  HABIT_TASKS_TABLE_COLUMNS,
-} from "./AppConstants";
+import { HABIT_HISTORY_COLUMNS, HABIT_TASKS_TABLE_COLUMNS } from "./AppConstants";
+
+export function isIntegerInRange(str, num1, num2) {
+  // Convert the string to a number
+  const num = parseInt(str, 10);
+
+  // Check if it's a valid integer and in the range
+  return !isNaN(num) && num.toString() === str && num >= num1 && num <= num2;
+}
 
 export function deepCopyObject(obj) {
   return JSON.parse(JSON.stringify(obj));
@@ -16,10 +21,7 @@ export function objIsEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-export function getHabitHistoryUpdateDict({
-  initialHabitSettings,
-  habitSettingsEdited,
-}) {
+export function getHabitHistoryUpdateDict({ initialHabitSettings, habitSettingsEdited }) {
   const updateDict = {};
   for (const col of HABIT_HISTORY_COLUMNS) {
     // we want to compare the VALUES of the two Date objects, not the references
@@ -29,9 +31,7 @@ export function getHabitHistoryUpdateDict({
       console.log(time1);
       console.log(time2);
       if (time1 != time2) {
-        updateDict.dueTimeOverride = new Date(
-          habitSettingsEdited[col]
-        ).toISOString();
+        updateDict.dueTimeOverride = new Date(habitSettingsEdited[col]).toISOString();
       }
       continue;
     }
@@ -43,10 +43,7 @@ export function getHabitHistoryUpdateDict({
   return updateDict;
 }
 
-export function getHabitTasksTableUpdateDict({
-  initialHabitSettings,
-  habitSettingsEdited,
-}) {
+export function getHabitTasksTableUpdateDict({ initialHabitSettings, habitSettingsEdited }) {
   const updateDict = {};
   for (const col of HABIT_TASKS_TABLE_COLUMNS) {
     // we want to compare the VALUES of the two list objects, not the references
@@ -76,6 +73,6 @@ export function getHabitTasksTableUpdateDict({
 
 export const getImportanceString = (importance) => {
   if (importance <= 4) return "low_importance";
-  if (importance <= 7) return "medium_importance"
-  return "high_importance"
+  if (importance <= 7) return "medium_importance";
+  return "high_importance";
 };

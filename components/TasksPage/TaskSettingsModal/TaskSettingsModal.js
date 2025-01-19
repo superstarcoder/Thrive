@@ -257,11 +257,6 @@ const TaskSettingsModal = forwardRef(({ session, syncLocalWithDb, supabase, task
         <DurationBox duration={taskSettings.duration} dispatch={dispatch} ref={durationBoxRef} />
         <ImportanceBox importance={taskSettings.importance} dispatch={dispatch} ref={importanceBoxRef} />
         <DueDatePickerBox dispatch={dispatch} dateTime={taskSettings.dueDate} includeOnlyTime={taskSettings.includeOnlyTime} />
-        {/* <StyledH1 style={styles.settingsTitle} text={"Habit Settings"} />
-        <UseHabitBox dispatch={dispatch} selected={taskSettings.isHabit} repeatDays={taskSettings.repeatDays} dueDate={taskSettings.dueDate} />
-        <RepeatBox dispatch={dispatch} repeatDays={taskSettings.repeatDays} isHabit={taskSettings.isHabit} /> */}
-        {/* <StyledH1 style={styles.settingsTitle} text={"Advanced"} /> */}
-        {/* </KeyboardAvoidingView> */}
       </ScrollView>
 
 

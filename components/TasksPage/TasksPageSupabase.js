@@ -1,28 +1,10 @@
 import { supabase } from "../../lib/supabase";
-import {
-  onlyDatesAreSame,
-  getDateFromDatetime,
-  toYMDFormat,
-  getStandardDateString,
-  getEndOfDay,
-  toDateOnly,
-} from "../../utils/DateHelper";
+import { onlyDatesAreSame, getDateFromDatetime, toYMDFormat, getStandardDateString, getEndOfDay, toDateOnly } from "../../utils/DateHelper";
 import { HABIT_HISTORY_COLUMNS } from "../../utils/AppConstants";
-import {
-  getHabitHistoryUpdateDict,
-  getImportanceString,
-} from "../../utils/OtherHelpers";
+import { getHabitHistoryUpdateDict, getImportanceString } from "../../utils/OtherHelpers";
 
 // local AND supabase changes
-export const supabaseUpdateTaskSettings = async (
-  session,
-  updateDict,
-  taskId,
-  setTaskItems,
-  taskItems,
-  setHabitStats,
-  habitHistory
-) => {
+export const supabaseUpdateTaskSettings = async (session, updateDict, taskId, setTaskItems, taskItems, setHabitStats, habitHistory) => {
   // find the index of the task in the taskItems array state and create a copy
 
   const oldTask = taskItems.find((x) => x.id == taskId);
@@ -30,18 +12,14 @@ export const supabaseUpdateTaskSettings = async (
   const index = taskItemsCopy.indexOf(oldTask);
 
   if (index == -1) {
-    console.error(
-      "supabaseUpdateTaskSettings: unable to edit task since task is not found in array state"
-    );
+    console.error("supabaseUpdateTaskSettings: unable to edit task since task is not found in array state");
   }
 
   // update the required properties of the task based on newTaskSettings and update local states
 
   for (let [taskProperty, propertyNewValue] of Object.entries(updateDict)) {
     if (!taskItemsCopy[index].hasOwnProperty(taskProperty)) {
-      console.error(
-        "supabaseUpdateTaskSettings: You're trying to update a property of a task that doesn't exist"
-      );
+      console.error("supabaseUpdateTaskSettings: You're trying to update a property of a task that doesn't exist");
     }
     taskItemsCopy[index][taskProperty] = propertyNewValue;
   }
@@ -83,31 +61,20 @@ export const supabaseUpdateTaskSettings = async (
   }
 
   if (Object.hasOwn(updateDictCopy, "repeat_days_edited_date")) {
-    updateDictCopy.repeat_days_edited_date =
-      updateDictCopy.repeat_days_edited_date.toISOString();
+    updateDictCopy.repeat_days_edited_date = updateDictCopy.repeat_days_edited_date.toISOString();
   }
 
   // update supabase
 
   // console.log({taskId})
-  const { error } = await supabase
-    .from("Tasks")
-    .update(updateDictCopy)
-    .eq("id", taskId);
+  const { error } = await supabase.from("Tasks").update(updateDictCopy).eq("id", taskId);
 
   if (error) console.warn(error);
 };
 
 // local AND supabase changes
 // NOTE: habit_due_date is of type ISO string, not Date()
-export const supabaseUpdateHabitHistoryEntry = async (
-  updateDict,
-  taskId,
-  habitHistory,
-  setHabitHistory,
-  habit_due_date,
-  setHabitStats
-) => {
+export const supabaseUpdateHabitHistoryEntry = async (updateDict, taskId, habitHistory, setHabitHistory, habit_due_date, setHabitStats) => {
   // local changes
   //find the entry that matches the id AND habit_due_date
   // then, update entry based on updateDict
@@ -118,9 +85,7 @@ export const supabaseUpdateHabitHistoryEntry = async (
 
       for (let [taskProperty, propertyNewValue] of Object.entries(updateDict)) {
         if (!entry.hasOwnProperty(taskProperty)) {
-          console.error(
-            "supabaseUpdateTaskSettings: You're trying to update a property of a HABIT that doesn't exist"
-          );
+          console.error("supabaseUpdateTaskSettings: You're trying to update a property of a HABIT that doesn't exist");
         }
         entry[taskProperty] = propertyNewValue;
       }
@@ -134,11 +99,7 @@ export const supabaseUpdateHabitHistoryEntry = async (
   // db changes below
 
   // db changes
-  const { error } = await supabase
-    .from("HabitHistory")
-    .update(updateDict)
-    .eq("id", taskId)
-    .eq("habit_due_date", habit_due_date);
+  const { error } = await supabase.from("HabitHistory").update(updateDict).eq("id", taskId).eq("habit_due_date", habit_due_date);
 
   if (error) console.warn(error);
 
@@ -147,14 +108,7 @@ export const supabaseUpdateHabitHistoryEntry = async (
 };
 
 // adds a list of entries to the habitHistory for a particular habitId
-export const supabaseInsertHabitHistoryEntries = async (
-  entriesToAdd,
-  habitId,
-  habitHistory,
-  setHabitHistory,
-  setHabitStats,
-  batchSize = 50
-) => {
+export const supabaseInsertHabitHistoryEntries = async (entriesToAdd, habitId, habitHistory, setHabitHistory, setHabitStats, batchSize = 50) => {
   const habitHistoryCopy = { ...habitHistory };
 
   if (!(habitId in habitHistoryCopy)) {
@@ -238,8 +192,7 @@ export const supabaseInsertTask = async (
 
   // covnert ALL dates to ISO string before adding to supabase
   if ("dueDate" in newTaskSettingsCopy) {
-    newTaskSettingsCopy["dueDate"] =
-      newTaskSettingsCopy["dueDate"].toISOString();
+    newTaskSettingsCopy["dueDate"] = newTaskSettingsCopy["dueDate"].toISOString();
   }
 
   if (newTaskSettingsCopy["habitHistory"] != null) {
@@ -254,19 +207,14 @@ export const supabaseInsertTask = async (
   }
 
   if ("repeat_days_edited_date" in newTaskSettingsCopy) {
-    newTaskSettingsCopy.repeat_days_edited_date =
-      newTaskSettingsCopy.repeat_days_edited_date.toISOString();
+    newTaskSettingsCopy.repeat_days_edited_date = newTaskSettingsCopy.repeat_days_edited_date.toISOString();
   }
 
   // update supabase
 
   console.info({ id: newTaskSettingsCopy.id });
 
-  const { data, error } = await supabase
-    .from("Tasks")
-    .insert(newTaskSettingsCopy)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("Tasks").insert(newTaskSettingsCopy).select().single();
   // console.log("HELLLOOOO")
 
   // console.log({data})
@@ -282,25 +230,11 @@ export const supabaseInsertTask = async (
 
   // if a habit is being added: update habit history entries, so that new habit gets displayed
   if (newTaskSetting.isHabit == true) {
-    await supabaseFixHistoryAllHabits(
-      taskItemsCopy,
-      habitHistory,
-      setHabitHistory,
-      habitStats,
-      setHabitStats
-    );
+    await supabaseFixHistoryAllHabits(taskItemsCopy, habitHistory, setHabitHistory, habitStats, setHabitStats);
   }
 };
 
-export const supabaseDeleteTask = async (
-  taskId,
-  isHabit,
-  setTaskItems,
-  taskItems,
-  habitHistory,
-  setHabitHistory,
-  setHabitStats
-) => {
+export const supabaseDeleteTask = async (taskId, isHabit, setTaskItems, taskItems, habitHistory, setHabitHistory, setHabitStats) => {
   // update local states
   let taskItemsCopy = [...taskItems];
   taskItemsCopy = taskItemsCopy.filter((item) => item.id !== taskId);
@@ -328,12 +262,7 @@ export const supabaseDeleteTask = async (
   }
 };
 
-export const supabaseSyncLocalWithDb = async (
-  session,
-  setTaskItems,
-  setHabitStats,
-  setHabitHistory
-) => {
+export const supabaseSyncLocalWithDb = async (session, setTaskItems, setHabitStats, setHabitHistory, setRewardItems) => {
   const data = await getAllTasks(session);
 
   // code to update taskItems state
@@ -367,13 +296,23 @@ export const supabaseSyncLocalWithDb = async (
   setTaskItems(newTaskItems);
 
   // update HabitHistory state
-  var newHabitHistory = await getAllHabitHistories(
-    setHabitHistory,
-    newTaskItems
-  );
+  var newHabitHistory = await getAllHabitHistories(setHabitHistory, newTaskItems);
 
   // update habit stats state
   var newHabitStats = updateHabitStats(setHabitStats, newHabitHistory);
+
+  // update reward items state
+  console.log({"user_id": session.user?.id})
+  const { data: rewardsSupabase, error } = await supabase.from("Rewards").select("*").eq("user_id", session.user?.id);
+  console.log({error})
+  console.log("REWARDS!!");
+  console.log(rewardsSupabase);
+
+  setRewardItems(rewardsSupabase);
+
+  if (error) {
+    throw error;
+  }
 
   console.log("syncing complete!");
 
@@ -385,11 +324,7 @@ const getAllHabitHistories = async (setHabitHistory, taskItems) => {
 
   for (const task of taskItems) {
     if (task.isHabit) {
-      const { data, error } = await supabase
-        .from("HabitHistory")
-        .select()
-        .eq("id", task.id)
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("HabitHistory").select().eq("id", task.id).order("created_at", { ascending: false });
 
       if (error) {
         console.warn(error);
@@ -428,26 +363,13 @@ const findEntryWithDate = (habitHistoryEntries, myDate) => {
 };
 
 // call this function when: habit is added and when page loads
-export const supabaseFixHistoryAllHabits = async (
-  taskItems,
-  habitHistory,
-  setHabitHistory,
-  habitStats,
-  setHabitStats
-) => {
+export const supabaseFixHistoryAllHabits = async (taskItems, habitHistory, setHabitHistory, habitStats, setHabitStats) => {
   console.log("Starting fix...");
   for (var habitSettings of taskItems) {
     if (habitSettings.isHabit == true) {
       // update stats is set to false since we would rather update stats after ALL the habit histories have been made up to date
       console.log("fixing habit id: " + habitSettings.id);
-      await supabaseFixHistoryForSingleHabit(
-        habitSettings,
-        habitSettings.id,
-        habitHistory,
-        setHabitHistory,
-        setHabitStats,
-        false
-      );
+      await supabaseFixHistoryForSingleHabit(habitSettings, habitSettings.id, habitHistory, setHabitHistory, setHabitStats, false);
       console.log("fixed!");
     }
   }
@@ -463,13 +385,7 @@ export const supabaseFixHistoryAllHabits = async (
 //             add entry ("pending" if it is today's date and "incomplete" if it is old date)
 //         if entry does exist for this date & is "pending" & selected date is today & habit_due_date != today:
 //             change from "pending" to "incomplete"
-export const supabaseFixHistoryForSingleHabit = async (
-  habitSettings,
-  habitId,
-  habitHistory,
-  setHabitHistory,
-  setHabitStats
-) => {
+export const supabaseFixHistoryForSingleHabit = async (habitSettings, habitId, habitHistory, setHabitHistory, setHabitStats) => {
   // console.log("===============================")
   // possibility of missing some habits
   // repeatDays last edited date -> current date
@@ -482,20 +398,14 @@ export const supabaseFixHistoryForSingleHabit = async (
   var datesToCheck = [];
   var newEntries = [];
   var updateEntries = [];
-  const start_date = getDateFromDatetime(
-    new Date(habitSettings.repeat_days_edited_date)
-  );
+  const start_date = getDateFromDatetime(new Date(habitSettings.repeat_days_edited_date));
   for (var d = start_date; d < dayAfterNow; d.setDate(d.getDate() + 1)) {
-    if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true)
-      datesToCheck.push(new Date(d));
+    if (habitSettings["repeatDays"][(d.getDay() + 6) % 7] == true) datesToCheck.push(new Date(d));
   }
 
   for (var i = 0; i < datesToCheck.length; i += 1) {
     const selectedDate = datesToCheck[i];
-    const selectedEntry = findEntryWithDate(
-      habitHistory[habitId],
-      selectedDate
-    );
+    const selectedEntry = findEntryWithDate(habitHistory[habitId], selectedDate);
 
     // if entry with selected date does not exist, add entry
     if (selectedEntry == -1) {
@@ -546,26 +456,12 @@ export const supabaseFixHistoryForSingleHabit = async (
   if (newEntries || updateEntries) {
     if (newEntries) {
       console.log("inserting new habit history entry");
-      await supabaseInsertHabitHistoryEntries(
-        newEntries,
-        habitId,
-        habitHistory,
-        setHabitHistory,
-        setHabitStats
-      );
+      await supabaseInsertHabitHistoryEntries(newEntries, habitId, habitHistory, setHabitHistory, setHabitStats);
     }
     if (updateEntries) {
       console.log("updating existing habit history entry");
       for (const entry of updateEntries) {
-        await supabaseUpdateHabitHistoryEntry(
-          entry,
-          habitId,
-          habitHistory,
-          setHabitHistory,
-          entry.habit_due_date,
-          setHabitStats,
-          setHabitStats
-        );
+        await supabaseUpdateHabitHistoryEntry(entry, habitId, habitHistory, setHabitHistory, entry.habit_due_date, setHabitStats, setHabitStats);
       }
     }
 
@@ -588,9 +484,7 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
   let newHabitStats = {};
 
   for (const [habitId, habitEntriesArray] of Object.entries(newHabitHistory)) {
-    habitEntriesArray.sort(
-      (b, a) => new Date(b.habit_due_date) - new Date(a.habit_due_date)
-    );
+    habitEntriesArray.sort((b, a) => new Date(b.habit_due_date) - new Date(a.habit_due_date));
 
     let streak = 0;
     let history = {};
@@ -599,8 +493,7 @@ export const updateHabitStats = (setHabitStats, newHabitHistory) => {
 
     // get latest streak count while also updating history & cumulative streak dictionaries
     for (const historyEntry of habitEntriesArray) {
-      cumulative_streak_history[toDateOnly(historyEntry.habit_due_date)] =
-        streak;
+      cumulative_streak_history[toDateOnly(historyEntry.habit_due_date)] = streak;
       if (historyEntry.status == "incomplete") streak = 0;
       else if (historyEntry.status == "complete") streak += 1;
 
@@ -630,19 +523,9 @@ export const calculateEmbersForHabit = (historyEntry, habitStatsEntry) => {
   let streaksNum = habitStatsEntry.cumulative_streak_history[dateKey];
   if (!streaksNum) streaksNum = 0;
 
-  if (historyEntry.status != "exempt")
-    emberStat.max += embersFormula(
-      historyEntry.duration,
-      historyEntry.importance,
-      streaksNum
-    );
+  if (historyEntry.status != "exempt") emberStat.max += embersFormula(historyEntry.duration, historyEntry.importance, streaksNum);
 
-  if (historyEntry.status == "complete")
-    emberStat.earned += embersFormula(
-      historyEntry.duration,
-      historyEntry.importance,
-      streaksNum
-    );
+  if (historyEntry.status == "complete") emberStat.earned += embersFormula(historyEntry.duration, historyEntry.importance, streaksNum);
 
   return emberStat;
 };
@@ -650,11 +533,9 @@ export const calculateEmbersForHabit = (historyEntry, habitStatsEntry) => {
 export const calculateEmbersForTask = (task) => {
   let emberStat = { max: 0, earned: 0 };
 
-  if (task.status != "exempt")
-    emberStat.max += embersFormula(task.duration, task.importance);
+  if (task.status != "exempt") emberStat.max += embersFormula(task.duration, task.importance);
 
-  if (task.status == "complete")
-    emberStat.earned += embersFormula(task.duration, task.importance);
+  if (task.status == "complete") emberStat.earned += embersFormula(task.duration, task.importance);
   return emberStat;
 };
 
@@ -697,12 +578,7 @@ const embersFormula = (duration, importance, streakNum = 0) => {
  * @param {*} taskItems
  * @param {*} habitHistory
  */
-export const updateEmberStats = (
-  setEmberStats,
-  taskItems,
-  habitHistory,
-  habitStats
-) => {
+export const updateEmberStats = (setEmberStats, taskItems, habitHistory, habitStats) => {
   let newEmberStats = {};
 
   for (const [habitId, habitEntriesArray] of Object.entries(habitHistory)) {
@@ -713,10 +589,7 @@ export const updateEmberStats = (
         newEmberStats[dateKey] = { max: 0, earned: 0 };
       }
 
-      let emberStat = calculateEmbersForHabit(
-        historyEntry,
-        habitStats[historyEntry.id]
-      );
+      let emberStat = calculateEmbersForHabit(historyEntry, habitStats[historyEntry.id]);
       newEmberStats[dateKey].earned += emberStat.earned;
       newEmberStats[dateKey].max += emberStat.max;
     }
@@ -771,27 +644,17 @@ export const getTasksForMonthString = ({ myMonth, myYear, taskItems }) => {
         myYear,
         isHabit: item.isHabit,
       });
-      return (
-        dueMonth === myMonth && dueYear === myYear && item.isHabit == false
-      );
+      return dueMonth === myMonth && dueYear === myYear && item.isHabit == false;
     })
     .map((item) => {
-      return [
-        toYMDFormat(item.dueDate),
-        item.title,
-        item.duration,
-        item.importance,
-        item.status,
-      ];
+      return [toYMDFormat(item.dueDate), item.title, item.duration, item.importance, item.status];
     });
 
   console.log({ selectedTasks });
 
   if (selectedTasks.length == 0) return null;
 
-  let result = selectedTasks
-    .map((subList) => `"` + subList.join('","') + `"`)
-    .join("\n");
+  let result = selectedTasks.map((subList) => `"` + subList.join('","') + `"`).join("\n");
   result = "dueDate, title, duration, importance, status\n" + result;
   return result;
 };
@@ -815,41 +678,25 @@ export const getRecentTasksString = ({ selectedDate, taskItems }) => {
       const daysDifference = timeDifference / (1000 * 3600 * 24);
       selectedCount += 1;
       // when the two conditions are eventually met, we just ignore the task
-      return (
-        !(daysDifference >= 7 && selectedCount >= 10) && task.isHabit == false
-      );
+      return !(daysDifference >= 7 && selectedCount >= 10) && task.isHabit == false;
     })
     .map((item) => {
-      return [
-        getStandardDateString(new Date(item.dueDate)),
-        item.title,
-        item.duration,
-        item.importance,
-        item.status,
-      ];
+      return [getStandardDateString(new Date(item.dueDate)), item.title, item.duration, item.importance, item.status];
     });
 
-  let result = selectedTasks
-    .map((subList) => `"` + subList.join('","') + `"`)
-    .join("\n");
+  let result = selectedTasks.map((subList) => `"` + subList.join('","') + `"`).join("\n");
   result = "dueDate, title, duration, importance, status\n" + result;
 
   if (result.split("\n").length <= 2) {
     result =
       "dueDate, title, duration, importance, status\n" +
-      `"${getStandardDateString(
-        getEndOfDay(selectedDate)
-      )}", "Exercise and meditate", "0.5", "7", "incomplete"`;
+      `"${getStandardDateString(getEndOfDay(selectedDate))}", "Exercise and meditate", "0.5", "7", "incomplete"`;
   }
   return result;
 };
 
 export const getAllTasks = async (session) => {
-  const { data, error } = await supabase
-    .from("Tasks")
-    .select()
-    .eq("email", session.user.email)
-    .order("created_at", { ascending: true });
+  const { data, error } = await supabase.from("Tasks").select().eq("email", session.user.email).order("created_at", { ascending: true });
 
   // console.log({data})
 
@@ -879,14 +726,7 @@ export const editSelectedHabitOn_ConfirmEdit = async ({
   console.log({ updateDict });
 
   const habit_due_date = initialHabitHistoryEntry.habit_due_date;
-  await supabaseUpdateHabitHistoryEntry(
-    updateDict,
-    habitSettingsEdited.id,
-    habitHistory,
-    setHabitHistory,
-    habit_due_date,
-    setHabitStats
-  );
+  await supabaseUpdateHabitHistoryEntry(updateDict, habitSettingsEdited.id, habitHistory, setHabitHistory, habit_due_date, setHabitStats);
 };
 
 /**
@@ -917,9 +757,7 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async ({
   });
   let updateDict_TasksTable = { ...updateDict };
   if ("dueTimeOverride" in updateDict_TasksTable) {
-    updateDict_TasksTable.dueDate = new Date(
-      updateDict_TasksTable.dueTimeOverride
-    );
+    updateDict_TasksTable.dueDate = new Date(updateDict_TasksTable.dueTimeOverride);
     delete updateDict_TasksTable["dueTimeOverride"];
   }
 
@@ -932,16 +770,11 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async ({
     allHabitEntries = [...habitHistory[habitSettingsEdited.id]];
 
     // sorts habitEntries of selected habit in ascending order based on habit_due_date
-    allHabitEntries.sort(
-      (a, b) => new Date(a.habit_due_date) - new Date(b.habit_due_date)
-    );
+    allHabitEntries.sort((a, b) => new Date(a.habit_due_date) - new Date(b.habit_due_date));
 
     // get index of object where it's habit_due_date == initialHabitHistoryEntry.habit_due_date
     for (let i = allHabitEntries.length - 1; i >= 0; i--) {
-      if (
-        allHabitEntries[i].habit_due_date ==
-        initialHabitHistoryEntry.habit_due_date
-      ) {
+      if (allHabitEntries[i].habit_due_date == initialHabitHistoryEntry.habit_due_date) {
         startIndex = i;
         break;
       }
@@ -972,9 +805,7 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async ({
       setHabitStats
     );
 
-    let myLoadingString = `${i + 1 - startIndex} / ${
-      allHabitEntries.length - startIndex
-    } habits updated. Please wait.`;
+    let myLoadingString = `${i + 1 - startIndex} / ${allHabitEntries.length - startIndex} habits updated. Please wait.`;
     console.log(myLoadingString);
     setLoadingString(myLoadingString);
   }
@@ -982,15 +813,7 @@ export const editSelectedAndUpcoming_OnConfirmEdit = async ({
   setLoadingString("");
 
   // update habit in Tasks table so that upcoming tasks would follow the new edited settings
-  await supabaseUpdateTaskSettings(
-    session,
-    updateDict_TasksTable,
-    habitSettingsEdited.id,
-    setTaskItems,
-    taskItems,
-    setHabitStats,
-    habitHistory
-  );
+  await supabaseUpdateTaskSettings(session, updateDict_TasksTable, habitSettingsEdited.id, setTaskItems, taskItems, setHabitStats, habitHistory);
 };
 
 /**

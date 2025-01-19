@@ -31,6 +31,7 @@ const TasksPage = forwardRef(({
   habitStats,
   setHabitStats,
   emberStats,
+  setRewardItems
 }, ref) => {
 
 
@@ -136,7 +137,7 @@ const TasksPage = forwardRef(({
 
 
   const syncLocalWithDb = async () => {
-    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory)
+    await supabaseSyncLocalWithDb(session, setTaskItems, setHabitStats, setHabitHistory, setRewardItems)
   }
 
   useEffect(() => {

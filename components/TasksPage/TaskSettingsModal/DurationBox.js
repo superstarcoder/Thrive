@@ -29,7 +29,6 @@ const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
       if (index == -1) {
         console.error("DurationBox.js: setDuration: duration not in list of possible durations")
       }
-      // console.log(index, duration, dataArray)
       scrollSelectRef?.current?.scrollToIndex(index)
 
       setSelectedIndex(dataArray.indexOf(duration))
@@ -55,17 +54,11 @@ const DurationBox = forwardRef(({ dispatch, duration }, ref) => {
         </Text>
         <View style={styles.timeText}>
           <Clock size={20} weight="fill" color={ColorState?.RedAccent} style={styles.clockIcon} />
-          {/* <View style={styles.durationContainer}> */}
           <StyledH4 text={dataArray[selectedIndex] + " hours "} style={styles.durationText} />
-          {/* </View> */}
-          {/* <View style={styles.editButton}>
-            <Pencil size={25} weight="regular" color={"black"} style={styles.buttonIcon} />
-          </View> */}
         </View>
       </View>
       <View style={styles.inputBoxRight}>
         <ScrollSelect dispatch={dispatch} dataArray={dataArray} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
-        {/* <ScrollSelect dataArray={dataArray} dispatch={dispatch} duration={duration} ref={scrollSelectRef} /> */}
       </View >
     </View>
   )
